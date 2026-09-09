@@ -47,7 +47,7 @@ def test_alpha_coverage_and_volume_guard():
     panel={s:history(s) for s in ('SPY','QQQ')}
     rows=alpha_features(panel,Feed.IEX,panel['SPY'][-1].available_at,adjusted=True,numbers=[6,101,100])
     assert rows[0].reason=='needs SIP data'
-    assert rows[2].reason.startswith('Formula not implemented')
+    assert rows[2].reason=='needs SIP data'
     b=panel['SPY'][-1]
     assert rows[1].values['SPY']==pytest.approx((b.close-b.open)/(b.high-b.low+.001))
 
@@ -58,7 +58,7 @@ def test_alpha_future_suffix_and_finite_or_null():
     full=alpha_features(panel,Feed.SIP,time,adjusted=True)
     cut=alpha_features({s:b[:221] for s,b in panel.items()},Feed.SIP,time,adjusted=True)
     assert full==cut
-    assert all(set(r.values)=={'SPY','QQQ','DIA'} for r in full)
+    assert all(set(r.values)=={'SPY','QQQ','DIA'} or not r.enabled and r.reason for r in full)
     assert any(r.values['SPY'] is not None for r in full)
 
 
@@ -105,3 +105,66 @@ def test_seasonal_calendar_future_schedule_cannot_leak():
     assert known.features['fomc_pre_active']==1
     assert known.features['fomc_pre_n']==0
     assert any('minimum 30' in text for text in known.diagnostics)
+
+
+def sourced_context(panel):
+    from selery_strategies.alpha import AlphaObservation
+    # Explicitly synthetic test observations, never provider substitutes.
+    return [AlphaObservation(s,b.time,b.available_at,b.feed,'synthetic test',vwap=(b.open+b.close)/2,
+        dollar_volume=b.volume*(b.open+b.close)/2,market_cap=(100+i)*1e6,
+        sector='A' if s in ('SPY','QQQ') else 'B',industry='A',subindustry='A')
+        for s,seq in panel.items() for i,b in enumerate(seq)]
+
+
+def test_every_nonbinary_formula_callable_with_explicit_context():
+    from selery_strategies.alpha import BINARY
+    panel={s:history(s,n=280,feed=Feed.SIP) for s in ('SPY','QQQ','DIA')}
+    results=alpha_features(panel,Feed.SIP,panel['SPY'][-1].available_at,adjusted=True,observations=sourced_context(panel))
+    assert len(results)==101-len(BINARY)==87
+    assert all(r.enabled for r in results)
+    assert all(set(r.values)==set(panel) for r in results)
+    assert all('binary' in r.reason for r in alpha_catalog(Feed.SIP) if not r.enabled)
+
+
+def test_vwap_dollar_volume_and_classification_are_not_fabricated():
+    panel={s:history(s,feed=Feed.SIP) for s in ('SPY','QQQ')}
+    result=alpha_features(panel,Feed.SIP,panel['SPY'][-1].available_at,adjusted=True,numbers=[5,7,48,56])
+    assert all(not r.enabled and 'Missing point-in-time inputs' in r.reason for r in result)
+    context=sourced_context(panel)
+    computed=alpha_features(panel,Feed.SIP,panel['SPY'][-1].available_at,adjusted=True,numbers=[41],observations=context)
+    b=panel['SPY'][-1]
+    assert computed[0].values['SPY']==pytest.approx((b.high*b.low)**.5-(b.open+b.close)/2)
+
+
+def test_all_contextual_alphas_future_suffix_invariance():
+    panel={s:history(s,feed=Feed.SIP) for s in ('SPY','QQQ','DIA')};context=sourced_context(panel)
+    cutoff=panel['SPY'][265].available_at
+    full=alpha_features(panel,Feed.SIP,cutoff,adjusted=True,observations=context)
+    prefix=alpha_features({s:rows[:266] for s,rows in panel.items()},Feed.SIP,cutoff,adjusted=True,observations=[o for o in context if o.available_at<=cutoff])
+    assert full==prefix
+
+
+def test_ic_decay_only_matured_point_in_time_labels():
+    from selery_strategies.alpha import AlphaResult,information_coefficient_decay
+    panel={s:history(s,n=30) for s in ('SPY','QQQ','DIA')}
+    point=panel['SPY'][20]
+    future={s:seq[21].close/seq[20].close-1 for s,seq in panel.items()}
+    snapshot=AlphaResult('alpha_test',True,values=future,available_at=point.available_at,feed='iex',observed_at=point.time)
+    before=information_coefficient_decay([snapshot],panel,point.available_at,horizons=(1,5))
+    assert all(r['mean_rank_ic'] is None for r in before['horizons'])
+    after=information_coefficient_decay([snapshot],panel,panel['SPY'][21].available_at,horizons=(1,5))
+    assert after['horizons'][0]['mean_rank_ic']==pytest.approx(1)
+    assert after['horizons'][1]['mean_rank_ic'] is None
+    with pytest.raises(ValueError,match='Duplicate'):information_coefficient_decay([snapshot,snapshot],panel,panel['SPY'][-1].available_at)
+
+
+def test_alpha_primitives_have_correct_axes_ties_and_fractional_windows():
+    import pandas as pd
+    from selery_strategies.alpha import rank,ts_rank,decay,neutral,delay
+    frame=pd.DataFrame({'A':[1.,3.,2.],'B':[1.,5.,9.],'C':[3.,7.,8.]})
+    assert rank(frame).iloc[0].tolist()==pytest.approx([.5,.5,1.])
+    assert ts_rank(frame,3).iloc[-1].tolist()==pytest.approx([2.,3.,3.])
+    assert decay(frame,3.8).iloc[-1]['A']==pytest.approx((1+6+6)/6)
+    assert delay(frame,1.9).iloc[-1]['B']==5
+    group=pd.DataFrame({'A':['x']*3,'B':['x']*3,'C':['y']*3})
+    assert neutral(frame,group).iloc[-1].tolist()==pytest.approx([-3.5,3.5,0])
