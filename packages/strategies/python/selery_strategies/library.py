@@ -115,7 +115,7 @@ class PriceStrategy(Strategy):
         session = None; opening = []; range_high = range_low = None; fired = False
         for i,b in enumerate(bars):
             sign = 0; features = {}; explanation = ''
-            if i < 1: continue
+            if i < 1 and self.id not in ('opening_range', 'dual_thrust'): continue
             if self.id in ('ema_cross','sma_cross') and slow[i-1] is not None:
                 before,now = fast[i-1]-slow[i-1],fast[i]-slow[i]
                 sign = 1 if before <= 0 < now else -1 if before >= 0 > now else 0
@@ -151,7 +151,9 @@ class PriceStrategy(Strategy):
                     session=local.date(); opening=[]; range_high=range_low=None; fired=False
                 if minute < 600:
                     opening.append(b); continue
-                if range_high is None and opening and datetime.fromtimestamp(opening[0].time,ZoneInfo('America/New_York')).strftime('%H:%M') == '09:30':
+                step = {Timeframe.M1:60,Timeframe.M5:300,Timeframe.M15:900}[timeframe]
+                complete = len(opening)==1800//step and all(z.time-a.time==step for a,z in zip(opening,opening[1:]))
+                if range_high is None and complete and datetime.fromtimestamp(opening[0].time,ZoneInfo('America/New_York')).strftime('%H:%M') == '09:30':
                     range_high=max(x.high for x in opening);range_low=min(x.low for x in opening)
                     if self.id == 'dual_thrust':
                         width=max(range_high-min(x.close for x in opening),max(x.close for x in opening)-range_low)
