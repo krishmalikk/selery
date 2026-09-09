@@ -1,0 +1,15 @@
+# Track D — SPY and ETF domain research
+
+`spy_snapshot()` provides source-linked reference definitions, fund expense context, data dependencies and explicit unavailable states. Integration can replace the earlier domain metadata response with this function. Optional arguments accept timestamped `Source`/`TimedValue` inputs and issuer `Constituent` rows; no network request or source substitution occurs inside calculations.
+
+The January 26, 2026 SPY prospectus identifies a unit investment trust tracking the S&P 500 and estimates annual ordinary operating expenses of 0.0945%. Those are dated reference facts, not a refreshed fee quote. The module retains the source date and September 9, 2026 verification date. [SEC-hosted prospectus](https://www.sec.gov/Archives/edgar/data/884394/000119312526022775/d77353d497.htm)
+
+Implemented calculations: timestamp-aligned NAV premium reference; issuer constituent concentration/sector weights; explicit partial-weight coverage; arithmetic constituent-return contributions; an IV square-root-of-time move proxy with explicit decimal IV/day-count units; an ATM paired-premium proxy with crossed-quote checks; and cost sensitivity delegated to the canonical cost module. None creates a user investment account. Missing constituent returns remain missing, partial weights are not renormalized, and IEX prices retain venue labels. Fund operating expenses embedded in NAV must not be deducted twice.
+
+NAV and market snapshots must align within 60 seconds. Options context requires OPRA-labelled source provenance, timestamp alignment, fresh observations and a future expiry; its output is an uncalibrated volatility proxy. Source timestamps after the requested as-of, synthetic inputs, stale issuer constituent files, or missing dependencies produce reasons rather than numbers. Current issuer weights are never presented as historical beginning-period weights. The pure constituent-contribution function requires callers to supply aligned beginning-period weights and returns; it does not retrieve historical membership.
+
+The default domain snapshot does not invent current NAV, holdings, options IV or macro releases. Actual issuer data capture, OPRA entitlement verification and FRED vintage retrieval remain resource-dependent integrations. `atm_straddle_proxy` is a pure calculation helper whose caller must provide a matched strike/expiry/time snapshot; it is not exposed as an authenticated endpoint on its own.
+
+Nine deterministic offline tests passed: default unavailable states, source alignment, future timestamps, partial weights, correct contribution units, IV/day-count checks, options entitlement/freshness, synthetic-source rejection, paired-quote validation and canonical cost delegation. No live domain data was fabricated or fetched.
+
+Additional checked sources: [Issuer SPY page](https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-sp-500-etf-trust-spy), [OIC volatility scaling explanation](https://www.optionseducation.org/news/understanding-the-rule-of-16-in-plain-terms). Probability bounds and calibrated confidence are deliberately absent because neither proxy supplies them.
