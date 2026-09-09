@@ -1,0 +1,9 @@
+# Track F — causal price strategies
+
+Implemented independent Python methodology for families 1–7. `strategy_catalog(feed)`, `get_strategy(id, feed)`, and `Strategy.evaluate(bars, timeframe)` consume frozen shared contracts. EMA/SMA, MACD, RSI with low ADX, Bollinger fade and confirmed W/M, US opening range and an explicitly named Dual Thrust opening-window variant, Parabolic SAR and Heikin-Ashi emit analytical signals only. Reference thresholds are frozen ATR distances. A changing PSAR is an indicator; no trailing execution simulation exists.
+
+Defaults are documented in the catalog. A pattern becomes observable on the current neckline break; its past pivot is not backdated. Opening range requires a 09:30 New York observation and supports 1/5/15-minute inputs, excludes weekends and resets by local date across DST. An exchange holiday/early-close calendar is not bundled; callers must supply valid session bars. No regular-session signal occurs after 16:00. Volume confirmation is a distinct capability filter and fails closed on IEX.
+
+Method references: Wilder, *New Concepts in Technical Trading Systems* (1978), Appel's MACD, and Bollinger's 20-period standard-deviation bands. The previously audited [je-suis-tm methodology reference](https://github.com/je-suis-tm/quant-trading/tree/611b73f2c3f577ac5b28aaa19ac8c43d3236c7a5) provided topic discovery only; no source copied. See LICENSE-AUDIT.md for excluded proprietary/GPL/AGPL sources. The implementation uses existing independent shared Python primitives and standard-library arithmetic.
+
+Verification: deterministic tests exercise future suffix invariance, unfinished-bar exclusion, warm-up, positive frozen levels, feed mismatch rejection, unsorted/duplicate/invalid availability rejection, and representative nonempty signals. Neither parameter superiority nor historical profitability is asserted. Research event costs are applied by the common evaluator, avoiding double-counting inside strategies.
