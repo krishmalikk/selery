@@ -8,7 +8,7 @@ async function proxy(request:NextRequest,{params}:{params:Promise<{path:string[]
  const url=new URL(`/api/v1/${path.map(encodeURIComponent).join('/')}${request.nextUrl.search}`,origin);
  const headers=new Headers({'content-type':'application/json'}); headers.set('x-forwarded-proto',request.nextUrl.protocol.replace(':','')); const cookie=request.headers.get('cookie');if(cookie)headers.set('cookie',cookie);
  // Browser calls must be same-origin; credentials are never sent to a caller-controlled host.
- if(request.method!=='GET'){const incoming=request.headers.get('origin');if(incoming&&incoming!==request.nextUrl.origin)return NextResponse.json({detail:'Origin rejected'},{status:403});}
+ if(request.method!=='GET'){const incoming=request.headers.get('origin');const expected=`${request.nextUrl.protocol}//${request.headers.get('host')}`;if(incoming&&incoming!==expected)return NextResponse.json({detail:'Origin rejected'},{status:403});}
  const response=await fetch(url,{method:request.method,headers,body:request.method==='GET'?undefined:await request.text(),cache:'no-store',signal:AbortSignal.timeout(30000)});
  const outputHeaders=new Headers({'content-type':response.headers.get('content-type')||'application/json','cache-control':'no-store'});
  for(const cookie of response.headers.getSetCookie())outputHeaders.append('set-cookie',cookie);

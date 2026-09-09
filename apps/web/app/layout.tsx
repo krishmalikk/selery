@@ -4,6 +4,7 @@ import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/jetbrains-mono/400.css';
 import './globals.css';
-export const metadata:Metadata={title:'Selery — Research, with perspective',description:'A personal market research workspace. Trace every signal back to its evidence.',manifest:'/manifest.webmanifest',icons:{icon:'/icon.svg',apple:'/icon.svg'}};
+import {Pwa} from '../components/pwa';
+export const metadata:Metadata={title:'Selery — Research, with perspective',description:'A personal market research workspace. Trace every signal back to its evidence.',manifest:'/manifest.webmanifest',icons:{icon:'/icon.svg',apple:'/apple-touch-icon.png'},appleWebApp:{capable:true,statusBarStyle:'black-translucent',title:'Selery'}};
 export const viewport:Viewport={themeColor:'#0c100f',width:'device-width',initialScale:1};
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body>{children}</body></html>}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><Pwa/>{children}</body></html>}

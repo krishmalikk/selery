@@ -232,7 +232,7 @@ class Settings(Contract):
     disclaimer: str = DISCLAIMER
 
 class DeviceRegistration(Contract):
-    token: str = Field(min_length=10, max_length=300)
+    token: str = Field(pattern=r'^(ExponentPushToken|ExpoPushToken)\[[A-Za-z0-9_-]{10,200}\]$', max_length=230)
     platform: Literal['ios', 'android']
     enabled: bool = True
 

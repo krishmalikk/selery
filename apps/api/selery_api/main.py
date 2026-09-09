@@ -163,6 +163,17 @@ def create_app(config=None,provider=None):
     @app.get('/api/v1/models',dependencies=[Depends(authorized)])
     def models():return {'status':'untrained','reason':'No validated model is promoted. Confidence and SHAP remain unavailable. Training is manual.','registry':app.state.store.list('models'),'validation':'purged walk-forward with embargo; final holdout untouched'}
 
+    @app.post('/api/v1/models/train',dependencies=[Depends(authorized)])
+    async def train(body:ResearchRequest):
+        from .ml import train_meta
+        from .config import ROOT
+        from selery_strategies.library import get_strategy
+        bars=await app.state.provider.bars(body.symbol,body.timeframe,body.feed,10000)
+        strategy=get_strategy(body.strategy,body.feed)
+        signals=strategy.evaluate(bars,body.timeframe)
+        result=await asyncio.to_thread(train_meta,signals,bars,app.state.store,ROOT/'data/models')
+        return result
+
     @app.get('/api/v1/domain/SPY',dependencies=[Depends(authorized)])
     def domain():return {'symbol':'SPY','name':'SPDR S&P 500 ETF Trust','feed':'iex','modules':[{'name':name,'status':'unavailable','reason':reason} for name,reason in [('Holdings and distributions','Point-in-time SSGA dataset not configured.'),('Options and volatility','Consolidated options chain and historical IV are not available.'),('Market internals','IEX does not provide consolidated breadth.'),('Macro and factors','FRED and Kenneth French ingestion not yet synchronized.')]],'limitations':['Unavailable inputs are never replaced by sample performance.']}
 

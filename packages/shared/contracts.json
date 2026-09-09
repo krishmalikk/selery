@@ -567,8 +567,8 @@
     "additionalProperties": false,
     "properties": {
       "token": {
-        "maxLength": 300,
-        "minLength": 10,
+        "maxLength": 230,
+        "pattern": "^(ExponentPushToken|ExpoPushToken)\\[[A-Za-z0-9_-]{10,200}\\]$",
         "title": "Token",
         "type": "string"
       },
