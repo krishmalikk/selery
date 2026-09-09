@@ -1,3 +1,4 @@
+import {DeviceRegistrationResultSchema, type DeviceRegistrationResult, type SeleryClient} from "@selery/shared";
 import type { NotificationResponse } from "expo-notifications";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
@@ -47,4 +48,13 @@ export async function subscribeNotificationLinks(
   const subscription =
     Notifications.addNotificationResponseReceivedListener(receive);
   return () => subscription.remove();
+}
+
+/** Register only after the user opts in; provider delivery remains controlled by server settings. */
+export async function registerNotificationsWithServer(client: SeleryClient): Promise<DeviceRegistrationResult> {
+  const token = await registerNotifications();
+  return client.request('/notifications/devices', DeviceRegistrationResultSchema, {
+    method: 'POST',
+    body: JSON.stringify({token, platform: Platform.OS === 'ios' ? 'ios' : 'android', enabled: true}),
+  });
 }
