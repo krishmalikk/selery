@@ -90,3 +90,18 @@ def test_pairs_degenerate_relationship_is_unavailable():
     ctx=Context(series=panel,universe=('SPY','QQQ'),universe_available_at=1,adjusted_daily=True)
     result=evaluate_advanced('pairs',panel['SPY'],Timeframe.D1,ctx)
     assert result.code in ('missing_dependency','degenerate_data')
+
+
+def test_seasonal_calendar_future_schedule_cannot_leak():
+    from selery_strategies.advanced import seasonal_cohorts
+    data=history(n=280);calendar=[b.time for b in history(n=330)]
+    last=data[-1]
+    event=Observation('FOMC',last.time,last.available_at+1,{'fomc_time':float(calendar[280])},'test',Feed.IEX)
+    ctx=Context(calendar=calendar,calendar_available_at=1,observations=[event])
+    result=seasonal_cohorts(data,ctx)
+    assert result.enabled and result.features['fomc_pre_active']==0
+    ctx.observations=[Observation('FOMC',last.time,last.available_at,{'fomc_time':float(calendar[280])},'test',Feed.IEX)]
+    known=seasonal_cohorts(data,ctx)
+    assert known.features['fomc_pre_active']==1
+    assert known.features['fomc_pre_n']==0
+    assert any('minimum 30' in text for text in known.diagnostics)

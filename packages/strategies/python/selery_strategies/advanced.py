@@ -165,22 +165,65 @@ def evaluate_advanced(strategy_id: str,bars: list[Bar],timeframe: Timeframe,ctx:
     if not ctx.calendar or ctx.calendar_available_at is None or ctx.calendar_available_at>as_of:
         return unavailable('missing_calendar','Versioned exchange-session calendar with known availability is required')
     if len(data)<253:return unavailable('insufficient_history','At least 253 finalized daily observations required')
-    local=lambda t:datetime.fromtimestamp(t,ZoneInfo('America/New_York'))
-    weekday=local(b.time).weekday();observations=[]
-    for previous,current in zip(data[:-2],data[1:-1]):
-        if local(current.time).weekday()==weekday:observations.append(current.close/previous.close-1)
-    if len(observations)<30:return unavailable('insufficient_cohort','At least 30 matured same-weekday returns are required')
-    mean=float(np.mean(observations));se=float(np.std(observations,ddof=1)/np.sqrt(len(observations)))
-    sessions=sorted(set(ctx.calendar));date=local(b.time).date()
-    month_sessions=[t for t in sessions if local(t).strftime('%Y-%m')==local(b.time).strftime('%Y-%m')]
-    if not any(local(t).strftime('%Y-%m')>local(b.time).strftime('%Y-%m') for t in sessions):
-        return unavailable('incomplete_calendar','Calendar must extend into next month to establish the true last session')
-    dates=[local(t).date() for t in month_sessions]
-    if date not in dates:return unavailable('invalid_calendar','Current observation absent from supplied session calendar')
-    index=dates.index(date);turn=index<3 or index==len(dates)-1
-    features={'weekday_mean_return':mean,'weekday_standard_error':se,'cohort_size':float(len(observations)),'turn_of_month':float(turn)}
-    if abs(mean)<=2*se:return Evaluation(True,features=features,diagnostics=['No weekday mean outside two standard errors; exploratory and unadjusted for multiple trials'])
-    return signal(1 if mean>0 else -1,features,'Prior matured same-weekday returns exceed two standard errors; exploratory seasonal association, no causal attribution. FOMC drift unavailable without dated event context.')
+    cohorts=seasonal_cohorts(data,ctx)
+    if not cohorts.enabled:return cohorts
+    # Pre-register priority rather than selecting the most favorable historical cohort.
+    for name in ('fomc_pre','fomc_post','turn_of_month','weekday'):
+        if not cohorts.features.get(name+'_active',0):continue
+        count=cohorts.features[name+'_n'];mean=cohorts.features[name+'_mean'];se=cohorts.features[name+'_se']
+        if count>=30 and abs(mean)>2*se:
+            result=signal(1 if mean>0 else -1,cohorts.features,
+                f'Prior matured next-session {name} cohort exceeds two standard errors; exploratory association, not corrected for multiple trials.')
+            result.diagnostics=cohorts.diagnostics
+            return result
+    return cohorts
+
+
+def seasonal_cohorts(data: list[Bar],ctx: Context) -> Evaluation:
+    """Next-session returns conditioned on information at the preceding close.
+
+    FOMC observations store a scheduled `fomc_time` in values and the release date
+    in observed_at/available_at. Future meetings may be known before they occur.
+    """
+    last=data[-1];local=lambda t:datetime.fromtimestamp(t,ZoneInfo('America/New_York')).date()
+    days=sorted(set(local(t) for t in ctx.calendar));index={d:i for i,d in enumerate(days)}
+    months={}
+    for day in days:months.setdefault((day.year,day.month),[]).append(day)
+    if local(last.time) not in index:return unavailable('invalid_calendar','Current observation absent from supplied session calendar')
+    if days[-1].strftime('%Y-%m')<=local(last.time).strftime('%Y-%m'):
+        return unavailable('incomplete_calendar','Calendar must extend into next month to identify the true last session')
+    def phases(bar: Bar):
+        day=local(bar.time)
+        if day not in index:return None
+        i=index[day];month=months[(day.year,day.month)]
+        turn=day in month[:3] or day==month[-1]
+        meetings={local(int(o.values['fomc_time'])) for o in known_observations(ctx,bar.available_at,bar.feed) if 'fomc_time' in o.values}
+        pre=i+1<len(days) and days[i+1] in meetings
+        post=i>0 and days[i-1] in meetings
+        return {'weekday':day.weekday(),'turn_of_month':turn,'fomc_pre':pre,'fomc_post':post}
+    current=phases(last);samples={name:[] for name in ('weekday','turn_of_month','fomc_pre','fomc_post')}
+    # Every target return has matured by the current observation, and its label
+    # uses only the event schedule available at the preceding observation.
+    for prior,nxt in zip(data[:-1],data[1:]):
+        if nxt.available_at>last.available_at:continue
+        phase=phases(prior)
+        if phase is None or index.get(local(nxt.time))!=index[local(prior.time)]+1:continue
+        value=nxt.close/prior.close-1
+        if phase['weekday']==current['weekday']:samples['weekday'].append(value)
+        for name in ('turn_of_month','fomc_pre','fomc_post'):
+            if phase[name]:samples[name].append(value)
+    features={};diagnostics=[]
+    for name,values in samples.items():
+        features[name+'_active']=1. if name=='weekday' else float(current[name])
+        features[name+'_n']=float(len(values))
+        features[name+'_mean']=float(np.mean(values)) if values else 0.
+        features[name+'_se']=float(np.std(values,ddof=1)/np.sqrt(len(values))) if len(values)>1 else 0.
+        if len(values)<30:diagnostics.append(f'{name}: unavailable inference; {len(values)} matured observations, minimum 30')
+    if not any('fomc_time' in o.values for o in known_observations(ctx,last.available_at,last.feed)):
+        diagnostics.append('FOMC cohort unavailable: no point-in-time meeting schedule supplied')
+    diagnostics.append('Cohort means are descriptive and unadjusted for multiple testing; zero-valued empty-cohort summaries must not be interpreted as estimates')
+    return Evaluation(True,features=features,diagnostics=diagnostics)
+
 
 
 def apply_volatility_gate(signals: list[Signal],bars: list[Bar],timeframe: Timeframe,ctx: Context) -> Evaluation:
