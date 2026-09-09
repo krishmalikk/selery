@@ -1,0 +1,5 @@
+'use client';
+import {useEffect,useRef} from 'react';
+import {createChart,LineSeries,ColorType,type UTCTimestamp} from 'lightweight-charts';
+import {tokens,type ResearchReport} from '@selery/shared';
+export default function ReportChart({report}:{report:ResearchReport}){const container=useRef<HTMLDivElement>(null);useEffect(()=>{if(!container.current)return;const chart=createChart(container.current,{autoSize:true,layout:{background:{type:ColorType.Solid,color:tokens.color.background},textColor:tokens.color.muted,attributionLogo:true},grid:{vertLines:{color:'#18231d'},horzLines:{color:'#18231d'}}});for(const [title,data,color]of [['Analytical return %',report.series,tokens.color.accent],['SPY return %',report.benchmark,tokens.color.warning]] as const){const series=chart.addSeries(LineSeries,{color,lineWidth:2,title,priceLineVisible:false});series.setData(data.filter(p=>p.value!==null).map(p=>({time:p.time as UTCTimestamp,value:p.value!})))}chart.timeScale().fitContent();return()=>chart.remove()},[report]);return <div style={{height:230,margin:'20px 0'}} ref={container} aria-label="Analytical research series and SPY benchmark chart"/>}
