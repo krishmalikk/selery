@@ -1,0 +1,13 @@
+# Track C — Transparent news research
+
+`process_news(items, observed_at=..., as_of=..., known_availability=...)` returns `NewsAnalysis(items, events, discarded_future)`. `items` contains shared `NewsItem` models ready for the existing news endpoint; `events` contains source clusters, timestamped citations, lexical sentiment evidence, novelty, symbol relevance and keyword salience. The integration agent can persist first-observed availability from archive records and serve both views. The pipeline does not silently register or call new routes.
+
+Implemented deterministic methods: HTML-to-text cleanup, tracking-link canonicalization, exact URL deduplication, TF-IDF unigram/bigram cosine clustering, and a versioned explicit finance lexicon. Sentiment scores show matched terms and local clause-bounded negation. Novelty compares only already known accepted stories. Relevance uses provider symbols, exact ticker mentions, or explicit macro terms; impact is named keyword salience, not a price forecast. Cluster members retain their own sources/publication/availability timestamps. Confidence remains unavailable. The event explanation says proximity does not establish a price-move cause.
+
+Publication time is not assumed to be availability. Newly retrieved old stories are unavailable to earlier as-of queries unless archival first-observed timestamps establish otherwise. Future items are excluded before fitting text similarity. Caller supplies at most 500 items per batch, bounding local compute. No model download, LLM request or paid embedding call occurs.
+
+`fetch_feed` supports fixed identifiers `sec_latest` and `federal_reserve` only; arbitrary URLs are refused. Contact user-agent identification is required, redirects are refused, HTTP failures sanitized, response size capped, and XML DTD/entity declarations rejected. Feed records without valid source links or timezone-aware publication timestamps are skipped. SEC company names are not guessed into ticker mappings.
+
+Verification: nine offline tests passed for sentiment/negation, citation-preserving duplicate clusters, future-data mutation, symbol relevance, text/URL safety, RSS/Atom parsing, prohibited XML markup and fetch allowlisting/redirects. A failing clause-negation case was fixed before the test suite passed. Official feed availability has not been probed live.
+
+Source interfaces checked September 9, 2026: [SEC feeds](https://www.sec.gov/about/rss-feeds), [Federal Reserve feeds](https://www.federalreserve.gov/feeds/feeds.htm). Existing Alpaca news is a separate ingest source; this pipeline can enrich its shared models directly. Full semantic embeddings, issuer CIK/ticker mapping and historical news archives remain separate resource-dependent extensions.
