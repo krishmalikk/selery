@@ -1,0 +1,48 @@
+services:
+  db:
+    image: timescale/timescaledb:2.21.1-pg17
+    environment:
+      POSTGRES_USER: selery
+      POSTGRES_PASSWORD: ${SELERY_DB_PASSWORD:?Set SELERY_DB_PASSWORD in .env}
+      POSTGRES_DB: selery
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./packages/shared/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U selery]
+      interval: 5s
+      retries: 10
+  redis:
+    image: redis:7.4-alpine
+    command: [redis-server, --appendonly, 'yes']
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      retries: 10
+  api:
+    build: .
+    env_file: .env
+    environment:
+      SELERY_DATABASE_URL: postgresql+psycopg://selery:${SELERY_DB_PASSWORD}@db:5432/selery
+      SELERY_REDIS_URL: redis://redis:6379
+    ports: ['8000:8000']
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    volumes: [raw-data:/app/data]
+  worker:
+    build: .
+    env_file: .env
+    environment:
+      SELERY_DATABASE_URL: postgresql+psycopg://selery:${SELERY_DB_PASSWORD}@db:5432/selery
+      SELERY_REDIS_URL: redis://redis:6379
+    command: [arq, selery_api.worker.WorkerSettings]
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    volumes: [raw-data:/app/data]
+volumes:
+  db-data:
+  redis-data:
+  raw-data:

@@ -1,0 +1,8 @@
+{
+  "provenance": {"synthetic": true, "provider": "test-generator", "feed": "synthetic", "purpose": "schema and ambiguity tests only; never research evidence", "recorded_at": "2026-09-09T00:00:00Z"},
+  "underlying": "SPY", "reference_price": 500,
+  "contracts": [
+    {"type": "call", "strike": 500, "expiry": "2026-09-18", "bid": 4.5, "ask": 4.7, "implied_volatility": 0.2},
+    {"type": "put", "strike": 500, "expiry": "2026-09-18", "bid": 4.4, "ask": 4.6, "implied_volatility": 0.21}
+  ]
+}
