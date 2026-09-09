@@ -55,6 +55,21 @@ export type Citation = {
   "url": string | null;
   "data_id": string | null;
 };
+export type DeliverySummary = {
+  "accepted": number;
+  "failed": number;
+  "skipped": number;
+  "unknown": number;
+};
+export type DeviceRegistration = {
+  "token": string;
+  "platform": "ios" | "android";
+  "enabled": boolean;
+};
+export type DeviceRegistrationResult = {
+  "id": string;
+  "enabled": boolean;
+};
 export type Feed = "iex" | "sip" | "delayed" | "synthetic";
 export type IndicatorPoint = {
   "time": number;
@@ -221,6 +236,9 @@ export const ChartResponseSchema: z.ZodType<ChartResponse> = z.object({"symbol":
 export const ChatRequestSchema: z.ZodType<ChatRequest> = z.object({"message": z.string(), "symbol": z.string(), "debate": z.boolean()});
 export const ChatResponseSchema: z.ZodType<ChatResponse> = z.object({"message": z.string(), "citations": z.array(z.lazy(() => CitationSchema)), "mode": z.enum(["local", "llm"]), "cost_usd": z.number().finite()});
 export const CitationSchema: z.ZodType<Citation> = z.object({"label": z.string(), "timestamp": z.string(), "url": z.union([z.string(), z.null()]), "data_id": z.union([z.string(), z.null()])});
+export const DeliverySummarySchema: z.ZodType<DeliverySummary> = z.object({"accepted": z.number().int(), "failed": z.number().int(), "skipped": z.number().int(), "unknown": z.number().int()});
+export const DeviceRegistrationSchema: z.ZodType<DeviceRegistration> = z.object({"token": z.string(), "platform": z.enum(["ios", "android"]), "enabled": z.boolean()});
+export const DeviceRegistrationResultSchema: z.ZodType<DeviceRegistrationResult> = z.object({"id": z.string(), "enabled": z.boolean()});
 export const FeedSchema: z.ZodType<Feed> = z.enum(["iex", "sip", "delayed", "synthetic"]);
 export const IndicatorPointSchema: z.ZodType<IndicatorPoint> = z.object({"time": z.number().int(), "value": z.union([z.number().finite(), z.null()])});
 export const JobSchema: z.ZodType<Job> = z.object({"id": z.string(), "kind": z.string(), "status": z.enum(["queued", "running", "completed", "failed", "unavailable"]), "created_at": z.string(), "result_id": z.union([z.string(), z.null()]), "reason": z.union([z.string(), z.null()])});

@@ -534,6 +534,84 @@
     "title": "ChatResponse",
     "type": "object"
   },
+  "DeliverySummary": {
+    "additionalProperties": false,
+    "properties": {
+      "accepted": {
+        "title": "Accepted",
+        "type": "integer"
+      },
+      "failed": {
+        "title": "Failed",
+        "type": "integer"
+      },
+      "skipped": {
+        "title": "Skipped",
+        "type": "integer"
+      },
+      "unknown": {
+        "title": "Unknown",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "accepted",
+      "failed",
+      "skipped",
+      "unknown"
+    ],
+    "title": "DeliverySummary",
+    "type": "object"
+  },
+  "DeviceRegistration": {
+    "additionalProperties": false,
+    "properties": {
+      "token": {
+        "maxLength": 300,
+        "minLength": 10,
+        "title": "Token",
+        "type": "string"
+      },
+      "platform": {
+        "enum": [
+          "ios",
+          "android"
+        ],
+        "title": "Platform",
+        "type": "string"
+      },
+      "enabled": {
+        "default": true,
+        "title": "Enabled",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "token",
+      "platform"
+    ],
+    "title": "DeviceRegistration",
+    "type": "object"
+  },
+  "DeviceRegistrationResult": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "enabled": {
+        "title": "Enabled",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "id",
+      "enabled"
+    ],
+    "title": "DeviceRegistrationResult",
+    "type": "object"
+  },
   "Job": {
     "additionalProperties": false,
     "properties": {

@@ -231,6 +231,21 @@ class Settings(Contract):
     llm_enabled: bool
     disclaimer: str = DISCLAIMER
 
+class DeviceRegistration(Contract):
+    token: str = Field(min_length=10, max_length=300)
+    platform: Literal['ios', 'android']
+    enabled: bool = True
+
+class DeviceRegistrationResult(Contract):
+    id: str
+    enabled: bool
+
+class DeliverySummary(Contract):
+    accepted: int
+    failed: int
+    skipped: int
+    unknown: int
+
 class StreamEvent(Contract):
     type: Literal['quotes', 'chart', 'signal', 'news', 'alert', 'heartbeat', 'error']
     timestamp: datetime
