@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { z } from "zod";
+import { encodeCache, parseCache } from "@selery/shared/src/cache";
 import { useSession } from "./session";
 export function useResource<T>(
   key: string,
@@ -36,10 +37,7 @@ export function useResource<T>(
       setCached(false);
       setUpdated(at);
       setError("");
-      await AsyncStorage.setItem(
-        storageKey,
-        JSON.stringify({ data: result, at }),
-      );
+      await AsyncStorage.setItem(storageKey, encodeCache(result, at));
     } catch (e) {
       if (valid()) {
         setError(e instanceof Error ? e.message : "Unable to refresh");
@@ -58,10 +56,12 @@ export function useResource<T>(
       .then((raw) => {
         if (raw && active) {
           try {
-            const value = JSON.parse(raw);
-            setData(schema.parse(value.data));
-            setUpdated(value.at);
-            setCached(true);
+            const value = parseCache(raw, schema);
+            if (value) {
+              setData(value.data);
+              setUpdated(value.retrievedAt);
+              setCached(true);
+            }
           } catch {}
         }
       })

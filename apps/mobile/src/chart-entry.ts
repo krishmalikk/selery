@@ -1,4 +1,4 @@
-import { createSeleryChart } from "@selery/shared/src/chart";
+import { createSeleryChart, prepareChartData } from "@selery/shared/src/chart";
 import { ChartResponseSchema } from "@selery/shared";
 let rendered: ReturnType<typeof createSeleryChart> | undefined;
 const bridge = window as unknown as {
@@ -7,8 +7,11 @@ const bridge = window as unknown as {
 };
 bridge.renderSelery = (data: unknown) => {
   try {
-    const parsed = ChartResponseSchema.parse(data);
-    rendered?.destroy();
+    const parsed = prepareChartData(ChartResponseSchema.parse(data));
+    if (rendered) {
+      rendered.update(parsed);
+      return;
+    }
     rendered = createSeleryChart(
       document.getElementById("chart")!,
       parsed,

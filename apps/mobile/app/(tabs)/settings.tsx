@@ -4,15 +4,14 @@ import { useRouter } from "expo-router";
 import { SettingsSchema, feedLabel } from "@selery/shared";
 import { useSession } from "../../src/session";
 import { useResource } from "../../src/resource";
-import { registerNotifications } from "../../src/notifications";
+import { registerNotificationsWithServer } from "../../src/notifications";
 import { Page, Card, Button, ResourceStatus, styles } from "../../src/ui";
 export default function Settings() {
   const { client, logout, endpoint } = useSession(),
     router = useRouter();
   const fetcher = useCallback(() => client.settings(), [client]);
   const r = useResource("settings", fetcher, SettingsSchema);
-  const [push, setPush] = useState(""),
-    [pushToken, setPushToken] = useState("");
+  const [push, setPush] = useState("");
   return (
     <Page title="Workspace settings" refresh={r.refresh} loading={r.loading}>
       <ResourceStatus {...r} />
@@ -55,22 +54,18 @@ export default function Settings() {
           title="Register this device"
           onPress={() => {
             setPush("Registering…");
-            registerNotifications()
-              .then((token) => {
-                setPushToken(token);
+            registerNotificationsWithServer(client)
+              .then((result) => {
                 setPush(
-                  "Registered with Expo. Server delivery is not configured; use this token for an explicit test notification.",
+                  result.enabled
+                    ? "Device registered with your research backend. Delivery depends on enabled server channels and valid push credentials."
+                    : "Device registration saved with notifications disabled.",
                 );
               })
               .catch((e) => setPush(e.message));
           }}
         />
         {!!push && <Text style={styles.warning}>{push}</Text>}
-        {!!pushToken && (
-          <Text selectable style={styles.muted}>
-            {pushToken}
-          </Text>
-        )}
       </Card>
       <Button
         title="Sign out and clear cache"
