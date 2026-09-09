@@ -271,3 +271,13 @@ The tests cover visible charts/feed limitations, command navigation, a study req
 | PWA does not launch offline | Full offline shell acceptance is not complete; metadata/cache is not a service-worker guarantee |
 
 The accepted scope is [IMPLEMENTATION.md](IMPLEMENTATION.md). Quant methodology, source licensing, remaining limitations and review evidence are maintained in [ARCHITECTURE.md](ARCHITECTURE.md), [LICENSE-AUDIT.md](LICENSE-AUDIT.md), [DEBT.md](DEBT.md) and the track/wave review files.
+
+## Final integration additions
+
+The Research screen now includes a paginated saved-study comparison table. It lists ten stored reports per page with symbol, strategy, feed, timeframe, horizon, event count and target-first rate. Selecting a row loads the full report and its assumptions. `GET /api/v1/research?limit=10&offset=0` powers this view. Comparison does not establish that different cohorts are interchangeable.
+
+Forward comparisons now keep symbols separate as well as feed/version/timeframe/horizon. Unexplained weekday gaps disable annualized ratios; an unverified holiday is not assumed away. Incomplete session coverage cannot resolve a later threshold favorably. WebSocket tickets are tied to the originating session, and existing streams recheck expiry/revocation before sending data.
+
+Eligible calibrated confidence is attached only when a new forward signal is captured and is retained in its immutable snapshot. Historical charts can reuse that exact snapshot; they do not apply a model trained later. `GET /api/v1/models/explain/{signal_id}` requests optional SHAP for a stored signal and reports explicit unavailability when the scope, artifact, timestamps or dependencies do not qualify. This endpoint is currently a manual backend workflow, not a complete SHAP visualization screen.
+
+[Requirement coverage](docs/REQUIREMENT-COVERAGE.md) and [final review](FINAL-REVIEW.md) distinguish implemented screens, unfinished advanced integrations and unverified deployments.

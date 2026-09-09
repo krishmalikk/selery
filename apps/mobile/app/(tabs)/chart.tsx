@@ -32,7 +32,7 @@ export default function Chart() {
     if (params.symbol) setSymbol(params.symbol.toUpperCase());
   }, [params.symbol]);
   const fetcher = useCallback(
-    () => client.chart(symbol, timeframe, "iex"),
+    () => client.chart(symbol, timeframe, "iex", 400),
     [client, symbol, timeframe],
   );
   const r = useResource(

@@ -60,7 +60,12 @@ def create_app(config=None,provider=None):
     register_routes(app,authorized)
 
     @app.get('/health')
-    def health():return {'status':'ok','service':'selery-research','version':'0.1.0'}
+    def health():
+        try:
+            with app.state.store.engine.connect() as connection:connection.exec_driver_sql('SELECT 1')
+        except Exception:
+            return __import__('fastapi').responses.JSONResponse(status_code=503,content={'status':'unavailable','service':'selery-research'})
+        return {'status':'ok','service':'selery-research','version':'0.1.0'}
 
     class Login(BaseModel):password:str=Field(max_length=1000)
 
@@ -79,7 +84,7 @@ def create_app(config=None,provider=None):
         return {'ok':True}
 
     @app.post('/api/v1/auth/stream-ticket',dependencies=[Depends(authorized)])
-    def ticket():return {'ticket':app.state.auth.stream_ticket()}
+    def ticket(request:Request):return {'ticket':app.state.auth.stream_ticket(app.state.auth.require(request))}
 
     @app.get('/api/v1/watchlist',response_model=WatchlistResponse,dependencies=[Depends(authorized)])
     async def watchlist():
@@ -90,16 +95,23 @@ def create_app(config=None,provider=None):
                 if not cached or cached.provenance.observed_at<quote.provenance.observed_at:app.state.live_quotes[quote.symbol]=quote
         return WatchlistResponse(quotes=quotes,data_mode=app.state.config.data_mode)
 
-    async def get_chart(symbol,timeframe,feed):
+    async def get_chart(symbol,timeframe,feed,limit=1000):
         valid_symbol(symbol)
-        bars=await app.state.provider.bars(symbol,timeframe,feed,1000)
+        bars=await app.state.provider.bars(symbol,timeframe,feed,limit)
         if not bars:raise HTTPException(404,'No bars for this symbol and feed')
         finalized=[b for b in bars if b.finalized]
         signals=EmaCross().evaluate(finalized,timeframe)
+        # Reuse signal-time confidence, never retrospectively apply today's model.
+        for index,signal in enumerate(signals):
+            snapshot=app.state.store.get('signals',signal.id)
+            if snapshot:
+                original=Signal.model_validate(snapshot)
+                from .model_registry import scope_for
+                if scope_for(original)==scope_for(signal):signals[index]=original
         return ChartResponse(symbol=symbol,timeframe=timeframe,bars=bars,signals=signals,indicators=chart_indicators(bars,feed),capabilities=capabilities(feed),provenance=provenance(feed,bars[-1].available_at,app.state.config.data_mode=='fixtures' or bars[-1].available_at<time.time()-120, 'alpaca-recording' if app.state.config.data_mode=='fixtures' else 'alpaca'))
 
     @app.get('/api/v1/chart/{symbol}',response_model=ChartResponse,dependencies=[Depends(authorized)])
-    async def chart(symbol:str,timeframe:Timeframe=Timeframe.M5,feed:Feed=Feed.IEX):return await get_chart(symbol,timeframe,feed)
+    async def chart(symbol:str,timeframe:Timeframe=Timeframe.M5,feed:Feed=Feed.IEX,limit:int=Query(1000,ge=80,le=2000)):return await get_chart(symbol,timeframe,feed,limit)
 
     @app.get('/api/v1/news',response_model=NewsResponse,dependencies=[Depends(authorized)])
     async def news():
@@ -161,6 +173,10 @@ def create_app(config=None,provider=None):
         app.state.store.audit('research_completed',{'id':report.id,'request':body.model_dump(mode='json')})
         return report
 
+    @app.get('/api/v1/research',response_model=list[ResearchReport],dependencies=[Depends(authorized)])
+    def reports(limit:int=Query(10,ge=1,le=50),offset:int=Query(0,ge=0)):
+        return app.state.store.list('reports',limit,offset)
+
     @app.get('/api/v1/research/{id}',response_model=ResearchReport,dependencies=[Depends(authorized)])
     def report(id:str):
         item=app.state.store.get('reports',id)
@@ -181,12 +197,12 @@ def create_app(config=None,provider=None):
         groups={}
         for raw in app.state.store.list('outcomes',10000):
             result=Outcome.model_validate(raw);signal=snapshots.get(result.signal_id)
-            if signal:groups.setdefault((signal.strategy,signal.feed,signal.strategy_version,signal.timeframe,signal.horizon_bars),[]).append(result)
+            if signal:groups.setdefault((signal.symbol,signal.strategy,signal.feed,signal.strategy_version,signal.timeframe,signal.horizon_bars),[]).append(result)
         reports=app.state.store.list('reports',200)
         summaries=[]
-        for (strategy,feed,version,timeframe,horizon),items in groups.items():
-            match=next((r for r in reports if r['request']['strategy']==strategy and r['request']['feed']==feed and r['request']['timeframe']==timeframe and r['request']['horizon_bars']==horizon and version=='1'),None)
-            summaries.append(summarize(f'{strategy} · v{version} · {timeframe} · {horizon} bars',feed,items,match['metrics'].get('hit_rate') if match else None))
+        for (symbol,strategy,feed,version,timeframe,horizon),items in groups.items():
+            match=next((r for r in reports if r['request']['symbol']==symbol and r['request']['strategy']==strategy and r['request']['feed']==feed and r['request']['timeframe']==timeframe and r['request']['horizon_bars']==horizon and version=='1'),None)
+            summaries.append(summarize(f'{symbol} · {strategy} · v{version} · {timeframe} · {horizon} bars',feed,items,match['metrics'].get('hit_rate') if match else None))
         return summaries
 
     @app.get('/api/v1/journal',response_model=list[JournalEntry],dependencies=[Depends(authorized)])
@@ -220,8 +236,32 @@ def create_app(config=None,provider=None):
     @app.get('/api/v1/jobs',response_model=list[Job],dependencies=[Depends(authorized)])
     def jobs():return app.state.store.list('jobs')
 
+    @app.post('/api/v1/jobs/research',response_model=Job,dependencies=[Depends(authorized)])
+    async def enqueue_research(body:ResearchRequest):
+        import os
+        from arq import create_pool
+        from arq.connections import RedisSettings
+        url=os.getenv('SELERY_REDIS_URL','')
+        if not url:raise HTTPException(422,'Configure Redis and the worker before queueing research jobs.')
+        job=Job(id=uuid4().hex,kind='research',status='queued',created_at=datetime.now(UTC))
+        app.state.store.put('jobs',job,job.id)
+        pool=None
+        try:
+            pool=await create_pool(RedisSettings.from_dsn(url))
+            await pool.enqueue_job('research_job',job.id,body.model_dump(mode='json'))
+        except Exception:
+            app.state.store.put('jobs',job.model_copy(update={'status':'failed','reason':'Research queue unavailable'}),job.id)
+            raise HTTPException(503,'Research queue unavailable') from None
+        finally:
+            if pool:await pool.aclose()
+        return job
+
     @app.get('/api/v1/models',dependencies=[Depends(authorized)])
-    def models():return {'status':'untrained','reason':'No validated model is promoted. Confidence and SHAP remain unavailable. Training is manual.','registry':app.state.store.list('models'),'validation':'purged walk-forward with embargo; final holdout untouched'}
+    def models():
+        from .model_registry import registry_models
+        registry=registry_models(app.state.store)
+        trained=any(item.get('status')=='champion' for item in registry)
+        return {'status':'qualified' if trained else 'untrained','reason':'Confidence requires a qualified, scope-matched model activated before each signal.' if trained else 'No validated model is promoted. Confidence and SHAP remain unavailable. Training is manual.','registry':registry,'validation':'purged walk-forward with embargo; final holdout untouched'}
 
     @app.post('/api/v1/models/train',dependencies=[Depends(authorized)])
     async def train(body:ResearchRequest):
@@ -230,9 +270,19 @@ def create_app(config=None,provider=None):
         from selery_strategies.library import get_strategy
         bars=await app.state.provider.bars(body.symbol,body.timeframe,body.feed,10000)
         strategy=get_strategy(body.strategy,body.feed)
-        signals=strategy.evaluate(bars,body.timeframe)
+        signals=[signal.model_copy(update={'horizon_bars':body.horizon_bars}) for signal in strategy.evaluate(bars,body.timeframe)]
         result=await asyncio.to_thread(train_meta,signals,bars,app.state.store,ROOT/'data/models')
         return result
+
+    @app.get('/api/v1/models/explain/{signal_id}',dependencies=[Depends(authorized)])
+    async def explain_signal(signal_id:str):
+        from .ml import predict_signal
+        from .config import ROOT
+        snapshot=app.state.store.get('signals',signal_id)
+        if not snapshot:raise HTTPException(404,'Immutable forward signal not found')
+        signal=Signal.model_validate(snapshot)
+        bars=await app.state.provider.bars(signal.symbol,signal.timeframe,signal.feed,2000)
+        return await asyncio.to_thread(predict_signal,signal,bars,app.state.store,ROOT/'data/models')
 
     @app.get('/api/v1/domain/SPY',dependencies=[Depends(authorized)])
     def domain():
@@ -263,7 +313,8 @@ def create_app(config=None,provider=None):
 
     @app.websocket('/api/v1/stream')
     async def stream(websocket:WebSocket):
-        if not app.state.auth.consume_ticket(websocket.query_params.get('ticket','')):
+        session=app.state.auth.consume_ticket(websocket.query_params.get('ticket',''))
+        if not session:
             await websocket.close(code=4401);return
         origin=websocket.headers.get('origin')
         if origin and origin not in app.state.config.allowed_origins:
@@ -273,6 +324,8 @@ def create_app(config=None,provider=None):
             while True:
                 try:event=await asyncio.wait_for(queue.get(),timeout=20)
                 except TimeoutError:event={'type':'heartbeat','timestamp':datetime.now(UTC).isoformat(),'data':{}}
+                if not app.state.auth.verify(session):
+                    await websocket.close(code=4401);return
                 await websocket.send_json(event)
         except (WebSocketDisconnect,RuntimeError):pass
         finally:app.state.subscribers.discard(queue)
@@ -294,8 +347,12 @@ async def observe(app):
                     bars=await app.state.provider.bars(symbol,Timeframe.M5,Feed.IEX)
                     for signal in EmaCross().evaluate(bars,Timeframe.M5):
                         if signal.available_at<app.state.started_at or app.state.store.get('signals',signal.id):continue
+                        from .ml import predict_signal
+                        from .config import ROOT
+                        prediction=await asyncio.to_thread(predict_signal,signal,bars,app.state.store,ROOT/'data/models',include_shap=False)
+                        signal=signal.model_copy(update={'confidence':prediction['confidence'],'confidence_reason':prediction['reason']})
                         app.state.store.put('signals',signal,signal.id,immutable=True)
-                        app.state.store.audit('signal_observed',{'id':signal.id})
+                        app.state.store.audit('signal_observed',{'id':signal.id,'model_id':prediction['model_id']})
                         alert=Alert(id=signal.id,kind='signal',title=f'{symbol} EMA crossover',body=signal.explanation,symbol=symbol,signal_id=signal.id,created_at=datetime.now(UTC))
                         app.state.store.put('alerts',alert,alert.id,immutable=True)
                         from .notifications import deliver_alert

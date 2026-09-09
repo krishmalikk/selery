@@ -1,12 +1,11 @@
 import React, { useCallback } from "react";
 import { Text } from "react-native";
 import { useRouter } from "expo-router";
-import { z } from "zod";
-import { AlertSchema, formatTime } from "@selery/shared";
+import { AlertListSchema, formatTime } from "@selery/shared";
 import { useSession } from "../../src/session";
 import { useResource } from "../../src/resource";
 import { Page, Card, Button, ResourceStatus, styles } from "../../src/ui";
-const schema = z.array(AlertSchema);
+const schema = AlertListSchema;
 export default function Alerts() {
   const { client } = useSession(),
     router = useRouter();

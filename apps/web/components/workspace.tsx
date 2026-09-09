@@ -63,6 +63,7 @@ import {
 } from "@selery/shared/src/chart";
 import ResearchChart from "./chart";
 import ReportChart from "./report-chart";
+import ReportLibrary from "./report-library";
 const api = new SeleryClient("");
 const views = [
   "Overview",
@@ -1142,6 +1143,7 @@ export default function Workspace() {
                   </Empty>
                 )}
               </section>
+              <ReportLibrary onSelect={setReport} refreshKey={report?.id} />
             </div>
           )}
           {view === "Outcomes" && (

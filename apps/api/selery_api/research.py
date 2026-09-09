@@ -1,7 +1,7 @@
 """Bar-aligned one-reference-unit signal research, without execution state."""
 from __future__ import annotations
 from dataclasses import dataclass,field,replace
-from datetime import datetime,timezone
+from datetime import datetime,timedelta,timezone
 from decimal import Decimal
 import numpy as np
 from uuid import uuid4
@@ -34,6 +34,24 @@ def finalized_bars(bars):
         if i and (b.time<=rows[i-1].time or b.available_at<rows[i-1].available_at or b.feed!=rows[0].feed or b.symbol!=rows[0].symbol):
             raise ValueError('Research requires one symbol/feed and unique chronological bars with causal availability')
     return rows
+
+
+def daily_calendar_coverage(rows:list[Bar],timeframe:Timeframe) -> bool:
+    """Only known weekend closures may separate daily observations.
+
+    Missing weekdays could be exchange holidays or missing data. Without an
+    authoritative calendar neither interpretation supports annualization.
+    """
+    if timeframe!=Timeframe.D1 or len(rows)<2:return False
+    dates=[datetime.fromtimestamp(b.time,ZoneInfo('America/New_York')).date() for b in rows]
+    if len(set(dates))!=len(dates) or any(day.weekday()>=5 for day in dates):return False
+    for previous,current in zip(dates,dates[1:]):
+        if current<=previous:return False
+        day=previous+timedelta(days=1)
+        while day<current:
+            if day.weekday()<5:return False
+            day+=timedelta(days=1)
+    return True
 
 
 def exposure_study(bars:list[Bar],signals:list[Signal],horizon:int,assumptions:CostAssumptions|None=None) -> ExposureStudy:
@@ -114,14 +132,14 @@ def evaluate(request:ResearchRequest,bars,benchmark_bars,strategy=None,*,trial_s
         'Raw closes lack corporate-action total-return adjustment; split/dividend effects can distort all price-based research.']
     limitations=list(study.limitations)+['Historical and forward hit rates are not calibrated confidence.','IEX prices represent one venue; volume-dependent studies require SIP.','Observed-bar alignment does not prove a complete exchange calendar. Missing sessions are not imputed.']
     daily=request.timeframe==Timeframe.D1
-    # Daily frequency is only credible with unique local dates and plausible gaps.
-    dates=[datetime.fromtimestamp(b.time,timezone.utc).date() for b in rows]
-    calendar_ok=daily and len(set(dates))==len(dates) and all(d.weekday()<5 for d in dates) and all(0<(b-a).days<=4 for a,b in zip(dates,dates[1:]))
+    calendar_ok=daily_calendar_coverage(rows,request.timeframe)
+    if daily and not calendar_ok:
+        limitations.append('Annualization unavailable: daily coverage contains non-session dates, duplicate dates or unexplained weekday gaps. Holidays and early closures require an authoritative exchange calendar; they are not assumed.')
     annual=252 if calendar_ok else None
     net_available=bool(study.net) and all(x is not None for x in study.net)
     stats=descriptive_stats(study.net,periods_per_year=annual) if net_available else descriptive_stats([])
     metrics.update(stats)
-    if not annual or len(study.net)<252:limitations.append('Annualized ratios unavailable until at least 252 daily intervals with plausible session spacing; intraday annualization is intentionally unspecified.')
+    if not annual or len(study.net)<252:limitations.append('Annualized ratios unavailable until at least 252 daily intervals with no unexplained weekday gaps; intraday annualization is intentionally unspecified.')
     if net_available:
         metrics['costed_return_percent']=float(sum(study.net)*100)
         if min(1+np.cumsum(study.net))<=0:limitations.append('Nonpositive analytical index: percentage drawdown and annualized ratios are undefined.')

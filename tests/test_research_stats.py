@@ -122,3 +122,44 @@ def test_report_matches_full_bar_grid_and_rejects_missing_benchmark():
     missing=evaluate(request,data,data[:-1],strategy=Fixed())
     assert missing.metrics['benchmark_return_percent'] is None
     assert any('no forward fills' in text for text in missing.limitations)
+
+
+def weekday_daily_history(count=255):
+    from zoneinfo import ZoneInfo
+    day=datetime(2025,1,6,tzinfo=ZoneInfo('America/New_York'))
+    rows=[]
+    while len(rows)<count:
+        if day.weekday()<5:
+            p=100+len(rows)*.02+np.sin(len(rows)/3)
+            rows.append(Bar(symbol='SPY',time=int(day.timestamp()),available_at=int(day.replace(hour=20).timestamp()),
+                open=p,high=p+1,low=p-1,close=p,feed=Feed.IEX))
+        day+=timedelta(days=1)
+    return rows
+
+
+def test_missing_midweek_day_disables_annual_ratios_even_above_252_intervals():
+    class Fixed:
+        def evaluate(self,rows,timeframe):return [event(rows)]
+    complete=weekday_daily_history()
+    full=evaluate(ResearchRequest(horizon_bars=252),complete,complete,strategy=Fixed())
+    assert full.metrics['sharpe'] is not None and full.metrics['benchmark_sharpe'] is not None
+    # Missing Wednesday leaves a two-day gap that the old <=4-day rule accepted.
+    missing=complete[:122]+complete[123:]
+    result=evaluate(ResearchRequest(horizon_bars=252),missing,missing,strategy=Fixed())
+    assert result.metrics['interval_count']>=252
+    for name in ('sharpe','sortino','calmar','annualized_reference_return_percent','benchmark_sharpe'):
+        assert result.metrics[name] is None
+    assert result.metrics['costed_return_percent'] is not None
+    assert any('unexplained weekday gaps' in reason for reason in result.limitations)
+
+
+def test_daily_calendar_allows_dst_weekends_but_not_unverified_holidays():
+    from zoneinfo import ZoneInfo
+    from selery_api.research import daily_calendar_coverage
+    def observed(iso):
+        day=datetime.fromisoformat(iso).replace(tzinfo=ZoneInfo('America/New_York'))
+        return Bar(symbol='SPY',time=int(day.timestamp()),available_at=int(day.replace(hour=20).timestamp()),open=100,high=101,low=99,close=100,feed=Feed.IEX)
+    assert daily_calendar_coverage([observed('2026-03-06'),observed('2026-03-09')],Timeframe.D1)
+    assert daily_calendar_coverage([observed('2026-10-30'),observed('2026-11-02')],Timeframe.D1)
+    assert not daily_calendar_coverage([observed('2026-04-02'),observed('2026-04-06')],Timeframe.D1)
+    assert not daily_calendar_coverage([observed('2026-03-06'),observed('2026-03-09')],Timeframe.H1)

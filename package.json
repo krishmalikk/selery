@@ -27,7 +27,7 @@
   },
   "overrides": {
     "postcss": "8.5.28",
-    "decode-uri-component": "0.5.0",
+    "decode-uri-component": "file:./packages/uri-decoder",
     "xcode": {
       "uuid": "11.1.1"
     }

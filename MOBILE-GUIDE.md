@@ -318,3 +318,9 @@ The shared renderer's desktop test benchmark does not meet the device requiremen
 | New API URL is ignored | Rebuild/re-export with the mobile public environment; changing only the server environment is insufficient |
 
 For the latest integration status and unfinished external requirements see [PROGRESS.md](PROGRESS.md), [DEBT.md](DEBT.md) and the wave reviews. Do not interpret this guide's build commands as evidence that a distribution action has already occurred.
+
+## Final integration notes
+
+The native chart requests a bounded 400-bar response through the shared client; the desktop defaults to 1,000 and the API accepts 80–2,000. Both still use the canonical chart shape, rather than a separate mobile projection. List schema construction lives in the shared package, avoiding incompatible Zod type composition while retaining runtime validation. The local mobile TypeScript check now completes using roughly 380 MiB with the default heap.
+
+A successful iOS/Android JavaScript export is recorded in [verification](reviews/verification.md). It is not a signed native build or real-device acceptance. See [coverage](docs/REQUIREMENT-COVERAGE.md) for native features that remain incomplete.

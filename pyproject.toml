@@ -11,7 +11,7 @@ dependencies = [
 ]
 [dependency-groups]
 dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "pytest-asyncio>=0.25,<2", "ruff>=0.11,<1"]
-ml = ["lightgbm>=4,<5", "shap>=0.47,<1", "torch>=2.6,<3"]
+ml = ["lightgbm>=4,<5", "shap>=0.47,<1", "torch>=2.6,<3", "numba>=0.64,<1"]
 [tool.pytest.ini_options]
 pythonpath = ["apps/api", "packages/shared/python", "packages/strategies/python"]
 testpaths = ["tests"]

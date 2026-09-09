@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-09-09T20:09:53.754431+00:00",
+  "python": "3.12.14",
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "peak_rss_mib": 255.06,
+  "measurements": {
+    "watchlist": {
+      "median_ms": 6.18,
+      "max_ms": 7.84,
+      "runs": 10
+    },
+    "chart_1000": {
+      "median_ms": 50.44,
+      "max_ms": 645.72,
+      "runs": 10
+    },
+    "daily_research": {
+      "median_ms": 11.31,
+      "max_ms": 13.44,
+      "runs": 10
+    }
+  },
+  "limits": "In-process fixtures, one client, SQLite memory; excludes persistent database, Redis, network, mobile, training and cloud overhead. Not a hosting price estimate."
+}

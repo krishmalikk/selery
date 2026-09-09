@@ -9,8 +9,9 @@ def require_capability(feature: str, feed: Feed):
         raise ValueError('needs SIP data')
 
 def capabilities(feed: Feed) -> list[Capability]:
-    return [Capability(id=name, label=name.replace('_',' ').upper(), enabled=feed==Feed.SIP,
-                       reason=None if feed==Feed.SIP else 'needs SIP data') for name in VOLUME_FEATURES]
+    implemented={'vwap','obv','volume_confirmation','volume_alpha'}
+    return [Capability(id=name, label=name.replace('_',' ').upper(), enabled=feed==Feed.SIP and name in implemented,
+                       reason='needs SIP data' if feed!=Feed.SIP else None if name in implemented else 'Feature implementation unavailable') for name in VOLUME_FEATURES]
 
 def ema(values: list[float], period: int) -> list[float | None]:
     if period < 1: raise ValueError('period must be positive')

@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Text } from "react-native";
-import { z } from "zod";
-import { JournalEntrySchema, formatTime } from "@selery/shared";
+import { JournalEntryListSchema, formatTime } from "@selery/shared";
 import { useSession } from "../../src/session";
 import { useResource } from "../../src/resource";
 import {
@@ -12,7 +11,7 @@ import {
   ResourceStatus,
   styles,
 } from "../../src/ui";
-const schema = z.array(JournalEntrySchema);
+const schema = JournalEntryListSchema;
 export default function Journal() {
   const { client } = useSession();
   const fetcher = useCallback(() => client.journal(), [client]);

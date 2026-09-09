@@ -5,6 +5,7 @@ import json
 import os
 from datetime import UTC, datetime
 from pathlib import Path
+from threading import Lock
 from uuid import uuid4
 
 import numpy as np
@@ -32,6 +33,7 @@ from .storage import tables
 
 VERSION = "meta-labels-2"
 EMBARGO_SECONDS = 86400
+_SEQUENCE_LOCK = Lock()
 
 
 def fractional_difference(values, d=0.4, window=30):
@@ -212,8 +214,10 @@ def _complex_model():
         from lightgbm import LGBMClassifier
 
         return LGBMClassifier(n_estimators=60, max_depth=3, num_leaves=7, verbosity=-1, random_state=42, n_jobs=1)
-    except ImportError:
-        return HistGradientBoostingClassifier(max_iter=60, max_depth=3, random_state=42)
+    except (ImportError, OSError):
+        fallback = HistGradientBoostingClassifier(max_iter=60, max_depth=3, random_state=42)
+        fallback._selery_runtime_note = "LightGBM package or native runtime unavailable; HistGradientBoosting was used."
+        return fallback
 
 
 def _baseline():
@@ -295,6 +299,7 @@ def fit_meta_dataset(x, y, starts, ends):
         "events": len(y),
         "holdout_events": len(holdout),
         "model": type(model).__name__,
+        "model_runtime_note": getattr(model, "_selery_runtime_note", "LightGBM native runtime loaded."),
         "baseline_model": "StandardScaler + LogisticRegression",
         "calibration": "Both candidates calibrated on past-only OOF probabilities; holdout labels excluded.",
         "reason": "Beat baseline in each raw fold and calibrated final holdout."
@@ -393,7 +398,7 @@ def train_meta(signals, bars, store, artifact_dir, scope=None):
     return metadata
 
 
-def predict_signal(signal, bars, store, artifact_dir):
+def predict_signal(signal, bars, store, artifact_dir, *, include_shap=True):
     if signal.available_at > datetime.now(UTC).timestamp():
         return {
             "confidence": None,
@@ -436,6 +441,9 @@ def predict_signal(signal, bars, store, artifact_dir):
         "shap": None,
         "shap_reason": "Optional SHAP dependency unavailable.",
     }
+    if not include_shap:
+        result["shap_reason"] = "SHAP is calculated only when explicitly requested."
+        return result
     try:
         import shap
 
@@ -483,6 +491,9 @@ def sequence_model(input_features, kind="lstm"):
     import torch
     from torch import nn
 
+    # Budgeted CPU research uses one intra-op thread. Parallel native execution
+    # after Numba indicator initialization crashes the macOS mixed runtime.
+    torch.set_num_threads(1)
     if kind not in ("lstm", "gru", "transformer"):
         raise ValueError("Unknown sequence architecture")
 
@@ -517,7 +528,7 @@ def sequence_model(input_features, kind="lstm"):
     return SequenceMeta()
 
 
-def validate_sequence(x, y, starts, ends, kind="lstm", epochs=10, available_at=None):
+def _validate_sequence_unlocked(x, y, starts, ends, kind="lstm", epochs=10, available_at=None):
     """Optional manual sequence experiment on the same past-only purged folds.
 
     No registry promotion or confidence follows from this diagnostic. Each sequence
@@ -583,3 +594,220 @@ def validate_sequence(x, y, starts, ends, kind="lstm", epochs=10, available_at=N
         "reason": "Sequence fold research only; calibration and untouched final-holdout qualification are still required. No confidence is exposed.",
         "holdout_events_untouched": len(y) - cutoff,
     }
+
+
+def _sequence_training_data(x, y, starts, ends, available_at, epochs):
+    x, y = np.asarray(x, dtype=np.float32), np.asarray(y)
+    starts, ends = np.asarray(starts), np.asarray(ends)
+    if (
+        x.ndim != 3
+        or len(x) != len(y)
+        or len(y) < 120
+        or not 1 <= x.shape[1] <= 512
+        or x.shape[2] != len(FEATURE_NAMES)
+        or not np.isfinite(x).all()
+        or not 1 <= epochs <= 100
+        or y.ndim != 1
+        or not np.isin(y, [0, 1]).all()
+    ):
+        raise ValueError("Need at least 120 finite binary-labeled sequences, 1–512 steps and 1–100 manual epochs.")
+    if len(starts) != len(y) or len(ends) != len(y):
+        raise ValueError("Sequence event intervals must match the number of labels.")
+    list(purged_walk_forward(starts, ends))
+    timestamps = np.asarray(available_at) if available_at is not None else None
+    if (
+        timestamps is None
+        or timestamps.shape != x.shape[:2]
+        or not np.isfinite(timestamps).all()
+        or np.any(timestamps > starts[:, None])
+        or np.any(np.diff(timestamps, axis=1) < 0)
+    ):
+        raise ValueError("Every sequence step needs ordered availability timestamps no later than its signal.")
+    cutoff = int(len(y) * 0.8)
+    development = np.flatnonzero((np.arange(len(y)) < cutoff) & (ends < starts[cutoff] - EMBARGO_SECONDS))
+    holdout = np.arange(cutoff, len(y))
+    if len(development) < 60 or len(np.unique(y[development])) < 2 or len(np.unique(y[holdout])) < 2:
+        raise ValueError("Purged development and untouched final holdout require both label classes.")
+    return x, y, starts, ends, development, holdout
+
+
+def _fit_sequence_candidate(x, y, kind, epochs, model_factory=None):
+    import torch
+
+    scaler = StandardScaler().fit(x.reshape(-1, x.shape[-1]))
+    transformed = scaler.transform(x.reshape(-1, x.shape[-1])).reshape(x.shape).astype(np.float32)
+    inputs, labels = torch.from_numpy(transformed), torch.tensor(y, dtype=torch.float32)
+    model = (model_factory or sequence_model)(x.shape[-1], kind)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    model.train()
+    for _ in range(epochs):
+        optimizer.zero_grad()
+        loss = torch.nn.functional.binary_cross_entropy_with_logits(model(inputs), labels)
+        if not torch.isfinite(loss):
+            raise ValueError("Sequence training diverged; no candidate qualified.")
+        loss.backward()
+        optimizer.step()
+    model.eval()
+    return model, scaler
+
+
+def _sequence_probabilities(model, scaler, x):
+    import torch
+
+    transformed = scaler.transform(x.reshape(-1, x.shape[-1])).reshape(x.shape).astype(np.float32)
+    with torch.no_grad():
+        probabilities = torch.sigmoid(model(torch.from_numpy(transformed))).numpy()
+    if probabilities.shape != (len(x),) or not np.isfinite(probabilities).all():
+        raise ValueError("Sequence candidate returned invalid probabilities.")
+    return probabilities
+
+
+def qualify_sequence(x, y, starts, ends, *, store, scope, available_at, kind="lstm", epochs=10, model_factory=None):
+    """Manually train, OOF-calibrate and qualify one fixed sequence candidate.
+
+    The returned artifact is in-memory; this function never promotes it or changes
+    signal confidence. Holdout claims share the tabular candidate namespace, so
+    comparing architectures requires independent untouched qualification samples.
+    """
+    try:
+        import torch
+    except ImportError:
+        return {"status": "unavailable", "reason": "Optional PyTorch dependency is not installed."}, None
+    if kind not in ("lstm", "gru", "transformer"):
+        return {"status": "unavailable", "reason": "Unknown sequence architecture."}, None
+    if store is None or not scope:
+        return {
+            "status": "unavailable",
+            "reason": "Qualification requires a registry store and explicit signal scope.",
+        }, None
+    try:
+        scope_key(scope)
+        x, y, starts, ends, development, holdout = _sequence_training_data(x, y, starts, ends, available_at, epochs)
+    except (ValueError, TypeError, KeyError):
+        return {
+            "status": "unavailable",
+            "reason": "Invalid scope, feature availability, label classes, or purged sequence dataset.",
+        }, None
+    trained_at = datetime.now(UTC)
+    if max(ends) > trained_at.timestamp():
+        return {"status": "unavailable", "reason": "Sequence qualification labels are not yet available."}, None
+    # Reserve every final-holdout event atomically before fitting any candidate.
+    try:
+        with store.engine.begin() as connection:
+            for event_at in set(starts[holdout].tolist()):
+                connection.execute(
+                    insert(tables["settings"]).values(
+                        id=f"model-held-event:{scope_key(scope)}:{event_at}",
+                        created_at=trained_at,
+                        payload={
+                            "kind": "model_holdout_event",
+                            "scope": scope,
+                            "event_at": event_at,
+                            "architecture": kind,
+                        },
+                    )
+                )
+    except IntegrityError:
+        return {
+            "status": "unavailable",
+            "reason": "Final holdout overlaps an evaluated or claimed candidate; new untouched events are required.",
+        }, None
+    # Serialize the CPU RNG context so simultaneous manual jobs cannot change each
+    # other's initialization. fork_rng restores the process RNG state on exit.
+    with _SEQUENCE_LOCK, torch.random.fork_rng(devices=[]):
+        folds, oof_sequence, oof_baseline, oof_labels = [], [], [], []
+        for train, valid in purged_walk_forward(starts[development], ends[development]):
+            if len(train) < 20 or len(np.unique(y[development][train])) < 2:
+                continue
+            train, valid = development[train], development[valid]
+            torch.manual_seed(42)
+            model, scaler = _fit_sequence_candidate(x[train], y[train], kind, epochs, model_factory)
+            baseline = _baseline().fit(x[train, -1], y[train])
+            probabilities = _sequence_probabilities(model, scaler, x[valid])
+            base = baseline.predict_proba(x[valid, -1])[:, 1]
+            folds.append(
+                {
+                    "sequence_brier": float(brier_score_loss(y[valid], probabilities)),
+                    "baseline_brier": float(brier_score_loss(y[valid], base)),
+                    "train_events": len(train),
+                    "validation_events": len(valid),
+                    "latest_training_label": int(max(ends[train])),
+                    "validation_start": int(starts[valid[0]]),
+                }
+            )
+            oof_sequence.extend(probabilities)
+            oof_baseline.extend(base)
+            oof_labels.extend(y[valid])
+        if len(folds) != 3 or len(np.unique(oof_labels)) != 2:
+            return {
+                "status": "unavailable",
+                "reason": "Three past-only purged folds with both OOF label classes are required.",
+                "folds": folds,
+            }, None
+        sequence_calibrator = calibrate_oof(oof_sequence, oof_labels)
+        baseline_calibrator = calibrate_oof(oof_baseline, oof_labels)
+        torch.manual_seed(42)
+        model, scaler = _fit_sequence_candidate(x[development], y[development], kind, epochs, model_factory)
+        baseline = _baseline().fit(x[development, -1], y[development])
+        raw = _sequence_probabilities(model, scaler, x[holdout])
+        probabilities = sequence_calibrator.predict_proba(raw.reshape(-1, 1))[:, 1]
+        base = baseline_calibrator.predict_proba(baseline.predict_proba(x[holdout, -1])[:, 1].reshape(-1, 1))[:, 1]
+        model_brier, baseline_brier = (
+            float(brier_score_loss(y[holdout], probabilities)),
+            float(brier_score_loss(y[holdout], base)),
+        )
+        validated = (
+            all(fold["sequence_brier"] <= fold["baseline_brier"] for fold in folds) and model_brier < baseline_brier
+        )
+        result = {
+            "status": "validated" if validated else "rejected",
+            "validated": validated,
+            "calibrated": True,
+            "architecture": kind,
+            "scope": scope,
+            "feature_version": FEATURE_VERSION,
+            "version": VERSION,
+            "trained_at": datetime.now(UTC).isoformat(),
+            "latest_label_at": int(max(ends)),
+            "epochs": epochs,
+            "learning_rate": 0.01,
+            "folds": folds,
+            "holdout_events": len(holdout),
+            "holdout_start": int(starts[holdout[0]]),
+            "holdout_brier": model_brier,
+            "baseline_holdout_brier": baseline_brier,
+            "reliability": reliability(y[holdout], probabilities),
+            "baseline_reliability": reliability(y[holdout], base),
+            "oof_calibration_events": len(oof_labels),
+            "reason": "Sequence candidate beat the baseline in every raw fold and calibrated final holdout; promotion remains explicit."
+            if validated
+            else "Sequence candidate did not consistently beat its calibrated baseline; no promotion.",
+            "baseline_model": "StandardScaler + LogisticRegression on the latest known feature row",
+            "calibration": "Both candidates calibrated on development OOF predictions only.",
+        }
+        artifact = {
+            "model": model,
+            "state_dict": {key: value.detach().cpu().clone() for key, value in model.state_dict().items()},
+            "scaler": scaler,
+            "calibrator": sequence_calibrator,
+            "baseline": baseline,
+            "baseline_calibrator": baseline_calibrator,
+            "scope": scope,
+            "feature_version": FEATURE_VERSION,
+            "architecture": kind,
+            "input_features": x.shape[-1],
+            "sequence_length": x.shape[1],
+            "reference_features": x[development, -1],
+        }
+    store.audit("manual_sequence_qualification", {"architecture": kind, "scope": scope, "status": result["status"]})
+    return result, artifact
+
+
+def validate_sequence(x, y, starts, ends, kind="lstm", epochs=10, available_at=None):
+    """Backward-compatible fold diagnostic; qualify_sequence adds final qualification."""
+    try:
+        import torch
+    except ImportError:
+        return {"status": "unavailable", "reason": "Optional PyTorch dependency is not installed."}
+    with _SEQUENCE_LOCK, torch.random.fork_rng(devices=[]):
+        return _validate_sequence_unlocked(x, y, starts, ends, kind, epochs, available_at)

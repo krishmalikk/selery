@@ -1,0 +1,68 @@
+name: Verify research workspace
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ALPACA_ENDPOINT: https://paper-api.alpaca.markets
+      SELERY_PASSWORD: ci-fixture-password-only
+      SELERY_SESSION_SECRET: ci-fixture-session-secret-not-for-deployment
+      SELERY_DATA_MODE: fixtures
+      SELERY_ALLOWED_ORIGINS: http://127.0.0.1:3000
+      PYTHONPATH: apps/api:packages/shared/python:packages/strategies/python
+      NEXT_TELEMETRY_DISABLED: 1
+      CI: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.12.12
+          python-version: 3.12
+      - run: uv sync --frozen
+      - run: npm ci
+      - run: .venv/bin/python scripts/generate_contracts.py --check
+      - run: .venv/bin/python -m pytest --cov=selery_api --cov=selery_shared --cov=selery_strategies --cov-report=xml
+      - run: npm run typecheck
+      - run: node --test tests/test_uri_decoder.cjs
+      - run: npm run build
+      - run: npm run export --workspace @selery/mobile
+      - run: npm audit --audit-level=moderate
+      - run: npx playwright install --with-deps chromium
+      - run: npx tsx tests/test_mobile_helpers.ts
+      - run: npx tsx tests/test_chart_helpers.ts
+      - name: Browser acceptance
+        run: |
+          .venv/bin/uvicorn selery_api.main:app --host 127.0.0.1 --port 8000 > /tmp/selery-api.log 2>&1 &
+          npm run start --workspace @selery/web -- --hostname 127.0.0.1 > /tmp/selery-web.log 2>&1 &
+          python - <<'PY'
+          import time, urllib.request
+          for attempt in range(60):
+              try:
+                  urllib.request.urlopen('http://127.0.0.1:8000/health')
+                  urllib.request.urlopen('http://127.0.0.1:3000')
+                  break
+              except Exception:
+                  time.sleep(1)
+          else:
+              raise SystemExit('Servers did not become healthy')
+          PY
+          npx playwright test
+      - run: .venv/bin/python scripts/security_scan.py --artifacts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification
+          path: |
+            coverage.xml
+            docs/web-desktop.png
+            test-results/
+          retention-days: 7

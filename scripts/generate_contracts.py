@@ -26,7 +26,11 @@ def zs(s):
     t=s.get('type')
     if t=='array':return 'z.array('+zs(s['items'])+')'
     if t=='object':return 'z.record('+ (zs(s['additionalProperties']) if isinstance(s.get('additionalProperties'),dict) else 'z.unknown()') +')'
-    return {'string':'z.string()','integer':'z.number().int()','number':'z.number().finite()','boolean':'z.boolean()','null':'z.null()'}.get(t,'z.unknown()')
+    result={'string':'z.string()','integer':'z.number().int().finite()','number':'z.number().finite()','boolean':'z.boolean()','null':'z.null()'}.get(t,'z.unknown()')
+    for key,method in [('minimum','min'),('maximum','max'),('exclusiveMinimum','gt'),('exclusiveMaximum','lt'),('minLength','min'),('maxLength','max')]:
+        if key in s:result+=f'.{method}({s[key]})'
+    if 'pattern' in s:result+='.regex(new RegExp('+json.dumps(s['pattern'])+'))'
+    return result
 
 schemas={}
 for name,cls in inspect.getmembers(models,inspect.isclass):
@@ -44,12 +48,14 @@ for name,s in sorted(schemas.items()):
 for name,s in sorted(schemas.items()):
     if 'properties' in s:
         parts=[json.dumps(k)+': '+zs(v) for k,v in s['properties'].items()]
-        lines.append(f'export const {name}Schema: z.ZodType<{name}> = z.object({{'+', '.join(parts)+'});')
+        lines.append(f'export const {name}Schema: z.ZodType<{name}> = z.object({{'+', '.join(parts)+'}).strict();')
     else:lines.append(f'export const {name}Schema: z.ZodType<{name}> = {zs(s)};')
 target=ROOT/'packages/shared/src/contracts.ts'
 content='\n'.join(lines)+'\n'
+json_target=ROOT/'packages/shared/contracts.json'
+json_content=json.dumps(schemas,indent=2)+'\n'
 if '--check' in sys.argv:
-    if not target.exists() or target.read_text()!=content:raise SystemExit('Generated contracts are stale')
+    if not target.exists() or target.read_text()!=content or not json_target.exists() or json_target.read_text()!=json_content:raise SystemExit('Generated contracts are stale')
 else:
     target.write_text(content)
-    (ROOT/'packages/shared/contracts.json').write_text(json.dumps(schemas,indent=2)+'\n')
+    json_target.write_text(json_content)

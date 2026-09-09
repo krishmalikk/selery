@@ -253,3 +253,9 @@ Before calling the system fully hosted and mobile-accepted, capture:
 - Any optional provider's entitlement, timestamp and license evidence before its data is treated as available.
 
 Implementation and tests may be complete while these external acceptance items remain pending. Consult [PROGRESS.md](PROGRESS.md), [DEBT.md](DEBT.md), [LICENSE-AUDIT.md](LICENSE-AUDIT.md) and the wave reviews for the latest recorded evidence.
+
+## Final local verification notes
+
+The optional ML dependency group was installed and exercised locally, including Torch 2.14.0, LightGBM 4.7.0, SHAP 0.52.0 and Numba 0.67.0. The lock explicitly constrains modern Numba to avoid an unsupported Python 3.12 resolution. On macOS, LightGBM also needs `brew install libomp`; Linux model images need an OpenMP runtime such as `libgomp1`. Sequence CPU training uses one thread, with a regression covering its interaction with indicator initialization. No successful real-market model is implied by architecture tests.
+
+See [operations and recovery](docs/OPERATIONS.md), [measured fixture resources](docs/runtime-profile.json), [verification](reviews/verification.md) and the [requirement-by-requirement coverage](docs/REQUIREMENT-COVERAGE.md). The full scope is not yet accepted; that matrix distinguishes missing code from missing external evidence.

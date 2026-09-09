@@ -38,7 +38,7 @@ class BoundedAssistant:
         record={'id':uuid4().hex,'feature':feature,'reserved_usd':estimate,'status':'reserved','timestamp':started.isoformat()}
         self.store.audit('llm_budget_reserved',record)
         try:
-            async with httpx.AsyncClient(transport=self.transport,timeout=60,follow_redirects=False) as client:
+            async with httpx.AsyncClient(transport=self.transport,timeout=45,follow_redirects=False) as client:
                 response=await client.post('https://api.anthropic.com/v1/messages',headers={'x-api-key':self.config.key,'anthropic-version':'2023-06-01'},json={'model':self.config.model,'max_tokens':self.config.max_tokens,'system':SYSTEM,'messages':[{'role':'user','content':prompt}]})
             if response.status_code!=200:
                 # Unknown external billing state remains reserved; do not retry automatically.

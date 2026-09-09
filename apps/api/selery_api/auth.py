@@ -42,10 +42,13 @@ class Auth:
             if origin and origin not in self.config.allowed_origins:raise HTTPException(403,'Origin is not allowed')
         return token
 
-    def stream_ticket(self):
+    def stream_ticket(self,token):
+        if not self.verify(token):raise HTTPException(401,'Session expired')
         now=time.time()
-        self.tickets={key:expiry for key,expiry in self.tickets.items() if expiry>now}
-        ticket=secrets.token_urlsafe(32);self.tickets[ticket]=now+30
+        self.tickets={key:value for key,value in self.tickets.items() if value[0]>now}
+        ticket=secrets.token_urlsafe(32);self.tickets[ticket]=(now+30,token)
         return ticket
 
-    def consume_ticket(self,ticket):return self.tickets.pop(ticket,0)>time.time()
+    def consume_ticket(self,ticket):
+        expiry,token=self.tickets.pop(ticket,(0,''))
+        return token if expiry>time.time() and self.verify(token) else None

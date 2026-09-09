@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { z } from "zod";
 import { encodeCache, parseCache } from "@selery/shared/src/cache";
 import { useSession } from "./session";
 export function useResource<T>(
   key: string,
   fetcher: () => Promise<T>,
-  schema: z.ZodType<T>,
+  schema: { parse: (value: unknown) => T },
 ) {
   const { authenticated, endpoint } = useSession();
   const [data, setData] = useState<T | null>(null),

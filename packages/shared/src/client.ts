@@ -14,7 +14,7 @@ export class SeleryClient {
   login(password:string){return this.request('/auth/login',z.object({token:z.string(),expires_in:z.number()}),{method:'POST',body:JSON.stringify({password})});}
   logout(){return this.request('/auth/logout',z.object({ok:z.boolean()}),{method:'POST'});}
   watchlist(){return this.request('/watchlist',WatchlistResponseSchema);}
-  chart(symbol:string,timeframe:Timeframe='5m',feed:Feed='iex'){return this.request(`/chart/${encodeURIComponent(symbol)}?timeframe=${timeframe}&feed=${feed}`,ChartResponseSchema);}
+  chart(symbol:string,timeframe:Timeframe='5m',feed:Feed='iex',limit=1000){return this.request(`/chart/${encodeURIComponent(symbol)}?timeframe=${timeframe}&feed=${feed}&limit=${limit}`,ChartResponseSchema);}
   news(){return this.request('/news',NewsResponseSchema);}
   settings(){return this.request('/settings',SettingsSchema);}
   strategies(){return this.request('/strategies',z.array(StrategyInfoSchema));}
@@ -26,6 +26,7 @@ export class SeleryClient {
   size(input:SizingRequest){return this.request('/research/size',SizingResponseSchema,{method:'POST',body:JSON.stringify(input)});}
   research(input:ResearchRequest){return this.request('/research',ResearchReportSchema,{method:'POST',body:JSON.stringify(input)});}
   report(id:string){return this.request(`/research/${encodeURIComponent(id)}`,ResearchReportSchema);}
+  reports(limit=10,offset=0){return this.request(`/research?limit=${limit}&offset=${offset}`,z.array(ResearchReportSchema));}
   chat(input:ChatRequest){return this.request('/chat',ChatResponseSchema,{method:'POST',body:JSON.stringify(input)});}
   jobs(){return this.request('/jobs',z.array(JobSchema));}
   domain(){return this.request('/domain/SPY',z.record(z.unknown()));}

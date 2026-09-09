@@ -1,7 +1,13 @@
 from datetime import datetime,timezone
 import pytest
 from selery_shared.models import Bar,Feed,Timeframe
-from selery_shared.indicators import ema,rsi,require_capability,chart_indicators,VOLUME_FEATURES
+from selery_shared.indicators import ema,rsi,require_capability,chart_indicators,VOLUME_FEATURES,capabilities
+
+def test_sip_entitlement_does_not_claim_unimplemented_features():
+    available={item.id:item for item in capabilities(Feed.SIP)}
+    assert available['vwap'].enabled
+    assert not available['volume_profile'].enabled
+    assert available['volume_profile'].reason=='Feature implementation unavailable'
 from selery_strategies.baseline import EmaCross
 from selery_api.config import Config
 from selery_api.providers import FixtureProvider

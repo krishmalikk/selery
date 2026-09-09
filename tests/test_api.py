@@ -80,3 +80,28 @@ def test_stream_ticket_single_use(client):
     ticket=client.post('/api/v1/auth/stream-ticket').json()['ticket']
     assert client.app.state.auth.consume_ticket(ticket)
     assert not client.app.state.auth.consume_ticket(ticket)
+
+def test_stream_ticket_rejected_after_logout_and_open_stream_revoked(client):
+    from starlette.websockets import WebSocketDisconnect
+    login(client)
+    ticket=client.post('/api/v1/auth/stream-ticket').json()['ticket']
+    unused=client.post('/api/v1/auth/stream-ticket').json()['ticket']
+    with client.websocket_connect('/api/v1/stream?ticket='+ticket) as stream:
+        client.post('/api/v1/auth/logout')
+        assert not client.app.state.auth.consume_ticket(unused)
+        async def publish():
+            for queue in client.app.state.subscribers:queue.put_nowait({'type':'heartbeat'})
+        client.portal.call(publish)
+        with pytest.raises(WebSocketDisconnect) as closed:stream.receive_json()
+        assert closed.value.code==4401
+
+def test_forward_cohorts_keep_symbols_separate(client):
+    login(client)
+    from selery_shared.models import Outcome
+    for symbol,status in [('SPY','target_first'),('QQQ','stop_first')]:
+        signal=Signal(id=symbol,symbol=symbol,strategy='test',timeframe=Timeframe.M5,time=0,available_at=300,direction='bullish',reference_price=100,stop=95,target=110,feed=Feed.IEX,explanation='test')
+        client.app.state.store.put('signals',signal,signal.id,immutable=True)
+        client.app.state.store.put('outcomes',Outcome(signal_id=signal.id,status=status,evaluated_at=datetime.now(timezone.utc),bars_observed=1),signal.id)
+    cohorts=client.get('/api/v1/outcomes').json()
+    assert len(cohorts)==2
+    assert sorted(c['hit_rate'] for c in cohorts)==[0,1]
