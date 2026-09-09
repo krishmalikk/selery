@@ -29,11 +29,21 @@ def create_app(config=None,provider=None):
         app.state.auth=Auth(app.state.config)
         app.state.started_at=int(time.time())
         app.state.subscribers=set()
+        app.state.live_quotes={}
+        app.state.last_stream_publish=0
         task=asyncio.create_task(observe(app))
+        upstream=None
+        if app.state.config.data_mode=='live':
+            from .live_stream import market_stream
+            upstream=asyncio.create_task(market_stream(app,WATCHLIST))
         yield
         task.cancel()
         try:await task
         except asyncio.CancelledError:pass
+        if upstream:
+            upstream.cancel()
+            try:await upstream
+            except asyncio.CancelledError:pass
         if hasattr(app.state.provider,'client'):await app.state.provider.client.aclose()
         app.state.store.engine.dispose()
 
@@ -45,6 +55,9 @@ def create_app(config=None,provider=None):
     async def validation_error(request,exc):return __import__('fastapi').responses.JSONResponse(status_code=422,content={'detail':str(exc)})
 
     def authorized(request:Request):return request.app.state.auth.require(request)
+
+    from .notifications import register_routes
+    register_routes(app,authorized)
 
     @app.get('/health')
     def health():return {'status':'ok','service':'selery-research','version':'0.1.0'}
@@ -69,7 +82,13 @@ def create_app(config=None,provider=None):
     def ticket():return {'ticket':app.state.auth.stream_ticket()}
 
     @app.get('/api/v1/watchlist',response_model=WatchlistResponse,dependencies=[Depends(authorized)])
-    async def watchlist():return WatchlistResponse(quotes=await app.state.provider.quotes(WATCHLIST),data_mode=app.state.config.data_mode)
+    async def watchlist():
+        quotes=await app.state.provider.quotes(WATCHLIST)
+        if app.state.config.data_mode=='live':
+            for quote in quotes:
+                cached=app.state.live_quotes.get(quote.symbol)
+                if not cached or cached.provenance.observed_at<quote.provenance.observed_at:app.state.live_quotes[quote.symbol]=quote
+        return WatchlistResponse(quotes=quotes,data_mode=app.state.config.data_mode)
 
     async def get_chart(symbol,timeframe,feed):
         valid_symbol(symbol)
@@ -83,13 +102,29 @@ def create_app(config=None,provider=None):
     async def chart(symbol:str,timeframe:Timeframe=Timeframe.M5,feed:Feed=Feed.IEX):return await get_chart(symbol,timeframe,feed)
 
     @app.get('/api/v1/news',response_model=NewsResponse,dependencies=[Depends(authorized)])
-    async def news():return NewsResponse(items=await app.state.provider.news(WATCHLIST),retrieved_at=datetime.now(UTC),stale=app.state.config.data_mode=='fixtures')
+    async def news():
+        from .news_pipeline import process_news
+        timestamp=datetime.now(UTC)
+        analysis=process_news(await app.state.provider.news(WATCHLIST),observed_at=timestamp)
+        return NewsResponse(items=analysis.items,retrieved_at=timestamp,stale=app.state.config.data_mode=='fixtures')
+
+    @app.get('/api/v1/providers',dependencies=[Depends(authorized)])
+    def providers():
+        import os
+        from .adapters import provider_catalog
+        return provider_catalog(dict(os.environ))
+
+    @app.get('/api/v1/features/catalog',dependencies=[Depends(authorized)])
+    def features(feed:Feed=Feed.IEX):
+        from selery_strategies.alpha import alpha_catalog
+        return alpha_catalog(feed)
 
     @app.get('/api/v1/strategies',response_model=list[StrategyInfo],dependencies=[Depends(authorized)])
     def strategies():
         try:
             from selery_strategies.library import strategy_catalog
-            return strategy_catalog(Feed.IEX)
+            from selery_strategies.advanced import advanced_catalog
+            return strategy_catalog(Feed.IEX)+advanced_catalog(Feed.IEX)
         except ImportError:
             return [StrategyInfo(id='ema_cross',name='EMA 9/21 crossover',description='Causal price crossover control with ATR reference thresholds.',enabled=True)]
 
@@ -128,8 +163,13 @@ def create_app(config=None,provider=None):
         groups={}
         for raw in app.state.store.list('outcomes',10000):
             result=Outcome.model_validate(raw);signal=snapshots.get(result.signal_id)
-            if signal:groups.setdefault((signal.strategy,signal.feed),[]).append(result)
-        return [summarize(strategy,feed,items) for (strategy,feed),items in groups.items()]
+            if signal:groups.setdefault((signal.strategy,signal.feed,signal.strategy_version,signal.timeframe,signal.horizon_bars),[]).append(result)
+        reports=app.state.store.list('reports',200)
+        summaries=[]
+        for (strategy,feed,version,timeframe,horizon),items in groups.items():
+            match=next((r for r in reports if r['request']['strategy']==strategy and r['request']['feed']==feed and r['request']['timeframe']==timeframe and r['request']['horizon_bars']==horizon and version=='1'),None)
+            summaries.append(summarize(f'{strategy} · v{version} · {timeframe} · {horizon} bars',feed,items,match['metrics'].get('hit_rate') if match else None))
+        return summaries
 
     @app.get('/api/v1/journal',response_model=list[JournalEntry],dependencies=[Depends(authorized)])
     def journal(limit:int=Query(50,ge=1,le=200),offset:int=Query(0,ge=0)):return app.state.store.list('journal',limit,offset)
@@ -155,7 +195,9 @@ def create_app(config=None,provider=None):
         return {'ok':True}
 
     @app.get('/api/v1/settings',response_model=Settings,dependencies=[Depends(authorized)])
-    def settings():return Settings(data_mode=app.state.config.data_mode,feed=Feed.IEX,llm_monthly_cap_usd=app.state.config.llm_cap,llm_spent_usd=app.state.store.spend(),llm_enabled=False)
+    def settings():
+        from .assistant import LlmConfig
+        return Settings(data_mode=app.state.config.data_mode,feed=Feed.IEX,llm_monthly_cap_usd=app.state.config.llm_cap,llm_spent_usd=app.state.store.spend(),llm_enabled=LlmConfig.load().active(app.state.config.llm_cap) and not bool(app.state.store.get('settings','llm-kill-switch')))
 
     @app.get('/api/v1/jobs',response_model=list[Job],dependencies=[Depends(authorized)])
     def jobs():return app.state.store.list('jobs')
@@ -179,7 +221,6 @@ def create_app(config=None,provider=None):
 
     @app.post('/api/v1/chat',response_model=ChatResponse,dependencies=[Depends(authorized)])
     async def chat(body:ChatRequest):
-        if body.debate:raise HTTPException(422,'LLM debate is disabled until a provider and hard spending cap are configured.')
         valid_symbol(body.symbol)
         chart=await get_chart(body.symbol,Timeframe.M5,Feed.IEX)
         news_items=await app.state.provider.news([body.symbol])
@@ -192,6 +233,12 @@ def create_app(config=None,provider=None):
         message+='This local data summary does not use an LLM; it cannot answer arbitrary research questions.'
         citations=[Citation(label='IEX reference bar',timestamp=datetime.fromtimestamp(last.available_at,UTC),data_id=f'{body.symbol}:5m:iex:{last.time}')]
         citations.extend(Citation(label=n.headline,timestamp=n.published_at,url=n.url,data_id=n.id) for n in news_items[:3])
+        from .assistant import LlmConfig,BoundedAssistant
+        llm=LlmConfig.load()
+        if llm.active(app.state.config.llm_cap):
+            context={'bar':last.model_dump(mode='json'),'signal':chart.signals[-1].model_dump(mode='json') if chart.signals else None,'news':[n.model_dump(mode='json') for n in news_items[:3]],'citations':[c.model_dump(mode='json') for c in citations]}
+            return await BoundedAssistant(app.state.store,llm,app.state.config.llm_cap).research(body,context,citations)
+        if body.debate:raise HTTPException(422,'LLM debate is disabled until a provider and hard spending cap are configured.')
         return ChatResponse(message=message,citations=citations,mode='local')
 
     @app.websocket('/api/v1/stream')
@@ -231,6 +278,8 @@ async def observe(app):
                         app.state.store.audit('signal_observed',{'id':signal.id})
                         alert=Alert(id=signal.id,kind='signal',title=f'{symbol} EMA crossover',body=signal.explanation,symbol=symbol,signal_id=signal.id,created_at=datetime.now(UTC))
                         app.state.store.put('alerts',alert,alert.id,immutable=True)
+                        from .notifications import deliver_alert
+                        await deliver_alert(app.state.store,alert.id)
                     for raw in app.state.store.list('signals',10000):
                         if raw['symbol']!=symbol:continue
                         signal=Signal.model_validate(raw)

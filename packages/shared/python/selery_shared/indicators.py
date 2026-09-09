@@ -75,4 +75,25 @@ def chart_indicators(bars: list[Bar], feed: Feed) -> dict[str,list[IndicatorPoin
             if i: obv+=bar.volume*(1 if bar.close>bars[i-1].close else -1 if bar.close<bars[i-1].close else 0)
             obvs.append(obv)
         arrays['vwap']=vwap;arrays['obv']=obvs
-    return {name:[IndicatorPoint(time=b.time,value=v) for b,v in zip(bars,values)] for name,values in arrays.items()}
+    if len(bars)>=80:
+        import pandas as pd
+        import pandas_ta_classic as ta
+        high=pd.Series([b.high for b in bars]);low=pd.Series([b.low for b in bars]);close=pd.Series(closes)
+        def add(key,series):
+            if series is not None:arrays[key]=[None if pd.isna(v) else float(v) for v in series]
+        adx=ta.adx(high,low,close,talib=False)
+        if adx is not None:add('adx14',adx.iloc[:,0])
+        stochastic=ta.stoch(high,low,close,talib=False)
+        if stochastic is not None:
+            add('stochastic_k',stochastic.iloc[:,0]);add('stochastic_d',stochastic.iloc[:,1])
+        sar=ta.psar(high,low,close,talib=False)
+        if sar is not None:add('psar',sar.iloc[:,0].combine_first(sar.iloc[:,1]))
+        trend=ta.supertrend(high,low,close)
+        if trend is not None:add('supertrend',trend.iloc[:,0])
+        cloud,_=ta.ichimoku(high,low,close,include_chikou=False,lookahead=False)
+        if cloud is not None:
+            for col in cloud.columns:add('ichimoku_'+col.lower(),cloud[col])
+    result={name:[IndicatorPoint(time=b.time,value=v) for b,v in zip(bars,values)] for name,values in arrays.items()}
+    from .structure import structure_levels
+    result.update(structure_levels(bars))
+    return result

@@ -1,4 +1,3 @@
-import type { z } from 'zod';
 
 /** Storage adapters remain client-owned; data validation/freshness is identical on both surfaces. */
 export type CacheEntry<T> = { data: T; retrievedAt: number; stale: boolean };
@@ -8,7 +7,7 @@ export function encodeCache<T>(data: T, retrievedAt = Date.now()): string {
 }
 export function parseCache<T>(
   raw: string | null,
-  schema: z.ZodType<T>,
+  schema: { parse: (value: unknown) => T },
   { maxAgeMs = 30_000, now = Date.now() }: { maxAgeMs?: number; now?: number } = {},
 ): CacheEntry<T> | null {
   if (!raw || !Number.isFinite(now) || !Number.isFinite(maxAgeMs) || maxAgeMs < 0) return null;
