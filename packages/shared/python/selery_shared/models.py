@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import date,datetime
 from enum import StrEnum
 from typing import Literal, Protocol
 from pydantic import BaseModel, ConfigDict, Field
@@ -245,6 +245,18 @@ class DeliverySummary(Contract):
     failed: int
     skipped: int
     unknown: int
+
+class DataQuery(Contract):
+    provider: Literal['finnhub','alpha_vantage','twelve_data','fred','sec','kenneth_french','yfinance']
+    dataset: str = Field(min_length=1,max_length=60)
+    symbol: str = 'SPY'
+    timeframe: Timeframe = Timeframe.D1
+    start: datetime | None = None
+    end: datetime | None = None
+    series_id: str | None = None
+    cik: str | None = None
+    as_of: date | None = None
+    archive: bool = False
 
 class StreamEvent(Contract):
     type: Literal['quotes', 'chart', 'signal', 'news', 'alert', 'heartbeat', 'error']

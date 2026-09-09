@@ -534,6 +534,113 @@
     "title": "ChatResponse",
     "type": "object"
   },
+  "DataQuery": {
+    "additionalProperties": false,
+    "properties": {
+      "provider": {
+        "enum": [
+          "finnhub",
+          "alpha_vantage",
+          "twelve_data",
+          "fred",
+          "sec",
+          "kenneth_french",
+          "yfinance"
+        ],
+        "title": "Provider",
+        "type": "string"
+      },
+      "dataset": {
+        "maxLength": 60,
+        "minLength": 1,
+        "title": "Dataset",
+        "type": "string"
+      },
+      "symbol": {
+        "default": "SPY",
+        "title": "Symbol",
+        "type": "string"
+      },
+      "timeframe": {
+        "$ref": "#/$defs/Timeframe",
+        "default": "1D"
+      },
+      "start": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Start"
+      },
+      "end": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "End"
+      },
+      "series_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Series Id"
+      },
+      "cik": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Cik"
+      },
+      "as_of": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "As Of"
+      },
+      "archive": {
+        "default": false,
+        "title": "Archive",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "provider",
+      "dataset"
+    ],
+    "title": "DataQuery",
+    "type": "object"
+  },
   "DeliverySummary": {
     "additionalProperties": false,
     "properties": {

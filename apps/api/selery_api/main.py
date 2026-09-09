@@ -114,6 +114,24 @@ def create_app(config=None,provider=None):
         from .adapters import provider_catalog
         return provider_catalog(dict(os.environ))
 
+    @app.post('/api/v1/providers/query',dependencies=[Depends(authorized)])
+    async def provider_query(body:DataQuery):
+        import os
+        from .adapters import FinnhubAdapter,AlphaVantageAdapter,TwelveDataAdapter,FredAdapter,SecAdapter,FrenchAdapter,YFinanceAdapter
+        registry={'finnhub':lambda:FinnhubAdapter(os.getenv('FINNHUB_API_KEY','')),'alpha_vantage':lambda:AlphaVantageAdapter(os.getenv('ALPHA_VANTAGE_API_KEY','')),'twelve_data':lambda:TwelveDataAdapter(os.getenv('TWELVE_DATA_API_KEY','')),'fred':lambda:FredAdapter(os.getenv('FRED_API_KEY','')),'sec':lambda:SecAdapter(os.getenv('SEC_USER_AGENT','')),'kenneth_french':FrenchAdapter,'yfinance':YFinanceAdapter}
+        query=body.model_dump(exclude_none=True,exclude={'provider','dataset','archive'})
+        try:batch=await registry[body.provider]().fetch(body.dataset,**query)
+        except KeyError as exc:raise HTTPException(422,f'Missing required provider query field: {exc.args[0]}') from None
+        result={'provenance':batch.provenance(),'records':batch.records}
+        if body.archive:
+            from .ingestion import RawArchive,ingest_batch
+            from .config import ROOT
+            archive=RawArchive(ROOT/'data/raw')
+            if batch.records and all(key in batch.records[0] for key in ('open','high','low','close','volume')):
+                result['ingestion']=ingest_batch(app.state.store,archive,batch,body.symbol,body.timeframe)
+            else:result['archive_id']=archive.put(batch)
+        return result
+
     @app.get('/api/v1/features/catalog',dependencies=[Depends(authorized)])
     def features(feed:Feed=Feed.IEX):
         from selery_strategies.alpha import alpha_catalog
@@ -217,7 +235,9 @@ def create_app(config=None,provider=None):
         return result
 
     @app.get('/api/v1/domain/SPY',dependencies=[Depends(authorized)])
-    def domain():return {'symbol':'SPY','name':'SPDR S&P 500 ETF Trust','feed':'iex','modules':[{'name':name,'status':'unavailable','reason':reason} for name,reason in [('Holdings and distributions','Point-in-time SSGA dataset not configured.'),('Options and volatility','Consolidated options chain and historical IV are not available.'),('Market internals','IEX does not provide consolidated breadth.'),('Macro and factors','FRED and Kenneth French ingestion not yet synchronized.')]],'limitations':['Unavailable inputs are never replaced by sample performance.']}
+    def domain():
+        from .domain import spy_snapshot
+        return spy_snapshot(feed=Feed.IEX)
 
     @app.post('/api/v1/chat',response_model=ChatResponse,dependencies=[Depends(authorized)])
     async def chat(body:ChatRequest):

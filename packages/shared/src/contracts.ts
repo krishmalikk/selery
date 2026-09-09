@@ -55,6 +55,18 @@ export type Citation = {
   "url": string | null;
   "data_id": string | null;
 };
+export type DataQuery = {
+  "provider": "finnhub" | "alpha_vantage" | "twelve_data" | "fred" | "sec" | "kenneth_french" | "yfinance";
+  "dataset": string;
+  "symbol": string;
+  "timeframe": Timeframe;
+  "start": string | null;
+  "end": string | null;
+  "series_id": string | null;
+  "cik": string | null;
+  "as_of": string | null;
+  "archive": boolean;
+};
 export type DeliverySummary = {
   "accepted": number;
   "failed": number;
@@ -236,6 +248,7 @@ export const ChartResponseSchema: z.ZodType<ChartResponse> = z.object({"symbol":
 export const ChatRequestSchema: z.ZodType<ChatRequest> = z.object({"message": z.string(), "symbol": z.string(), "debate": z.boolean()});
 export const ChatResponseSchema: z.ZodType<ChatResponse> = z.object({"message": z.string(), "citations": z.array(z.lazy(() => CitationSchema)), "mode": z.enum(["local", "llm"]), "cost_usd": z.number().finite()});
 export const CitationSchema: z.ZodType<Citation> = z.object({"label": z.string(), "timestamp": z.string(), "url": z.union([z.string(), z.null()]), "data_id": z.union([z.string(), z.null()])});
+export const DataQuerySchema: z.ZodType<DataQuery> = z.object({"provider": z.enum(["finnhub", "alpha_vantage", "twelve_data", "fred", "sec", "kenneth_french", "yfinance"]), "dataset": z.string(), "symbol": z.string(), "timeframe": z.lazy(() => TimeframeSchema), "start": z.union([z.string(), z.null()]), "end": z.union([z.string(), z.null()]), "series_id": z.union([z.string(), z.null()]), "cik": z.union([z.string(), z.null()]), "as_of": z.union([z.string(), z.null()]), "archive": z.boolean()});
 export const DeliverySummarySchema: z.ZodType<DeliverySummary> = z.object({"accepted": z.number().int(), "failed": z.number().int(), "skipped": z.number().int(), "unknown": z.number().int()});
 export const DeviceRegistrationSchema: z.ZodType<DeviceRegistration> = z.object({"token": z.string(), "platform": z.enum(["ios", "android"]), "enabled": z.boolean()});
 export const DeviceRegistrationResultSchema: z.ZodType<DeviceRegistrationResult> = z.object({"id": z.string(), "enabled": z.boolean()});
