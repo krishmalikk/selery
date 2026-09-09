@@ -1,0 +1,171 @@
+{
+  "checked_at": "2026-09-09T18:34:57.562843+00:00",
+  "endpoint": "paper-api.alpaca.markets",
+  "checks": [
+    {
+      "symbol": "SPY",
+      "feed": "iex",
+      "timeframe": "1Min",
+      "status": 200,
+      "bars": 1581,
+      "sha256": "29668f860b11848142020dfddfe8b5580a37cf97dedd05eed81028a0009ed5d5"
+    },
+    {
+      "symbol": "QQQ",
+      "feed": "iex",
+      "timeframe": "1Min",
+      "status": 200,
+      "bars": 1622,
+      "sha256": "80aaa2c4e49814898896c3f9c9b3c2e7eeff8c057c6d6fd79880eef2015aa3fb"
+    },
+    {
+      "symbol": "AAPL",
+      "feed": "iex",
+      "timeframe": "1Min",
+      "status": 200,
+      "bars": 1582,
+      "sha256": "e0d69461751412adc42f807ad8d9ab9149557ebe0462f25211aab76777174ca5"
+    },
+    {
+      "symbol": "NVDA",
+      "feed": "iex",
+      "timeframe": "1Min",
+      "status": 200,
+      "bars": 1571,
+      "sha256": "7f7a2377c628f0a0695b12cb14175b606d6d2d8b92688c4cccced410f22c5512"
+    },
+    {
+      "symbol": "SPY",
+      "feed": "iex",
+      "timeframe": "5Min",
+      "status": 200,
+      "bars": 741,
+      "sha256": "65c371658ff59190e01ab7bd9468c0f810c8c636cb5775e23bee26de2e9b4158"
+    },
+    {
+      "symbol": "QQQ",
+      "feed": "iex",
+      "timeframe": "5Min",
+      "status": 200,
+      "bars": 821,
+      "sha256": "c41835d37edae2ccb1193380ee3ff6847ba30884b18124e55e3f85dc17d5c80e"
+    },
+    {
+      "symbol": "AAPL",
+      "feed": "iex",
+      "timeframe": "5Min",
+      "status": 200,
+      "bars": 741,
+      "sha256": "d9b4ecf73337896e69490c2ea9e70c36580d229899ae1c519a24099cbc785c0c"
+    },
+    {
+      "symbol": "NVDA",
+      "feed": "iex",
+      "timeframe": "5Min",
+      "status": 200,
+      "bars": 734,
+      "sha256": "c89d9faa7fd56c051a7ba4da6ba51050ea7f85225f8f17ef637fd3037d375087"
+    },
+    {
+      "symbol": "SPY",
+      "feed": "iex",
+      "timeframe": "1Hour",
+      "status": 200,
+      "bars": 223,
+      "sha256": "9ecc2295d76a529be54ea27003b71cb833fcd3c7cff2ae792a9c6ab5207daf16"
+    },
+    {
+      "symbol": "QQQ",
+      "feed": "iex",
+      "timeframe": "1Hour",
+      "status": 200,
+      "bars": 218,
+      "sha256": "ecb0a241ed65332b047fd1726f2e4280fdcd481abd48449dac85c0cd06beba53"
+    },
+    {
+      "symbol": "AAPL",
+      "feed": "iex",
+      "timeframe": "1Hour",
+      "status": 200,
+      "bars": 203,
+      "sha256": "556bfc24f82e1a00bb77c7a79ed30a871d51359ea5504c115f2e487e9b77ca9a"
+    },
+    {
+      "symbol": "NVDA",
+      "feed": "iex",
+      "timeframe": "1Hour",
+      "status": 200,
+      "bars": 204,
+      "sha256": "d22e2bd8844c73f526027593a8844a63f16ad7e6ba304505eb67e24aa4986916"
+    },
+    {
+      "symbol": "SPY",
+      "feed": "iex",
+      "timeframe": "1Day",
+      "status": 200,
+      "bars": 251,
+      "sha256": "bbddd905dd62275ce8d821f1e9a978485af29ecadc0343cc0293be95b4dd93e5"
+    },
+    {
+      "symbol": "QQQ",
+      "feed": "iex",
+      "timeframe": "1Day",
+      "status": 200,
+      "bars": 251,
+      "sha256": "0a1ef1220be3281bb59ec5ac26e5c084c9e504e39b4d34803a22b9c1c603bb64"
+    },
+    {
+      "symbol": "AAPL",
+      "feed": "iex",
+      "timeframe": "1Day",
+      "status": 200,
+      "bars": 251,
+      "sha256": "31fb342c52f046a8fdec9c8879de4efd9c556384e2154f3ab9b21b1aa1d6442e"
+    },
+    {
+      "symbol": "NVDA",
+      "feed": "iex",
+      "timeframe": "1Day",
+      "status": 200,
+      "bars": 251,
+      "sha256": "cef41033ce683e6f2a8018cde5eb94de976311eac3963a6bac5a26a1278e2677"
+    },
+    {
+      "symbol": "SPY",
+      "feed": "sip",
+      "timeframe": "1Min",
+      "status": 200,
+      "bars": 2000,
+      "sha256": "da52b7763f0ba74b3939de636bd5fc731724716e13fd8a2bc9bdb41e30d583b7"
+    },
+    {
+      "symbol": "SPY",
+      "feed": "sip",
+      "timeframe": "5Min",
+      "status": 200,
+      "bars": 1725,
+      "sha256": "ce4802851330ccf6826ebee95e8e72e5a8348e1580464b6613ce4cebb91cefec"
+    },
+    {
+      "symbol": "SPY",
+      "feed": "sip",
+      "timeframe": "1Hour",
+      "status": 200,
+      "bars": 186,
+      "sha256": "dab49926926340e51acb13f7cb0b86ca62da789cd5a63c0e8eee43c4eadd2322"
+    },
+    {
+      "symbol": "SPY",
+      "feed": "sip",
+      "timeframe": "1Day",
+      "status": 200,
+      "bars": 251,
+      "sha256": "e0ecb0f9b228234c98f59abb2e9bf0e418019a034f42c22bbe0c185e365b4827"
+    },
+    {
+      "resource": "news",
+      "status": 200,
+      "count": 20
+    }
+  ]
+}

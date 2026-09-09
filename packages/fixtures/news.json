@@ -1,0 +1,440 @@
+{
+  "provenance": {
+    "provider": "alpaca",
+    "recorded_at": "2026-09-09T18:34:57.562843+00:00",
+    "synthetic": false
+  },
+  "payload": {
+    "news": [
+      {
+        "author": "Rounak Jain",
+        "content": "",
+        "created_at": "2026-09-09T18:06:45Z",
+        "headline": "Apple AirPods 5, Watch Ultra 4 and Watch Series 12 Are Here: Price, Features and Pre-Order Details",
+        "id": 61696812,
+        "images": [
+          {
+            "size": "large",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Apple-AirPods-5.jpg?width=2048&height=1536"
+          },
+          {
+            "size": "small",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Apple-AirPods-5.jpg?width=1024&height=768"
+          },
+          {
+            "size": "thumb",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Apple-AirPods-5.jpg?width=250&height=187"
+          }
+        ],
+        "source": "benzinga",
+        "summary": "Apple unveils AirPods 5, Watch Ultra 4 and Series 12 with improved ANC, health tracking and battery life; prices start at $129, $799 and $399.",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T18:17:05Z",
+        "url": "https://www.benzinga.com/markets/tech/26/09/61696812/apple-announced-airpods-5-watch-ultra-4-and-watch-series-12"
+      },
+      {
+        "author": "Ananya Gairola",
+        "content": "",
+        "created_at": "2026-09-09T18:12:53Z",
+        "headline": "Apple iPhone 18 Pro Launched With New A20 Pro Chip, Siri AI, Camera Upgrades and $1,199 Starting Price",
+        "id": 61696979,
+        "images": [
+          {
+            "size": "large",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/iPhone-18-Pro-Colours.jpg?width=2048&height=1536"
+          },
+          {
+            "size": "small",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/iPhone-18-Pro-Colours.jpg?width=1024&height=768"
+          },
+          {
+            "size": "thumb",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/iPhone-18-Pro-Colours.jpg?width=250&height=187"
+          }
+        ],
+        "source": "benzinga",
+        "summary": "Apple unveiled the iPhone 18 lineup, led by Pro models with a 2nm A20 Pro chip, upgraded Siri AI, better battery life and camera features.",
+        "symbols": [
+          "AAPL",
+          "TSM"
+        ],
+        "updated_at": "2026-09-09T18:12:53Z",
+        "url": "https://www.benzinga.com/markets/tech/26/09/61696979/apple-iphone-18-pro-launched-with-new-a20-pro-chip-siri-ai-camera-upgrades-and-1199-starting-price"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:47:12Z",
+        "headline": "Apple Introduces Audio Intelligence; Introduces Live Rewind Feature To Transcribe 15 Seconds Of Recent Audio; Apple Introduces Siri Recap To Summarize Conversations; Apple Says Audio Intelligence Features Do Not Create Or Store Audio Files; Introducing Audio Intelligence To Bring Sound Recognition To Apple Watch",
+        "id": 61696203,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:47:12Z",
+        "url": "https://www.benzinga.com/news/26/09/61696203/apple-introduces-audio-intelligence-introduces-live-rewind-feature-transcribe-15-seconds-recent-audi"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:38:52Z",
+        "headline": "Apple Announces Apple Watch Series 12 And Apple Watch Ultra 4",
+        "id": 61695882,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:38:52Z",
+        "url": "https://www.benzinga.com/news/26/09/61695882/apple-announces-apple-watch-series-12-and-apple-watch-ultra-4"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:35:33Z",
+        "headline": "Apple AirPods 5 Base Model Start At $129; AirPods 5 With Wireless Charging Case Add Longer Battery Life And On-Stem Volume Control For $149",
+        "id": 61695728,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:35:33Z",
+        "url": "https://www.benzinga.com/news/26/09/61695728/apple-airpods-5-base-model-start-129-airpods-5-wireless-charging-case-add-longer-battery-life-and-st"
+      },
+      {
+        "author": "Benzinga Insights",
+        "content": "",
+        "created_at": "2026-09-09T17:35:19Z",
+        "headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "id": 61695718,
+        "images": [
+          {
+            "size": "large",
+            "url": "https://cdn.benzinga.com/files/images/story/2025/11/06/aggregated_options_2.jpg?width=2048&height=1536"
+          },
+          {
+            "size": "small",
+            "url": "https://cdn.benzinga.com/files/images/story/2025/11/06/aggregated_options_2.jpg?width=1024&height=768"
+          },
+          {
+            "size": "thumb",
+            "url": "https://cdn.benzinga.com/files/images/story/2025/11/06/aggregated_options_2.jpg?width=250&height=187"
+          }
+        ],
+        "source": "benzinga",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity scanner.\nTraders will",
+        "symbols": [
+          "AAPL",
+          "HPE",
+          "INTC",
+          "LITE",
+          "MRVL",
+          "MSFT",
+          "SHOP",
+          "SNDK",
+          "SNOW",
+          "ZS"
+        ],
+        "updated_at": "2026-09-09T17:35:19Z",
+        "url": "https://www.benzinga.com/markets/options/26/09/61695718/10-information-technology-stocks-whale-activity-today-s-session"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:31:24Z",
+        "headline": "Apple Announces AirPods 5",
+        "id": 61695580,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:31:24Z",
+        "url": "https://www.benzinga.com/news/26/09/61695580/apple-announces-airpods-5"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:30:55Z",
+        "headline": "Apple Introduces iPhone Handoff To Allow Use Of A Single Phone Number Across Two iPhones; iPhone 18 Pro Starts At $1,199; iPhone 18 Pro Max Starts At $1,299",
+        "id": 61695559,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:30:55Z",
+        "url": "https://www.benzinga.com/news/26/09/61695559/apple-introduces-iphone-handoff-allow-use-single-phone-number-across-two-iphones-iphone-18-pro-start"
+      },
+      {
+        "author": "The Arora Report",
+        "content": "",
+        "created_at": "2026-09-09T17:24:50Z",
+        "headline": "Oil Surge and Carry Trade Weigh On Stocks; Apple Bets Big On $2K Foldable iPhone",
+        "id": 61695350,
+        "images": [
+          {
+            "size": "large",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Apple-Logo.jpg?width=2048&height=1536"
+          },
+          {
+            "size": "small",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Apple-Logo.jpg?width=1024&height=768"
+          },
+          {
+            "size": "thumb",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Apple-Logo.jpg?width=250&height=187"
+          }
+        ],
+        "source": "benzinga",
+        "summary": "\n\n\n\nOil Surge\n\n\n\nPlease click here for an enlarged chart of United States Oil ETF (NYSE:USO).\n\n\n\nNote the following:\n\n\n\n\nThe chart shows USO is approaching zone 1 (resistance).\n\n\n\nThe chart shows oil was previously in",
+        "symbols": [
+          "AAPL",
+          "AMZN",
+          "BTCUSD",
+          "GOOG",
+          "META",
+          "MSFT",
+          "NVDA",
+          "QQQ",
+          "SPY",
+          "SSNLF",
+          "TSLA",
+          "USO"
+        ],
+        "updated_at": "2026-09-09T17:27:26Z",
+        "url": "https://www.benzinga.com/Opinion/26/09/61695350/oil-surge-and-carry-trade-weigh-on-stocks-apple-bets-big-on-2k-foldable-iphone"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:26:51Z",
+        "headline": "Apple Introduces 'Apple Reference Image' Standard To Prove Authenticity Of Photos At Time Of Capture; Apple Says It Will Support Synth ID Standard For Identifying AI Generated Or Edited Images; Says Reference Image Not Available In EU Or China",
+        "id": 61695390,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:26:51Z",
+        "url": "https://www.benzinga.com/news/26/09/61695390/apple-introduces-apple-reference-image-standard-prove-authenticity-photos-time-capture-apple-says-it"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:22:49Z",
+        "headline": "Apple Says iPhone 18 Pro Has 48 MP Fusion Main Camera With Variable Aperture",
+        "id": 61695250,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:22:49Z",
+        "url": "https://www.benzinga.com/news/26/09/61695250/apple-says-iphone-18-pro-has-48-mp-fusion-main-camera-variable-aperture"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:20:01Z",
+        "headline": "Apple Says iPhone 18 Pro Max Has The Largest Increase In Battery Life Ever On iPhone",
+        "id": 61695166,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:20:01Z",
+        "url": "https://www.benzinga.com/news/26/09/61695166/apple-says-iphone-18-pro-max-has-largest-increase-battery-life-ever-iphone"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:18:38Z",
+        "headline": "Apple Says A20 Chip Will Have Two Neural Engines With 32 Cores Total, Increasing On-Device AI Performance; Apple Says A20 Pro Chip Will Use Custom Packaging Similar To Mac Chips To Improve Thermal Performance; A20 Pro Chip Has Seven GPU Cores; A20 Chip Uses Improved Vapor Chamber Cooling",
+        "id": 61695115,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:18:38Z",
+        "url": "https://www.benzinga.com/news/26/09/61695115/apple-says-a20-chip-will-have-two-neural-engines-32-cores-total-increasing-device-ai-performance-app"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:16:17Z",
+        "headline": "Apple Says Apple A20 Pro Will Have Six Core CPU With Two 'Desktop Class' Super Cores And Four Efficiency Cores",
+        "id": 61695034,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:16:17Z",
+        "url": "https://www.benzinga.com/news/26/09/61695034/apple-says-apple-a20-pro-will-have-six-core-cpu-two-desktop-class-super-cores-and-four-efficiency-co"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:14:57Z",
+        "headline": "Apple Announces A20 Pro Chip Based On 2nm Technology",
+        "id": 61694991,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:14:57Z",
+        "url": "https://www.benzinga.com/news/26/09/61694991/apple-announces-a20-pro-chip-based-2nm-technology"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:14:35Z",
+        "headline": "Apple Says Apple Intelligence Is Not Available In China; Updated Siri Will Not Be Available In EU And China",
+        "id": 61694974,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL",
+          "FXI",
+          "VGK"
+        ],
+        "updated_at": "2026-09-09T17:14:35Z",
+        "url": "https://www.benzinga.com/economics/macro-economic-events/26/09/61694974/apple-says-apple-intelligence-not-available-china-updated-siri-will-not-be-available-eu-and-china"
+      },
+      {
+        "author": "Surbhi Jain",
+        "content": "",
+        "created_at": "2026-09-09T17:13:24Z",
+        "headline": "Nvidia Blackwell Demand Sent Nebius Auction Prices 20% Higher",
+        "id": 61694901,
+        "images": [
+          {
+            "size": "large",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Konskie--Poland---May-03--2025-Nebius-Gr.jpg?width=2048&height=1536"
+          },
+          {
+            "size": "small",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Konskie--Poland---May-03--2025-Nebius-Gr.jpg?width=1024&height=768"
+          },
+          {
+            "size": "thumb",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Konskie--Poland---May-03--2025-Nebius-Gr.jpg?width=250&height=187"
+          }
+        ],
+        "source": "benzinga",
+        "summary": "Nebius says customers paid 15%\u201320% more for Nvidia Blackwell AI compute through an auction as demand continued to outstrip supply.",
+        "symbols": [
+          "NBIS",
+          "NVDA"
+        ],
+        "updated_at": "2026-09-09T17:13:24Z",
+        "url": "https://www.benzinga.com/trading-ideas/long-ideas/26/09/61694901/nvidia-blackwell-demand-nebius-prices-higher"
+      },
+      {
+        "author": "Benzinga Newsdesk",
+        "content": "",
+        "created_at": "2026-09-09T17:09:21Z",
+        "headline": "Apple Announces iPhone 18 Pro And iPhone 18 Pro Max",
+        "id": 61694800,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:09:21Z",
+        "url": "https://www.benzinga.com/news/26/09/61694800/apple-announces-iphone-18-pro-and-iphone-18-pro-max"
+      },
+      {
+        "author": "Piero Cingari",
+        "content": "",
+        "created_at": "2026-09-09T17:04:58Z",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "id": 61694601,
+        "images": [
+          {
+            "size": "large",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Markets-up.jpg?width=2048&height=1536"
+          },
+          {
+            "size": "small",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Markets-up.jpg?width=1024&height=768"
+          },
+          {
+            "size": "thumb",
+            "url": "https://cdn.benzinga.com/files/images/story/2026/09/09/Markets-up.jpg?width=250&height=187"
+          }
+        ],
+        "source": "benzinga",
+        "summary": "Brent crude pushes above $100 a barrel for the first time since July as US-Iran strikes escalated, equities slip broadly.",
+        "symbols": [
+          "AKAM",
+          "ALAB",
+          "CASY",
+          "CHWY",
+          "DDOG",
+          "DIA",
+          "IWM",
+          "META",
+          "MU",
+          "NET",
+          "QQQ",
+          "SKHY",
+          "SUNB",
+          "UI",
+          "VOO",
+          "VRT",
+          "XE",
+          "XLE",
+          "XLF",
+          "XLI",
+          "XLK",
+          "XLP",
+          "XLRE",
+          "XLU",
+          "XLV",
+          "XLY",
+          "ZS"
+        ],
+        "updated_at": "2026-09-09T17:04:58Z",
+        "url": "https://www.benzinga.com/markets/equities/26/09/61694601/oil-tops-100-meta-cloudflare-jump-ai-breakthroughs-markets-wednesday"
+      },
+      {
+        "author": "Benzinga News-desk",
+        "content": "",
+        "created_at": "2026-09-09T17:02:56Z",
+        "headline": "LIVE: Apple Event Begins; New Product Announcements, Prices, Release Dates And The Company's First Launch Under CEO John Ternus",
+        "id": 61694545,
+        "images": [],
+        "source": "benzinga",
+        "summary": "",
+        "symbols": [
+          "AAPL"
+        ],
+        "updated_at": "2026-09-09T17:04:37Z",
+        "url": "https://www.benzinga.com/news/26/09/61694545/live-apple-event-begins-new-product-announcements-prices-release-dates-and-the-companys-first-launch-under-ceo-john-ternus"
+      }
+    ],
+    "next_page_token": "MTc4ODk3MzQ3NzAwMDAwMDAwMHw2MTY5NDU0NQ=="
+  }
+}

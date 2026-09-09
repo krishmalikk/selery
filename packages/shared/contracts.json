@@ -1,0 +1,1361 @@
+{
+  "Alert": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "kind": {
+        "title": "Kind",
+        "type": "string"
+      },
+      "title": {
+        "title": "Title",
+        "type": "string"
+      },
+      "body": {
+        "title": "Body",
+        "type": "string"
+      },
+      "symbol": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Symbol"
+      },
+      "signal_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Signal Id"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      },
+      "read": {
+        "default": false,
+        "title": "Read",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "id",
+      "kind",
+      "title",
+      "body",
+      "created_at"
+    ],
+    "title": "Alert",
+    "type": "object"
+  },
+  "Feed": {
+    "enum": [
+      "iex",
+      "sip",
+      "delayed",
+      "synthetic"
+    ],
+    "title": "Feed",
+    "type": "string"
+  },
+  "Bar": {
+    "additionalProperties": false,
+    "properties": {
+      "symbol": {
+        "title": "Symbol",
+        "type": "string"
+      },
+      "time": {
+        "title": "Time",
+        "type": "integer"
+      },
+      "available_at": {
+        "title": "Available At",
+        "type": "integer"
+      },
+      "open": {
+        "title": "Open",
+        "type": "number"
+      },
+      "high": {
+        "title": "High",
+        "type": "number"
+      },
+      "low": {
+        "title": "Low",
+        "type": "number"
+      },
+      "close": {
+        "title": "Close",
+        "type": "number"
+      },
+      "volume": {
+        "default": 0,
+        "title": "Volume",
+        "type": "number"
+      },
+      "feed": {
+        "$ref": "#/$defs/Feed"
+      },
+      "finalized": {
+        "default": true,
+        "title": "Finalized",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "symbol",
+      "time",
+      "available_at",
+      "open",
+      "high",
+      "low",
+      "close",
+      "feed"
+    ],
+    "title": "Bar",
+    "type": "object"
+  },
+  "Capability": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "label": {
+        "title": "Label",
+        "type": "string"
+      },
+      "enabled": {
+        "title": "Enabled",
+        "type": "boolean"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      }
+    },
+    "required": [
+      "id",
+      "label",
+      "enabled"
+    ],
+    "title": "Capability",
+    "type": "object"
+  },
+  "IndicatorPoint": {
+    "additionalProperties": false,
+    "properties": {
+      "time": {
+        "title": "Time",
+        "type": "integer"
+      },
+      "value": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Value"
+      }
+    },
+    "required": [
+      "time",
+      "value"
+    ],
+    "title": "IndicatorPoint",
+    "type": "object"
+  },
+  "Provenance": {
+    "additionalProperties": false,
+    "properties": {
+      "provider": {
+        "title": "Provider",
+        "type": "string"
+      },
+      "feed": {
+        "$ref": "#/$defs/Feed"
+      },
+      "observed_at": {
+        "format": "date-time",
+        "title": "Observed At",
+        "type": "string"
+      },
+      "available_at": {
+        "format": "date-time",
+        "title": "Available At",
+        "type": "string"
+      },
+      "retrieved_at": {
+        "format": "date-time",
+        "title": "Retrieved At",
+        "type": "string"
+      },
+      "stale": {
+        "default": false,
+        "title": "Stale",
+        "type": "boolean"
+      },
+      "synthetic": {
+        "default": false,
+        "title": "Synthetic",
+        "type": "boolean"
+      },
+      "version": {
+        "default": "1",
+        "title": "Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "provider",
+      "feed",
+      "observed_at",
+      "available_at",
+      "retrieved_at"
+    ],
+    "title": "Provenance",
+    "type": "object"
+  },
+  "Signal": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "symbol": {
+        "title": "Symbol",
+        "type": "string"
+      },
+      "strategy": {
+        "title": "Strategy",
+        "type": "string"
+      },
+      "strategy_version": {
+        "default": "1",
+        "title": "Strategy Version",
+        "type": "string"
+      },
+      "timeframe": {
+        "$ref": "#/$defs/Timeframe"
+      },
+      "time": {
+        "title": "Time",
+        "type": "integer"
+      },
+      "available_at": {
+        "title": "Available At",
+        "type": "integer"
+      },
+      "direction": {
+        "enum": [
+          "bullish",
+          "bearish"
+        ],
+        "title": "Direction",
+        "type": "string"
+      },
+      "reference_price": {
+        "title": "Reference Price",
+        "type": "number"
+      },
+      "stop": {
+        "title": "Stop",
+        "type": "number"
+      },
+      "target": {
+        "title": "Target",
+        "type": "number"
+      },
+      "horizon_bars": {
+        "default": 20,
+        "title": "Horizon Bars",
+        "type": "integer"
+      },
+      "confidence": {
+        "anyOf": [
+          {
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Confidence"
+      },
+      "confidence_reason": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": "No calibrated model is attached to this signal.",
+        "title": "Confidence Reason"
+      },
+      "feed": {
+        "$ref": "#/$defs/Feed"
+      },
+      "features": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "title": "Features",
+        "type": "object"
+      },
+      "explanation": {
+        "title": "Explanation",
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "symbol",
+      "strategy",
+      "timeframe",
+      "time",
+      "available_at",
+      "direction",
+      "reference_price",
+      "stop",
+      "target",
+      "feed",
+      "explanation"
+    ],
+    "title": "Signal",
+    "type": "object"
+  },
+  "Timeframe": {
+    "enum": [
+      "1m",
+      "5m",
+      "15m",
+      "1h",
+      "4h",
+      "1D",
+      "1W"
+    ],
+    "title": "Timeframe",
+    "type": "string"
+  },
+  "ChartResponse": {
+    "additionalProperties": false,
+    "properties": {
+      "symbol": {
+        "title": "Symbol",
+        "type": "string"
+      },
+      "timeframe": {
+        "$ref": "#/$defs/Timeframe"
+      },
+      "bars": {
+        "items": {
+          "$ref": "#/$defs/Bar"
+        },
+        "title": "Bars",
+        "type": "array"
+      },
+      "indicators": {
+        "additionalProperties": {
+          "items": {
+            "$ref": "#/$defs/IndicatorPoint"
+          },
+          "type": "array"
+        },
+        "title": "Indicators",
+        "type": "object"
+      },
+      "signals": {
+        "items": {
+          "$ref": "#/$defs/Signal"
+        },
+        "title": "Signals",
+        "type": "array"
+      },
+      "capabilities": {
+        "items": {
+          "$ref": "#/$defs/Capability"
+        },
+        "title": "Capabilities",
+        "type": "array"
+      },
+      "provenance": {
+        "$ref": "#/$defs/Provenance"
+      }
+    },
+    "required": [
+      "symbol",
+      "timeframe",
+      "bars",
+      "indicators",
+      "signals",
+      "capabilities",
+      "provenance"
+    ],
+    "title": "ChartResponse",
+    "type": "object"
+  },
+  "ChatRequest": {
+    "additionalProperties": false,
+    "properties": {
+      "message": {
+        "maxLength": 4000,
+        "minLength": 1,
+        "title": "Message",
+        "type": "string"
+      },
+      "symbol": {
+        "default": "SPY",
+        "title": "Symbol",
+        "type": "string"
+      },
+      "debate": {
+        "default": false,
+        "title": "Debate",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "message"
+    ],
+    "title": "ChatRequest",
+    "type": "object"
+  },
+  "Citation": {
+    "additionalProperties": false,
+    "properties": {
+      "label": {
+        "title": "Label",
+        "type": "string"
+      },
+      "timestamp": {
+        "format": "date-time",
+        "title": "Timestamp",
+        "type": "string"
+      },
+      "url": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Url"
+      },
+      "data_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Data Id"
+      }
+    },
+    "required": [
+      "label",
+      "timestamp"
+    ],
+    "title": "Citation",
+    "type": "object"
+  },
+  "ChatResponse": {
+    "additionalProperties": false,
+    "properties": {
+      "message": {
+        "title": "Message",
+        "type": "string"
+      },
+      "citations": {
+        "items": {
+          "$ref": "#/$defs/Citation"
+        },
+        "title": "Citations",
+        "type": "array"
+      },
+      "mode": {
+        "enum": [
+          "local",
+          "llm"
+        ],
+        "title": "Mode",
+        "type": "string"
+      },
+      "cost_usd": {
+        "default": 0,
+        "title": "Cost Usd",
+        "type": "number"
+      }
+    },
+    "required": [
+      "message",
+      "citations",
+      "mode"
+    ],
+    "title": "ChatResponse",
+    "type": "object"
+  },
+  "Job": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "kind": {
+        "title": "Kind",
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "queued",
+          "running",
+          "completed",
+          "failed",
+          "unavailable"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      },
+      "result_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Result Id"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      }
+    },
+    "required": [
+      "id",
+      "kind",
+      "status",
+      "created_at"
+    ],
+    "title": "Job",
+    "type": "object"
+  },
+  "JournalEntry": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Id"
+      },
+      "symbol": {
+        "maxLength": 12,
+        "minLength": 1,
+        "title": "Symbol",
+        "type": "string"
+      },
+      "thesis": {
+        "maxLength": 10000,
+        "minLength": 1,
+        "title": "Thesis",
+        "type": "string"
+      },
+      "outcome": {
+        "default": "",
+        "maxLength": 10000,
+        "title": "Outcome",
+        "type": "string"
+      },
+      "reflection": {
+        "default": "",
+        "maxLength": 10000,
+        "title": "Reflection",
+        "type": "string"
+      },
+      "chart_snapshot": {
+        "anyOf": [
+          {
+            "maxLength": 500000,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Chart Snapshot"
+      },
+      "created_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Created At"
+      }
+    },
+    "required": [
+      "symbol",
+      "thesis"
+    ],
+    "title": "JournalEntry",
+    "type": "object"
+  },
+  "NewsItem": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "headline": {
+        "title": "Headline",
+        "type": "string"
+      },
+      "summary": {
+        "title": "Summary",
+        "type": "string"
+      },
+      "url": {
+        "title": "Url",
+        "type": "string"
+      },
+      "source": {
+        "title": "Source",
+        "type": "string"
+      },
+      "published_at": {
+        "format": "date-time",
+        "title": "Published At",
+        "type": "string"
+      },
+      "symbols": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Symbols",
+        "type": "array"
+      },
+      "sentiment": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Sentiment"
+      },
+      "sentiment_method": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Sentiment Method"
+      }
+    },
+    "required": [
+      "id",
+      "headline",
+      "summary",
+      "url",
+      "source",
+      "published_at",
+      "symbols"
+    ],
+    "title": "NewsItem",
+    "type": "object"
+  },
+  "NewsResponse": {
+    "additionalProperties": false,
+    "properties": {
+      "items": {
+        "items": {
+          "$ref": "#/$defs/NewsItem"
+        },
+        "title": "Items",
+        "type": "array"
+      },
+      "retrieved_at": {
+        "format": "date-time",
+        "title": "Retrieved At",
+        "type": "string"
+      },
+      "stale": {
+        "title": "Stale",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "items",
+      "retrieved_at",
+      "stale"
+    ],
+    "title": "NewsResponse",
+    "type": "object"
+  },
+  "Outcome": {
+    "additionalProperties": false,
+    "properties": {
+      "signal_id": {
+        "title": "Signal Id",
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "pending",
+          "target_first",
+          "stop_first",
+          "neither",
+          "ambiguous",
+          "incomplete"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "evaluated_at": {
+        "format": "date-time",
+        "title": "Evaluated At",
+        "type": "string"
+      },
+      "bars_observed": {
+        "title": "Bars Observed",
+        "type": "integer"
+      },
+      "resolved_at": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Resolved At"
+      },
+      "max_favorable_percent": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Max Favorable Percent"
+      },
+      "max_adverse_percent": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Max Adverse Percent"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      }
+    },
+    "required": [
+      "signal_id",
+      "status",
+      "evaluated_at",
+      "bars_observed"
+    ],
+    "title": "Outcome",
+    "type": "object"
+  },
+  "OutcomeSummary": {
+    "additionalProperties": false,
+    "properties": {
+      "strategy": {
+        "title": "Strategy",
+        "type": "string"
+      },
+      "feed": {
+        "$ref": "#/$defs/Feed"
+      },
+      "matured": {
+        "title": "Matured",
+        "type": "integer"
+      },
+      "target_first": {
+        "title": "Target First",
+        "type": "integer"
+      },
+      "stop_first": {
+        "title": "Stop First",
+        "type": "integer"
+      },
+      "neither": {
+        "title": "Neither",
+        "type": "integer"
+      },
+      "ambiguous": {
+        "title": "Ambiguous",
+        "type": "integer"
+      },
+      "hit_rate": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Hit Rate"
+      },
+      "denominator": {
+        "default": "All matured, complete, unambiguous signals, including neither.",
+        "title": "Denominator",
+        "type": "string"
+      },
+      "historical_hit_rate": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Historical Hit Rate"
+      },
+      "comparison_reason": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Comparison Reason"
+      }
+    },
+    "required": [
+      "strategy",
+      "feed",
+      "matured",
+      "target_first",
+      "stop_first",
+      "neither",
+      "ambiguous",
+      "hit_rate"
+    ],
+    "title": "OutcomeSummary",
+    "type": "object"
+  },
+  "Quote": {
+    "additionalProperties": false,
+    "properties": {
+      "symbol": {
+        "title": "Symbol",
+        "type": "string"
+      },
+      "price": {
+        "title": "Price",
+        "type": "number"
+      },
+      "change": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Change"
+      },
+      "change_percent": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Change Percent"
+      },
+      "bid": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Bid"
+      },
+      "ask": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Ask"
+      },
+      "provenance": {
+        "$ref": "#/$defs/Provenance"
+      },
+      "sparkline": {
+        "items": {
+          "type": "number"
+        },
+        "title": "Sparkline",
+        "type": "array"
+      }
+    },
+    "required": [
+      "symbol",
+      "price",
+      "provenance"
+    ],
+    "title": "Quote",
+    "type": "object"
+  },
+  "ResearchRequest": {
+    "additionalProperties": false,
+    "properties": {
+      "symbol": {
+        "default": "SPY",
+        "title": "Symbol",
+        "type": "string"
+      },
+      "timeframe": {
+        "$ref": "#/$defs/Timeframe",
+        "default": "1D"
+      },
+      "strategy": {
+        "default": "ema_cross",
+        "title": "Strategy",
+        "type": "string"
+      },
+      "feed": {
+        "$ref": "#/$defs/Feed",
+        "default": "iex"
+      },
+      "horizon_bars": {
+        "default": 20,
+        "maximum": 252,
+        "minimum": 1,
+        "title": "Horizon Bars",
+        "type": "integer"
+      }
+    },
+    "title": "ResearchRequest",
+    "type": "object"
+  },
+  "ResearchReport": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      },
+      "request": {
+        "$ref": "#/$defs/ResearchRequest"
+      },
+      "signal_count": {
+        "title": "Signal Count",
+        "type": "integer"
+      },
+      "outcomes": {
+        "items": {
+          "$ref": "#/$defs/Outcome"
+        },
+        "title": "Outcomes",
+        "type": "array"
+      },
+      "metrics": {
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": "Metrics",
+        "type": "object"
+      },
+      "assumptions": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Assumptions",
+        "type": "array"
+      },
+      "limitations": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Limitations",
+        "type": "array"
+      },
+      "series": {
+        "items": {
+          "$ref": "#/$defs/IndicatorPoint"
+        },
+        "title": "Series",
+        "type": "array"
+      },
+      "benchmark": {
+        "items": {
+          "$ref": "#/$defs/IndicatorPoint"
+        },
+        "title": "Benchmark",
+        "type": "array"
+      }
+    },
+    "required": [
+      "id",
+      "created_at",
+      "request",
+      "signal_count",
+      "outcomes",
+      "metrics",
+      "assumptions",
+      "limitations",
+      "series",
+      "benchmark"
+    ],
+    "title": "ResearchReport",
+    "type": "object"
+  },
+  "Settings": {
+    "additionalProperties": false,
+    "properties": {
+      "data_mode": {
+        "enum": [
+          "fixtures",
+          "live"
+        ],
+        "title": "Data Mode",
+        "type": "string"
+      },
+      "feed": {
+        "$ref": "#/$defs/Feed"
+      },
+      "llm_monthly_cap_usd": {
+        "title": "Llm Monthly Cap Usd",
+        "type": "number"
+      },
+      "llm_spent_usd": {
+        "title": "Llm Spent Usd",
+        "type": "number"
+      },
+      "llm_enabled": {
+        "title": "Llm Enabled",
+        "type": "boolean"
+      },
+      "disclaimer": {
+        "default": "Selery is research software that displays analysis. It does not execute, recommend, or place trades.",
+        "title": "Disclaimer",
+        "type": "string"
+      }
+    },
+    "required": [
+      "data_mode",
+      "feed",
+      "llm_monthly_cap_usd",
+      "llm_spent_usd",
+      "llm_enabled"
+    ],
+    "title": "Settings",
+    "type": "object"
+  },
+  "SizingRequest": {
+    "additionalProperties": false,
+    "properties": {
+      "research_capital": {
+        "exclusiveMinimum": 0,
+        "title": "Research Capital",
+        "type": "number"
+      },
+      "risk_percent": {
+        "exclusiveMinimum": 0,
+        "maximum": 5,
+        "title": "Risk Percent",
+        "type": "number"
+      },
+      "reference_price": {
+        "exclusiveMinimum": 0,
+        "title": "Reference Price",
+        "type": "number"
+      },
+      "stop": {
+        "exclusiveMinimum": 0,
+        "title": "Stop",
+        "type": "number"
+      },
+      "max_allocation_percent": {
+        "default": 20,
+        "exclusiveMinimum": 0,
+        "maximum": 100,
+        "title": "Max Allocation Percent",
+        "type": "number"
+      }
+    },
+    "required": [
+      "research_capital",
+      "risk_percent",
+      "reference_price",
+      "stop"
+    ],
+    "title": "SizingRequest",
+    "type": "object"
+  },
+  "SizingResponse": {
+    "additionalProperties": false,
+    "properties": {
+      "units": {
+        "title": "Units",
+        "type": "integer"
+      },
+      "risk_budget": {
+        "title": "Risk Budget",
+        "type": "number"
+      },
+      "analytical_risk": {
+        "title": "Analytical Risk",
+        "type": "number"
+      },
+      "notional": {
+        "title": "Notional",
+        "type": "number"
+      },
+      "disclaimer": {
+        "default": "Informational calculation only; no action is taken.",
+        "title": "Disclaimer",
+        "type": "string"
+      }
+    },
+    "required": [
+      "units",
+      "risk_budget",
+      "analytical_risk",
+      "notional"
+    ],
+    "title": "SizingResponse",
+    "type": "object"
+  },
+  "StrategyInfo": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "description": {
+        "title": "Description",
+        "type": "string"
+      },
+      "enabled": {
+        "title": "Enabled",
+        "type": "boolean"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      },
+      "requires": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Requires",
+        "type": "array"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "description",
+      "enabled"
+    ],
+    "title": "StrategyInfo",
+    "type": "object"
+  },
+  "StreamEvent": {
+    "additionalProperties": false,
+    "properties": {
+      "type": {
+        "enum": [
+          "quotes",
+          "chart",
+          "signal",
+          "news",
+          "alert",
+          "heartbeat",
+          "error"
+        ],
+        "title": "Type",
+        "type": "string"
+      },
+      "timestamp": {
+        "format": "date-time",
+        "title": "Timestamp",
+        "type": "string"
+      },
+      "data": {
+        "additionalProperties": true,
+        "title": "Data",
+        "type": "object"
+      }
+    },
+    "required": [
+      "type",
+      "timestamp",
+      "data"
+    ],
+    "title": "StreamEvent",
+    "type": "object"
+  },
+  "WatchlistResponse": {
+    "additionalProperties": false,
+    "properties": {
+      "quotes": {
+        "items": {
+          "$ref": "#/$defs/Quote"
+        },
+        "title": "Quotes",
+        "type": "array"
+      },
+      "data_mode": {
+        "enum": [
+          "fixtures",
+          "live"
+        ],
+        "title": "Data Mode",
+        "type": "string"
+      }
+    },
+    "required": [
+      "quotes",
+      "data_mode"
+    ],
+    "title": "WatchlistResponse",
+    "type": "object"
+  }
+}
