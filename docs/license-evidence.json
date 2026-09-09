@@ -1,0 +1,1512 @@
+{
+  "audit_date": "2026-09-09",
+  "schema_version": 1,
+  "scope": "Every repository named in Part 5, including alpha101 alternate, explicitly excluded mlfinlab, and pandas-ta-classic replacement. No upstream source code was imported. SHA pins identify the audited reference revisions, not package lockfile versions.",
+  "records": [
+    {
+      "repository": "je-suis-tm/quant-trading",
+      "requested_url": "https://github.com/je-suis-tm/quant-trading",
+      "revision": "611b73f2c3f577ac5b28aaa19ac8c43d3236c7a5",
+      "revision_url": "https://github.com/je-suis-tm/quant-trading/commit/611b73f2c3f577ac5b28aaa19ac8c43d3236c7a5",
+      "license": "Apache-2.0",
+      "decision": "Methodology reference for independent price-pattern implementations; no copied files.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/je-suis-tm/quant-trading/blob/611b73f2c3f577ac5b28aaa19ac8c43d3236c7a5/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "bytes": 11357,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "Awesome Oscillator backtest.py",
+          "url": "https://github.com/je-suis-tm/quant-trading/blob/611b73f2c3f577ac5b28aaa19ac8c43d3236c7a5/Awesome%20Oscillator%20backtest.py",
+          "sha256": "20c20276d0c2f3bc35fd287f8d1e32ee3ab54c3c4639e82a8adc949c267b3587",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "Bollinger Bands Pattern Recognition backtest.py",
+          "url": "https://github.com/je-suis-tm/quant-trading/blob/611b73f2c3f577ac5b28aaa19ac8c43d3236c7a5/Bollinger%20Bands%20Pattern%20Recognition%20backtest.py",
+          "sha256": "fc054f7456a41ccf3fb34046aa2d49179af37b4c46f882d3432f0c2dd7a16027",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "yli188/WorldQuant_alpha101_code",
+      "requested_url": "https://github.com/yli188/WorldQuant_alpha101_code",
+      "revision": "3bb9918dd7b62039f41a585a9e37bfd67ce3719f",
+      "revision_url": "https://github.com/yli188/WorldQuant_alpha101_code/commit/3bb9918dd7b62039f41a585a9e37bfd67ce3719f",
+      "license": "NOASSERTION",
+      "decision": "Exclude source reuse: no license grant found. Independently implement published formula methodology.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [],
+      "sampled_files": [
+        {
+          "path": "101Alpha_code_1.py",
+          "url": "https://github.com/yli188/WorldQuant_alpha101_code/blob/3bb9918dd7b62039f41a585a9e37bfd67ce3719f/101Alpha_code_1.py",
+          "sha256": "e78cf3b39198a9999e127b977697aa13057a59aba8a6ad5b6b9080433ba6ac3e",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "101Alpha_code_2.py",
+          "url": "https://github.com/yli188/WorldQuant_alpha101_code/blob/3bb9918dd7b62039f41a585a9e37bfd67ce3719f/101Alpha_code_2.py",
+          "sha256": "3fe0f04a7295425cf8d7a994e9d87e5bc64926a1eb2194cb1976174d88105fd2",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "lvlh2/alpha101",
+      "requested_url": "https://github.com/lvlh2/alpha101",
+      "revision": "b6bd3f4fb53fdf62a9f8454c477561651f764952",
+      "revision_url": "https://github.com/lvlh2/alpha101/commit/b6bd3f4fb53fdf62a9f8454c477561651f764952",
+      "license": "MIT",
+      "decision": "Permissive alpha feature reference; no copied code. Volume-dependent formulas require SIP.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/lvlh2/alpha101/blob/b6bd3f4fb53fdf62a9f8454c477561651f764952/LICENSE",
+          "sha256": "5fa0c82bac658f598134663cf62112603992fec1ff340eaa28766b0bc0fb21ef",
+          "bytes": 1062,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "src/alpha101/__init__.py",
+          "url": "https://github.com/lvlh2/alpha101/blob/b6bd3f4fb53fdf62a9f8454c477561651f764952/src/alpha101/__init__.py",
+          "sha256": "288adaa089e2dc958cde2cf81043af1c4920f82a9799dcbde6b032ab14a51b82",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "src/alpha101/alphas.py",
+          "url": "https://github.com/lvlh2/alpha101/blob/b6bd3f4fb53fdf62a9f8454c477561651f764952/src/alpha101/alphas.py",
+          "sha256": "259290a0d2a4a9686d2e96ba2ad62b5fdcf56db72bb53defd9d4058080b76bfe",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "iterativv/NostalgiaForInfinity",
+      "requested_url": "https://github.com/iterativv/NostalgiaForInfinity",
+      "revision": "e9e165f8fc832d77a50ea115e3d06c7418fa5661",
+      "revision_url": "https://github.com/iterativv/NostalgiaForInfinity/commit/e9e165f8fc832d77a50ea115e3d06c7418fa5661",
+      "license": "GPL-3.0",
+      "decision": "Architecture concept only; no GPL code dependency or copied signal expressions.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/iterativv/NostalgiaForInfinity/blob/e9e165f8fc832d77a50ea115e3d06c7418fa5661/LICENSE",
+          "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+          "bytes": 35149,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "NostalgiaForInfinityX.py",
+          "url": "https://github.com/iterativv/NostalgiaForInfinity/blob/e9e165f8fc832d77a50ea115e3d06c7418fa5661/NostalgiaForInfinityX.py",
+          "sha256": "f0548cefe30620d873eff8721f68ed8b37e1adb1f4af1d54db25c0b3c4e81e35",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "NostalgiaForInfinityX2.py",
+          "url": "https://github.com/iterativv/NostalgiaForInfinity/blob/e9e165f8fc832d77a50ea115e3d06c7418fa5661/NostalgiaForInfinityX2.py",
+          "sha256": "a72849dd141eb1fa203cd648e57de8ea7baffa1e699011528779d2dad711170f",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "QuantConnect/Lean",
+      "requested_url": "https://github.com/QuantConnect/Lean",
+      "revision": "23b735d99a357807dc0df9f4c51d30f05fe0d277",
+      "revision_url": "https://github.com/QuantConnect/Lean/commit/23b735d99a357807dc0df9f4c51d30f05fe0d277",
+      "license": "Apache-2.0",
+      "decision": "Data-slice/lifecycle concepts only; no engine dependency or execution components.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/QuantConnect/Lean/blob/23b735d99a357807dc0df9f4c51d30f05fe0d277/LICENSE",
+          "sha256": "522cf0a716ce03f67d46f8fceb5bf78c5b84400ec5cd8d14bf9f02cddc1cb6ba",
+          "bytes": 10737,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "Algorithm.CSharp/AccordVectorMachinesAlgorithm.cs",
+          "url": "https://github.com/QuantConnect/Lean/blob/23b735d99a357807dc0df9f4c51d30f05fe0d277/Algorithm.CSharp/AccordVectorMachinesAlgorithm.cs",
+          "sha256": "14e21793bca1bf9af4d5bb761997d15631420b8215f4db388abd1a721eef1641",
+          "header_indications": [
+            "Apache"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "Algorithm.CSharp/AccumulativeInsightPortfolioRegressionAlgorithm.cs",
+          "url": "https://github.com/QuantConnect/Lean/blob/23b735d99a357807dc0df9f4c51d30f05fe0d277/Algorithm.CSharp/AccumulativeInsightPortfolioRegressionAlgorithm.cs",
+          "sha256": "34ae720d3cf484605f97b3f8015db90a9a2001e4ba6a87e0c1baac7d491d3864",
+          "header_indications": [
+            "Apache"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "microsoft/qlib",
+      "requested_url": "https://github.com/microsoft/qlib",
+      "revision": "79633dd9506ea689e5400dea0197717b5b3d74b7",
+      "revision_url": "https://github.com/microsoft/qlib/commit/79633dd9506ea689e5400dea0197717b5b3d74b7",
+      "license": "MIT",
+      "decision": "Point-in-time pipeline concepts only; no copied code or bundled model zoo.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/microsoft/qlib/blob/79633dd9506ea689e5400dea0197717b5b3d74b7/LICENSE",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+          "bytes": 1141,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "docs/conf.py",
+          "url": "https://github.com/microsoft/qlib/blob/79633dd9506ea689e5400dea0197717b5b3d74b7/docs/conf.py",
+          "sha256": "a89b2ca29d22227423d362042f7a83607aa3ef6438c950b3cf5a4a418e5fd4e9",
+          "header_indications": [
+            "MIT License"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "examples/benchmarks/LightGBM/features_resample_N.py",
+          "url": "https://github.com/microsoft/qlib/blob/79633dd9506ea689e5400dea0197717b5b3d74b7/examples/benchmarks/LightGBM/features_resample_N.py",
+          "sha256": "d8c25e15fc9259561aed4a77db9909a29687a4ec8bdeff9c0f89274715553c71",
+          "header_indications": [
+            "MIT License"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "nautechsystems/nautilus_trader",
+      "requested_url": "https://github.com/nautechsystems/nautilus_trader",
+      "revision": "f05a1bee636f17a7426ca31e8aa1de3b13b38f54",
+      "revision_url": "https://github.com/nautechsystems/nautilus_trader/commit/f05a1bee636f17a7426ca31e8aa1de3b13b38f54",
+      "license": "LGPL-3.0",
+      "decision": "Event processing concepts only; no LGPL package dependency or adapter reuse.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/LICENSE",
+          "sha256": "ee907919ec88c9c017b1f8b608db20960b6598aefcc4fe58820bde955d65ed3c",
+          "bytes": 7651,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "crates/adapters/architect_ax/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/architect_ax/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/betfair/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/betfair/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/binance/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/binance/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/bitmex/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/bitmex/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/blockchain/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/blockchain/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/bybit/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/bybit/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/coinbase/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/coinbase/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/databento/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/databento/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/deribit/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/deribit/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/dydx/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/dydx/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/hyperliquid/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/hyperliquid/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/interactive_brokers/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/interactive_brokers/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/kraken/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/kraken/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/lighter/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/lighter/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/okx/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/okx/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/polymarket/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/polymarket/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/sandbox/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/sandbox/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/adapters/tardis/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/tardis/LICENSE",
+          "sha256": "ad9b25753454219df7622f788b8bfa9fb7df68f34d426cc1ea0c675b31a57f60",
+          "bytes": 16,
+          "kind": "license-or-notice",
+          "symlink_target": "../../../LICENSE"
+        },
+        {
+          "path": "crates/analysis/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/analysis/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/backtest/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/backtest/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/cli/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/cli/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/common/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/common/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/core/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/core/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/cryptography/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/cryptography/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/data/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/data/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/event_store/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/event_store/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/execution/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/execution/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/indicators/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/indicators/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/infrastructure/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/infrastructure/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/live/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/live/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/model/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/model/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/network/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/network/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/persistence/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/persistence/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/plugin/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/plugin/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/portfolio/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/portfolio/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/pyo3/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/pyo3/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/risk/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/risk/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/serialization/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/serialization/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/system/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/system/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/testkit/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/testkit/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "crates/trading/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/trading/LICENSE",
+          "sha256": "a2553752ed447e1147617c1b0bc46775232bbc2c9bf4654516721f9d488191d2",
+          "bytes": 13,
+          "kind": "license-or-notice",
+          "symlink_target": "../../LICENSE"
+        },
+        {
+          "path": "patches/pyo3-stub-gen/LICENSE-APACHE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/patches/pyo3-stub-gen/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "bytes": 10847,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "patches/pyo3-stub-gen/LICENSE-MIT",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/patches/pyo3-stub-gen/LICENSE-MIT",
+          "sha256": "8b58302eeac069dffa230bb1104375f3e0baffc189bd59811816e496e3caa05a",
+          "bytes": 1065,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "python/LICENSE",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/python/LICENSE",
+          "sha256": "ee907919ec88c9c017b1f8b608db20960b6598aefcc4fe58820bde955d65ed3c",
+          "bytes": 7651,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "crates/adapters/derive/tests/oracle-py/generate_oracle.py",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/derive/tests/oracle-py/generate_oracle.py",
+          "sha256": "b377c03bbb35a8df88a7cc5f95add556fdaaa145d1efdef7c23b75d75f2a8cc3",
+          "header_indications": [
+            "Lesser General"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "crates/adapters/lighter/tests/oracle-py/generate_oracle.py",
+          "url": "https://github.com/nautechsystems/nautilus_trader/blob/f05a1bee636f17a7426ca31e8aa1de3b13b38f54/crates/adapters/lighter/tests/oracle-py/generate_oracle.py",
+          "sha256": "8645379c256bf555703ccf57a6d38d6ec79eb2fe1841a115e6df94e6e1c5048b",
+          "header_indications": [
+            "Lesser General"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "polakowo/vectorbt",
+      "requested_url": "https://github.com/polakowo/vectorbt",
+      "revision": "34b6d5935e3ea3eccd549e2592bc0f455b8045f5",
+      "revision_url": "https://github.com/polakowo/vectorbt/commit/34b6d5935e3ea3eccd549e2592bc0f455b8045f5",
+      "license": "Apache-2.0 WITH Commons-Clause; docs AGPL-3.0",
+      "decision": "Exclude package/code reuse because of Commons Clause and separate documentation license.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE.md",
+          "url": "https://github.com/polakowo/vectorbt/blob/34b6d5935e3ea3eccd549e2592bc0f455b8045f5/LICENSE.md",
+          "sha256": "a914859a115b70e80956a3cbd613139ad74c04e5d1bd38da8bcc16725822ec84",
+          "bytes": 12321,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "docs/LICENSE.md",
+          "url": "https://github.com/polakowo/vectorbt/blob/34b6d5935e3ea3eccd549e2592bc0f455b8045f5/docs/LICENSE.md",
+          "sha256": "4df3c306dddaaf4baffdff5ca820cc679ac8cd6dc263c6a74517783e42fa7a3b",
+          "bytes": 34522,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "docs/docs/terms/license.md",
+          "url": "https://github.com/polakowo/vectorbt/blob/34b6d5935e3ea3eccd549e2592bc0f455b8045f5/docs/docs/terms/license.md",
+          "sha256": "1c8e78a20d22efc355b24e1c75e5beb6f877e1e4d6b4ab99e4b52bc222a51885",
+          "bytes": 12437,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "apps/candlestick-patterns/app.py",
+          "url": "https://github.com/polakowo/vectorbt/blob/34b6d5935e3ea3eccd549e2592bc0f455b8045f5/apps/candlestick-patterns/app.py",
+          "sha256": "e29a9e4a0c859fd671ac7944842009c88eef9743abc8393ba5a41fdf0b2d863c",
+          "header_indications": [
+            "Apache",
+            "Commons Clause"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "benchmarks/bench_engine.py",
+          "url": "https://github.com/polakowo/vectorbt/blob/34b6d5935e3ea3eccd549e2592bc0f455b8045f5/benchmarks/bench_engine.py",
+          "sha256": "529149299e1ebfa5b525933217276c497ba0f099ca3df671e2a0fad3db2e0c32",
+          "header_indications": [
+            "Apache",
+            "Commons Clause"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "kernc/backtesting.py",
+      "requested_url": "https://github.com/kernc/backtesting.py",
+      "revision": "ca2e2611621e472542ba90f7243a1fa06a7d7108",
+      "revision_url": "https://github.com/kernc/backtesting.py/commit/ca2e2611621e472542ba90f7243a1fa06a7d7108",
+      "license": "AGPL-3.0",
+      "decision": "Interface concepts only; no AGPL dependency, copied source, or execution backtester.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE.md",
+          "url": "https://github.com/kernc/backtesting.py/blob/ca2e2611621e472542ba90f7243a1fa06a7d7108/LICENSE.md",
+          "sha256": "ad858d53cae05eed9531ecd4c467440803acffe34c69de7b88e03affc5b6a1bd",
+          "bytes": 34283,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "backtesting/__init__.py",
+          "url": "https://github.com/kernc/backtesting.py/blob/ca2e2611621e472542ba90f7243a1fa06a7d7108/backtesting/__init__.py",
+          "sha256": "6eecd96f78ce4006429d16c1e270e25fbed46b449c933cd74a7c46da43a4c598",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "backtesting/_plotting.py",
+          "url": "https://github.com/kernc/backtesting.py/blob/ca2e2611621e472542ba90f7243a1fa06a7d7108/backtesting/_plotting.py",
+          "sha256": "d7716a06df169189650636faeb04ae97f6dfdf2d4cb99a8ba87ad37d3e0871a6",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "freqtrade/freqtrade",
+      "requested_url": "https://github.com/freqtrade/freqtrade",
+      "revision": "3d31927c8232830729e37ce9c36f230ab8d9c7c2",
+      "revision_url": "https://github.com/freqtrade/freqtrade/commit/3d31927c8232830729e37ce9c36f230ab8d9c7c2",
+      "license": "GPL-3.0",
+      "decision": "Configuration concepts only; no GPL dependency or copied strategy code.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/freqtrade/freqtrade/blob/3d31927c8232830729e37ce9c36f230ab8d9c7c2/LICENSE",
+          "sha256": "589ed823e9a84c56feb95ac58e7cf384626b9cbf4fda2a907bc36e103de1bad2",
+          "bytes": 35141,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "ft_client/LICENSE",
+          "url": "https://github.com/freqtrade/freqtrade/blob/3d31927c8232830729e37ce9c36f230ab8d9c7c2/ft_client/LICENSE",
+          "sha256": "1e881ecf2862d01e6e5bc2b861e46886d2a6fb01499c0c508a209a7271b13cf2",
+          "bytes": 10,
+          "kind": "license-or-notice",
+          "symlink_target": "../LICENSE"
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "build_helpers/binance_update_lev_tiers.py",
+          "url": "https://github.com/freqtrade/freqtrade/blob/3d31927c8232830729e37ce9c36f230ab8d9c7c2/build_helpers/binance_update_lev_tiers.py",
+          "sha256": "380b248c2909f4898ab79d73a85d9da7ef2a3c8063a0dd8c26763b3fde30ddf7",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "build_helpers/create_command_partials.py",
+          "url": "https://github.com/freqtrade/freqtrade/blob/3d31927c8232830729e37ce9c36f230ab8d9c7c2/build_helpers/create_command_partials.py",
+          "sha256": "ab02d120b62e399956d343e7d2d8a9e9cc598cbbdeba7e35490a1fcebb41d283",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "StockSharp/StockSharp",
+      "requested_url": "https://github.com/StockSharp/StockSharp",
+      "revision": "c049b1f9ee1653b158a9303115779a1f48e5534e",
+      "revision_url": "https://github.com/StockSharp/StockSharp/commit/c049b1f9ee1653b158a9303115779a1f48e5534e",
+      "license": "LicenseRef-StockSharp-Proprietary",
+      "decision": "Excluded: proprietary repository. No implementation source read or copied.",
+      "inventory_scope": "Complete recursive license/notice path inventory and terms only; implementation sources intentionally excluded.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/StockSharp/StockSharp/blob/c049b1f9ee1653b158a9303115779a1f48e5534e/LICENSE",
+          "sha256": "411e8dabf16d48306ad5dc415e6647b373d063710891ae3ce5f592733d5f2082",
+          "bytes": 1356,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "NOTICE",
+          "url": "https://github.com/StockSharp/StockSharp/blob/c049b1f9ee1653b158a9303115779a1f48e5534e/NOTICE",
+          "sha256": "b29aa9db071f16828263f7e991e07df890d59aa989b7ee055d98887fe411a077",
+          "bytes": 797,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "baobach/mlfinpy",
+      "requested_url": "https://github.com/baobach/mlfinpy",
+      "revision": "89511cc1ee4695beed0044bbbc6665d98ac4a5c5",
+      "revision_url": "https://github.com/baobach/mlfinpy/commit/89511cc1ee4695beed0044bbbc6665d98ac4a5c5",
+      "license": "MIT",
+      "decision": "Permissive methodology reference for labeling and purged validation; independently implemented.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/baobach/mlfinpy/blob/89511cc1ee4695beed0044bbbc6665d98ac4a5c5/LICENSE",
+          "sha256": "db54d4e2b7046968250ed5cf55294bcdb13d0f2f8616f0223382085116db303b",
+          "bytes": 1069,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "docs/conf.py",
+          "url": "https://github.com/baobach/mlfinpy/blob/89511cc1ee4695beed0044bbbc6665d98ac4a5c5/docs/conf.py",
+          "sha256": "814b1d10f1efae17dc446147dfb5717253c3adad087ed5b03a1379ff59f01970",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "mlfinpy/__init__.py",
+          "url": "https://github.com/baobach/mlfinpy/blob/89511cc1ee4695beed0044bbbc6665d98ac4a5c5/mlfinpy/__init__.py",
+          "sha256": "2eb066aa57fe5df3a8564c7280bcf8c3206f5a640cc37c6ac83d55c5e7875c5b",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "hudson-and-thames/mlfinlab",
+      "requested_url": "https://github.com/hudson-and-thames/mlfinlab",
+      "revision": "79dcc7120ec84110578f75b025a75850eb72fc73",
+      "revision_url": "https://github.com/hudson-and-thames/mlfinlab/commit/79dcc7120ec84110578f75b025a75850eb72fc73",
+      "license": "LicenseRef-HudsonThames-Proprietary",
+      "decision": "Explicitly excluded by project requirements. No code accessed, installed, or copied; license evidence only.",
+      "inventory_scope": "Complete recursive license/notice path inventory and terms only; implementation sources intentionally excluded.",
+      "license_evidence": [
+        {
+          "path": "LICENSE.txt",
+          "url": "https://github.com/hudson-and-thames/mlfinlab/blob/79dcc7120ec84110578f75b025a75850eb72fc73/LICENSE.txt",
+          "sha256": "12db2e63dc8b23b2fb90a54d6330fdc0425af0c8d0cd3f7c52a5580dd8aaf8eb",
+          "bytes": 23122,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "docs/source/additional_information/license.rst",
+          "url": "https://github.com/hudson-and-thames/mlfinlab/blob/79dcc7120ec84110578f75b025a75850eb72fc73/docs/source/additional_information/license.rst",
+          "sha256": "a24041004194a5431bffbcf39e1ffd53c5bab08fc39ea46e355d170d1436fe4e",
+          "bytes": 18249,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "stefan-jansen/machine-learning-for-trading",
+      "requested_url": "https://github.com/stefan-jansen/machine-learning-for-trading",
+      "revision": "072da7fec087dd38044ea038964e68ee5b9f4047",
+      "revision_url": "https://github.com/stefan-jansen/machine-learning-for-trading/commit/072da7fec087dd38044ea038964e68ee5b9f4047",
+      "license": "MIT",
+      "decision": "Research pipeline reference only; no execution content or bundled datasets.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/stefan-jansen/machine-learning-for-trading/blob/072da7fec087dd38044ea038964e68ee5b9f4047/LICENSE",
+          "sha256": "0094a98ecda4424d88af9ab717659aaee3d721c2653ff638aaf8bafbc58ce8c3",
+          "bytes": 1075,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "01_process_is_edge/factor_regimes.py",
+          "url": "https://github.com/stefan-jansen/machine-learning-for-trading/blob/072da7fec087dd38044ea038964e68ee5b9f4047/01_process_is_edge/factor_regimes.py",
+          "sha256": "e391f0cf3f92ec2f438d86bfde2d54fd988f02d4e002ee8bcdbc4aa9916b3bdf",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "01_process_is_edge/macro_regimes.py",
+          "url": "https://github.com/stefan-jansen/machine-learning-for-trading/blob/072da7fec087dd38044ea038964e68ee5b9f4047/01_process_is_edge/macro_regimes.py",
+          "sha256": "03eeb6988c8130ff7b1b1d3b65f00b11517566244ccf35bb4b791abd5dfebec0",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "AI4Finance-Foundation/FinRL",
+      "requested_url": "https://github.com/AI4Finance-Foundation/FinRL",
+      "revision": "2334a5fe6d30629157f13c3b0319e1637e15e123",
+      "revision_url": "https://github.com/AI4Finance-Foundation/FinRL/commit/2334a5fe6d30629157f13c3b0319e1637e15e123",
+      "license": "MIT",
+      "decision": "Optional architecture reference only; no reinforcement-learning execution environment included.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/AI4Finance-Foundation/FinRL/blob/2334a5fe6d30629157f13c3b0319e1637e15e123/LICENSE",
+          "sha256": "486a06be9075686b75b35649de0adf9076508c5d0cc5b00af7928b7a96bffe65",
+          "bytes": 1093,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "docs/source/conf.py",
+          "url": "https://github.com/AI4Finance-Foundation/FinRL/blob/2334a5fe6d30629157f13c3b0319e1637e15e123/docs/source/conf.py",
+          "sha256": "ad08558c888c63613f1d2e1d7385fc73ec523214fe0cd3b13e4120f43d061fdd",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "examples/FinRL_PaperTrading_Demo_refactored.py",
+          "url": "https://github.com/AI4Finance-Foundation/FinRL/blob/2334a5fe6d30629157f13c3b0319e1637e15e123/examples/FinRL_PaperTrading_Demo_refactored.py",
+          "sha256": "65454f1b80402fb8873b1ddf7d8cb9c4b2c8a89fe3a8f2887455dc8132dfef99",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "huseinzol05/Stock-Prediction-Models",
+      "requested_url": "https://github.com/huseinzol05/Stock-Prediction-Models",
+      "revision": "33266732b0b16188b565e0aeb6b24efa71161f6a",
+      "revision_url": "https://github.com/huseinzol05/Stock-Prediction-Models/commit/33266732b0b16188b565e0aeb6b24efa71161f6a",
+      "license": "Apache-2.0",
+      "decision": "Architecture reference only; do not use claimed performance as evidence. Sampled files retain Google Apache notices.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/huseinzol05/Stock-Prediction-Models/blob/33266732b0b16188b565e0aeb6b24efa71161f6a/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "bytes": 11357,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "deep-learning/access.py",
+          "url": "https://github.com/huseinzol05/Stock-Prediction-Models/blob/33266732b0b16188b565e0aeb6b24efa71161f6a/deep-learning/access.py",
+          "sha256": "ec7f1f420af0054daad3471dd20a9ac233d2e7677ad201df927087372a405469",
+          "header_indications": [
+            "Apache",
+            "Copyright 2017 Google"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "deep-learning/addressing.py",
+          "url": "https://github.com/huseinzol05/Stock-Prediction-Models/blob/33266732b0b16188b565e0aeb6b24efa71161f6a/deep-learning/addressing.py",
+          "sha256": "ad7e2f5c33b60ea8c43e8b64f5e92e45f123856e2dd8f306f4622d264b2df516",
+          "header_indications": [
+            "Apache",
+            "Copyright 2017 Google"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "pskrunner14/trading-bot",
+      "requested_url": "https://github.com/pskrunner14/trading-bot",
+      "revision": "940e443ffc05eb827c4dae286cdae53755c53291",
+      "revision_url": "https://github.com/pskrunner14/trading-bot/commit/940e443ffc05eb827c4dae286cdae53755c53291",
+      "license": "MIT",
+      "decision": "Concept reference only; no deep-Q execution agent dependency.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/pskrunner14/trading-bot/blob/940e443ffc05eb827c4dae286cdae53755c53291/LICENSE",
+          "sha256": "fe00fd5c31677ca0f7811da1017a266a7a1e4ae0a3fe9dddae3966a3aa5d8388",
+          "bytes": 1074,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "eval.py",
+          "url": "https://github.com/pskrunner14/trading-bot/blob/940e443ffc05eb827c4dae286cdae53755c53291/eval.py",
+          "sha256": "9a5e14747a5ef6dc973e9e7efcf4c81f3bd7a46458ea44d4070889c9cf9fa366",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "trading_bot/__init__.py",
+          "url": "https://github.com/pskrunner14/trading-bot/blob/940e443ffc05eb827c4dae286cdae53755c53291/trading_bot/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "TauricResearch/TradingAgents",
+      "requested_url": "https://github.com/TauricResearch/TradingAgents",
+      "revision": "be952b8eccb49720509af544c6675233bc1f10d0",
+      "revision_url": "https://github.com/TauricResearch/TradingAgents/commit/be952b8eccb49720509af544c6675233bc1f10d0",
+      "license": "Apache-2.0",
+      "decision": "Read-only analyst decomposition reference; no agent tools copied or execution capability.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/TauricResearch/TradingAgents/blob/be952b8eccb49720509af544c6675233bc1f10d0/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "bytes": 11357,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "cli/__init__.py",
+          "url": "https://github.com/TauricResearch/TradingAgents/blob/be952b8eccb49720509af544c6675233bc1f10d0/cli/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "cli/announcements.py",
+          "url": "https://github.com/TauricResearch/TradingAgents/blob/be952b8eccb49720509af544c6675233bc1f10d0/cli/announcements.py",
+          "sha256": "35d301132f36e32b5e6ff614f1c30586cb8dbb70109566aaaa2e2dde0f0bc3ac",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "virattt/ai-hedge-fund",
+      "requested_url": "https://github.com/virattt/ai-hedge-fund",
+      "revision": "fc1bf250ead209ae5f02c39c3d0062c4bb554505",
+      "revision_url": "https://github.com/virattt/ai-hedge-fund/commit/fc1bf250ead209ae5f02c39c3d0062c4bb554505",
+      "license": "MIT",
+      "decision": "Analyst persona concept reference only; no manager/action simulation or code dependency.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/virattt/ai-hedge-fund/blob/fc1bf250ead209ae5f02c39c3d0062c4bb554505/LICENSE",
+          "sha256": "6cb192c4a37c69c84459d2e1b3da7af51b06d91e35be521c898107bdae18e2a4",
+          "bytes": 1068,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "hedge_fund/__init__.py",
+          "url": "https://github.com/virattt/ai-hedge-fund/blob/fc1bf250ead209ae5f02c39c3d0062c4bb554505/hedge_fund/__init__.py",
+          "sha256": "5ca8b0d1d223028261a4fd53befda5420200e9d699d4ee6f70209564b86a1418",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "hedge_fund/backtesting/__init__.py",
+          "url": "https://github.com/virattt/ai-hedge-fund/blob/fc1bf250ead209ae5f02c39c3d0062c4bb554505/hedge_fund/backtesting/__init__.py",
+          "sha256": "73c70b51d202220f81569bce7144c20525081dda7e9c05940e2a0be71c3c879d",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "LLMQuant/awesome-trading-agents",
+      "requested_url": "https://github.com/LLMQuant/awesome-trading-agents",
+      "revision": "a5bcbc6a192386e7c625976082715dabed9bfb26",
+      "revision_url": "https://github.com/LLMQuant/awesome-trading-agents/commit/a5bcbc6a192386e7c625976082715dabed9bfb26",
+      "license": "CC0-1.0",
+      "decision": "Link discovery only. Each linked project requires its own audit before use.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/LLMQuant/awesome-trading-agents/blob/a5bcbc6a192386e7c625976082715dabed9bfb26/LICENSE",
+          "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+          "bytes": 7048,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "georgezouq/awesome-ai-in-finance",
+      "requested_url": "https://github.com/georgezouq/awesome-ai-in-finance",
+      "revision": "2863ab2389aa1b1b7c68af5fa87c47236ed61421",
+      "revision_url": "https://github.com/georgezouq/awesome-ai-in-finance/commit/2863ab2389aa1b1b7c68af5fa87c47236ed61421",
+      "license": "CC0-1.0",
+      "decision": "Link discovery only. CC0 does not license linked third-party projects.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/georgezouq/awesome-ai-in-finance/blob/2863ab2389aa1b1b7c68af5fa87c47236ed61421/LICENSE",
+          "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+          "bytes": 7048,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "twopirllc/pandas-ta",
+      "requested_url": "https://github.com/twopirllc/pandas-ta",
+      "revision": null,
+      "revision_url": null,
+      "license": "UNAVAILABLE",
+      "decision": "Excluded: upstream returned 404; revision and license could not be verified. Use pandas-ta-classic.",
+      "inventory_scope": "Unavailable: GitHub commits endpoint returned 404; no pin or license asserted.",
+      "license_evidence": [],
+      "sampled_files": [],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": "Not Found"
+    },
+    {
+      "repository": "TA-Lib/ta-lib-python",
+      "requested_url": "https://github.com/TA-Lib/ta-lib-python",
+      "revision": "290dd191d1bd8bc07ce7da65b8b70c38f174124b",
+      "revision_url": "https://github.com/TA-Lib/ta-lib-python/commit/290dd191d1bd8bc07ce7da65b8b70c38f174124b",
+      "license": "BSD-2-Clause",
+      "decision": "Optional indicator dependency; preserve BSD license and separate COPYRIGHT when distributing.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "COPYRIGHT",
+          "url": "https://github.com/TA-Lib/ta-lib-python/blob/290dd191d1bd8bc07ce7da65b8b70c38f174124b/COPYRIGHT",
+          "sha256": "e75a0e1fe36190063aba8eb9076962ff31c5d71d540c002a5c47b0e65415c3bf",
+          "bytes": 163,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/TA-Lib/ta-lib-python/blob/290dd191d1bd8bc07ce7da65b8b70c38f174124b/LICENSE",
+          "sha256": "78dbb65a3526ca5cf3c9eb8a0648d6293651ca40f6d414a626b45ef2406ae5d0",
+          "bytes": 1269,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "docs/generate_html_pages.py",
+          "url": "https://github.com/TA-Lib/ta-lib-python/blob/290dd191d1bd8bc07ce7da65b8b70c38f174124b/docs/generate_html_pages.py",
+          "sha256": "50a27970f7d63a7c0bdb3b17b6ef65ea1f34546672136a7078b85b93f0e02c85",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "setup.py",
+          "url": "https://github.com/TA-Lib/ta-lib-python/blob/290dd191d1bd8bc07ce7da65b8b70c38f174124b/setup.py",
+          "sha256": "cc89d98870e014c2720cba71650ef37362432c663687d5b1be3371aacf802ec8",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "ranaroussi/quantstats",
+      "requested_url": "https://github.com/ranaroussi/quantstats",
+      "revision": "fbd10daed0227aa0d10da6513f1b15e7e98d7fae",
+      "revision_url": "https://github.com/ranaroussi/quantstats/commit/fbd10daed0227aa0d10da6513f1b15e7e98d7fae",
+      "license": "Apache-2.0",
+      "decision": "Optional research analytics reference; no portfolio-performance assumptions copied.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE.txt",
+          "url": "https://github.com/ranaroussi/quantstats/blob/fbd10daed0227aa0d10da6513f1b15e7e98d7fae/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "quantstats/__init__.py",
+          "url": "https://github.com/ranaroussi/quantstats/blob/fbd10daed0227aa0d10da6513f1b15e7e98d7fae/quantstats/__init__.py",
+          "sha256": "7cb837e835382d7d8ed46471cdcf6b51a1455d83a239be9ab488d8f59e7985b2",
+          "header_indications": [
+            "Apache"
+          ],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "quantstats/_compat.py",
+          "url": "https://github.com/ranaroussi/quantstats/blob/fbd10daed0227aa0d10da6513f1b15e7e98d7fae/quantstats/_compat.py",
+          "sha256": "e1c99f817d01c2586513791ae81e764311b1ab8a0291386f620bbb7b0c164b2e",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "robertmartin8/PyPortfolioOpt",
+      "requested_url": "https://github.com/robertmartin8/PyPortfolioOpt",
+      "revision": "a6638d2e06dae6f444fd022cfd4b3c528902a85b",
+      "revision_url": "https://github.com/robertmartin8/PyPortfolioOpt/commit/a6638d2e06dae6f444fd022cfd4b3c528902a85b",
+      "license": "MIT",
+      "decision": "Optional analytical sizing reference only; no broker synchronization or holdings model.",
+      "inventory_scope": "Pinned source archive file-name inventory (API rate limited), root LICENSE, selected source header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/robertmartin8/PyPortfolioOpt/blob/a6638d2e06dae6f444fd022cfd4b3c528902a85b/LICENSE",
+          "sha256": "0e401d63a7b31bde363ca577a2537af1c345fccbf532edc55cb589f568b2a883",
+          "bytes": 1077,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "pypfopt/base_optimizer.py",
+          "url": "https://github.com/robertmartin8/PyPortfolioOpt/blob/a6638d2e06dae6f444fd022cfd4b3c528902a85b/pypfopt/base_optimizer.py",
+          "sha256": "b7359f821614ad4d2324957627a7fcd83d1bfa8463abffe90e9c920e10276780",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "README.md",
+          "url": "https://github.com/robertmartin8/PyPortfolioOpt/blob/a6638d2e06dae6f444fd022cfd4b3c528902a85b/README.md",
+          "sha256": "aa39aacf964b967b8b23063f91eeb5997136e10e40fb62e7c5a848e348a00123",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "ranaroussi/yfinance",
+      "requested_url": "https://github.com/ranaroussi/yfinance",
+      "revision": "3d9d2f0cacb662bff689874cd6113bae3a30a885",
+      "revision_url": "https://github.com/ranaroussi/yfinance/commit/3d9d2f0cacb662bff689874cd6113bae3a30a885",
+      "license": "Apache-2.0",
+      "decision": "Optional historical-data adapter only after data-use terms verification. Software license does not grant data redistribution.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE.txt",
+          "url": "https://github.com/ranaroussi/yfinance/blob/3d9d2f0cacb662bff689874cd6113bae3a30a885/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "doc/source/conf.py",
+          "url": "https://github.com/ranaroussi/yfinance/blob/3d9d2f0cacb662bff689874cd6113bae3a30a885/doc/source/conf.py",
+          "sha256": "24bc2fb54c2c02dff2bd4448a9c858f134bcbbdeccced0571964367fcffea3d3",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "doc/source/reference/examples/auth.py",
+          "url": "https://github.com/ranaroussi/yfinance/blob/3d9d2f0cacb662bff689874cd6113bae3a30a885/doc/source/reference/examples/auth.py",
+          "sha256": "abcdf0e0f21adfdf02ecc45f4f8e533087cec85c6b9f4e57347b555dce1a09d2",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "tradingview/lightweight-charts",
+      "requested_url": "https://github.com/tradingview/lightweight-charts",
+      "revision": "d4b20359106aa126f1647b6673dbafd0218ab5ce",
+      "revision_url": "https://github.com/tradingview/lightweight-charts/commit/d4b20359106aa126f1647b6673dbafd0218ab5ce",
+      "license": "Apache-2.0; bundled tslib 0BSD",
+      "decision": "Approved chart dependency for both surfaces. Distribute package license/notices and visible TradingView attribution/link.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/LICENSE",
+          "sha256": "70c9d5382506dd184465425c08a99ad9bd6d9ac1313c252968ba0b585e5ef823",
+          "bytes": 11347,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "NOTICE",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/NOTICE",
+          "sha256": "f76c6afab94884448f0426e30d6e9d555ca7247894cd3484e477d2f87513036e",
+          "bytes": 101,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "packages/create-lwc-plugin/LICENSE",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/packages/create-lwc-plugin/LICENSE",
+          "sha256": "85184cfa3a2172d4c9045bc9a8a1decc8862df18d79d4149cfbb68152f7f6871",
+          "bytes": 16877,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "packages/create-lwc-plugin/template-workspace/LICENSE",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/packages/create-lwc-plugin/template-workspace/LICENSE",
+          "sha256": "70c9d5382506dd184465425c08a99ad9bd6d9ac1313c252968ba0b585e5ef823",
+          "bytes": 11347,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "packages/create-lwc-plugin/template-workspace/NOTICE",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/packages/create-lwc-plugin/template-workspace/NOTICE",
+          "sha256": "a72a28df06e81b64755888c0749988f562e508810203a645a1b8e57ec1d1a94f",
+          "bytes": 124,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "packages/lwc-toolkit/LICENSE",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/packages/lwc-toolkit/LICENSE",
+          "sha256": "70c9d5382506dd184465425c08a99ad9bd6d9ac1313c252968ba0b585e5ef823",
+          "bytes": 11347,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "packages/lwc-toolkit/NOTICE",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/packages/lwc-toolkit/NOTICE",
+          "sha256": "1a6bde639a975bf14a73411ca340556478ce92867fad281105330da45cee758f",
+          "bytes": 119,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        },
+        {
+          "path": "tests/fixtures/plugins/valid-plugin/NOTICE",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/tests/fixtures/plugins/valid-plugin/NOTICE",
+          "sha256": "32222e9b03c31c141e73a88711defd5c8f6609b0e21ccb38eeb397ac9d40994f",
+          "bytes": 85,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "debug/default/index.ts",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/debug/default/index.ts",
+          "sha256": "791ddc3bffa2c84c8a5218f09e3aa8ad4dbba619a5d143dade394586c4ce0d51",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "indicator-examples/src/helpers/assertions.ts",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/indicator-examples/src/helpers/assertions.ts",
+          "sha256": "9713a189c695eea7bcef35df68c760a1d6daef07d5025d60fe40e5a951c8ced0",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "README.md",
+          "url": "https://github.com/tradingview/lightweight-charts/blob/d4b20359106aa126f1647b6673dbafd0218ab5ce/README.md",
+          "sha256": "e32aae65b24825b9368a25c6de05e7a93c0fe9fff45e5c02cd24fa7e1de81db5",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "paperswithbacktest/awesome-systematic-trading",
+      "requested_url": "https://github.com/paperswithbacktest/awesome-systematic-trading",
+      "revision": "4e23dd84c9ff746ddfcbc856316bcbcef0855b81",
+      "revision_url": "https://github.com/paperswithbacktest/awesome-systematic-trading/commit/4e23dd84c9ff746ddfcbc856316bcbcef0855b81",
+      "license": "NOASSERTION",
+      "decision": "Links only: no root license found. Do not copy curated descriptions, scripts, or linked code.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "README.md",
+          "url": "https://github.com/paperswithbacktest/awesome-systematic-trading/blob/4e23dd84c9ff746ddfcbc856316bcbcef0855b81/README.md",
+          "sha256": "456caf198b42ef5e8da1c4fd937229af49ade6061482521c4817a35f4d200a09",
+          "bytes": 90734,
+          "kind": "readme-no-license",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "scripts/build_strategies_table.py",
+          "url": "https://github.com/paperswithbacktest/awesome-systematic-trading/blob/4e23dd84c9ff746ddfcbc856316bcbcef0855b81/scripts/build_strategies_table.py",
+          "sha256": "38b4adeb936f0c0dc0a2f214fd3f47a0f9f63a4dd95bb0740b6f03b6e5201f8d",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "scripts/check_links.py",
+          "url": "https://github.com/paperswithbacktest/awesome-systematic-trading/blob/4e23dd84c9ff746ddfcbc856316bcbcef0855b81/scripts/check_links.py",
+          "sha256": "b15cb4a348955df7fbc3553d20bf2998205d918387b2073da7ea96e961fd4702",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "leoncuhk/awesome-quant-ai",
+      "requested_url": "https://github.com/leoncuhk/awesome-quant-ai",
+      "revision": "ccfff58bce85b9afc47be45068445c5ae0093372",
+      "revision_url": "https://github.com/leoncuhk/awesome-quant-ai/commit/ccfff58bce85b9afc47be45068445c5ae0093372",
+      "license": "Apache-2.0",
+      "decision": "Academic reference discovery only. Audit each linked implementation independently.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/leoncuhk/awesome-quant-ai/blob/ccfff58bce85b9afc47be45068445c5ae0093372/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "bytes": 11357,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    },
+    {
+      "repository": "xgboosted/pandas-ta-classic",
+      "requested_url": "https://github.com/xgboosted/pandas-ta-classic",
+      "revision": "f241c5acf7511850f9b238c043818e3e486b434f",
+      "revision_url": "https://github.com/xgboosted/pandas-ta-classic/commit/f241c5acf7511850f9b238c043818e3e486b434f",
+      "license": "MIT",
+      "decision": "Approved default Python indicator dependency. Preserve MIT notice; Python >=3.10 supports target 3.12; numpy/pandas >=2.0.",
+      "inventory_scope": "Complete recursive file-name inventory, license/notice contents, and selected source headers; not every source-file header.",
+      "license_evidence": [
+        {
+          "path": "LICENSE",
+          "url": "https://github.com/xgboosted/pandas-ta-classic/blob/f241c5acf7511850f9b238c043818e3e486b434f/LICENSE",
+          "sha256": "c24a2595fb468d1c68384a6df162a6c01ff53baf7411d750c45cc5276b8a3701",
+          "bytes": 1171,
+          "kind": "license-or-notice",
+          "symlink_target": null
+        }
+      ],
+      "sampled_files": [
+        {
+          "path": "docs/conf.py",
+          "url": "https://github.com/xgboosted/pandas-ta-classic/blob/f241c5acf7511850f9b238c043818e3e486b434f/docs/conf.py",
+          "sha256": "3c6a37643fc946825f83abadfca3d8402bb35ac9ed9df0b0b29bc9f2599e9dc1",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "examples/backtesting_py_strategy.py",
+          "url": "https://github.com/xgboosted/pandas-ta-classic/blob/f241c5acf7511850f9b238c043818e3e486b434f/examples/backtesting_py_strategy.py",
+          "sha256": "1feaee85e23f44cd6f07a60fa5664e82fc8a5e8d27419d4a971e1a87035b2b16",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "pyproject.toml",
+          "url": "https://github.com/xgboosted/pandas-ta-classic/blob/f241c5acf7511850f9b238c043818e3e486b434f/pyproject.toml",
+          "sha256": "616da2a8cb7f66d4f5f4e4a1c991eb6a85321ebe0b00997ec158a46eb14f70bc",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        },
+        {
+          "path": "pandas_ta_classic/overlap/ema.py",
+          "url": "https://github.com/xgboosted/pandas-ta-classic/blob/f241c5acf7511850f9b238c043818e3e486b434f/pandas_ta_classic/overlap/ema.py",
+          "sha256": "b79792172090c5d98af4f3b632febf566c3f35510d1a28ef7ec9d09b5148eae3",
+          "header_indications": [],
+          "review_scope": "Header and package metadata only; no code imported."
+        }
+      ],
+      "notice_obligation": "Preserve the exact upstream license, relevant copyright and NOTICE files in every redistributed approved package; re-audit any future copied source file individually.",
+      "unresolved": null
+    }
+  ]
+}
