@@ -21,7 +21,8 @@ test('authenticated public records work through the real Next proxy',async({page
   await expect(detail.getByText('Unavailable; no exit inferred')).toBeVisible();
   await detail.getByRole('button',{name:'Ask about this trade',exact:true}).click();
   await expect(detail.getByText(/SYNTHETIC EXAMPLE/)).toBeVisible();
-  await expect(detail.getByRole('link',{name:'Public activity source'})).toBeVisible();
+  await detail.getByRole('button',{name:/Public activity source/}).click();
+  await expect(detail.getByRole('region',{name:'Evidence details',exact:true}).getByRole('link',{name:'Open original source',exact:true})).toBeVisible();
   const evidence=await page.request.get('/api/v1/public-traders/activity?limit=1');
   expect(evidence.headers()['cache-control']).toContain('no-store');
   const rows=await evidence.json();expect(rows.total).toBe(3);

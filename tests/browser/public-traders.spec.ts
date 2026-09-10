@@ -23,7 +23,7 @@ async function mockWorkspace(page: Page) {
       body = { items: filtered ? [] : [trader], total: filtered ? 0 : 1, limit: 12, offset: 0 };
     } else if (path === '/public-traders/activity') body = { items: [activity], total: 1, limit: 12, offset: 0 };
     else if (path.startsWith('/public-traders/activity/')) body = { activity, trader, chart, market_context_reason: 'IEX context does not represent the public trader’s performance.', reference_move_percent: null, llm_allowed: false };
-    else if (path === '/chat') body = { message: 'Local evidence: no sale or motive can be inferred.', citations: [{ label: 'Public source record', timestamp: observed, url: trader.source_url, data_id: activity.id }], mode: 'local', cost_usd: 0 };
+    else if (path === '/chat') body = { message: 'Local evidence: no sale or motive can be inferred.', citations: [{ label: 'Public source record', timestamp: observed, url: trader.source_url, data_id: activity.id, provider: null, feed: null, available_at: null, observation: null }], mode: 'local', cost_usd: 0 };
     else return route.fulfill({ status: 404, json: { detail: 'Unexpected test route' } });
     await route.fulfill({ json: body });
   });
@@ -62,7 +62,10 @@ test('public record preserves unknown exits and sends activity-linked local ques
   await detail.getByRole('button', { name: 'Ask about this trade' }).click();
   expect((await request).postDataJSON()).toMatchObject({ activity_id: activity.id, symbol: 'SPY', debate: false });
   await expect(detail.getByText('Local evidence: no sale or motive can be inferred.')).toBeVisible();
-  await expect(detail.getByRole('link', { name: 'Public source record' })).toHaveAttribute('href', trader.source_url);
+  await detail.getByRole('button', { name: /Public source record/ }).click();
+  const evidence = detail.getByRole('region', { name: 'Evidence details', exact: true });
+  await expect(evidence.getByRole('link', { name: 'Open original source', exact: true })).toHaveAttribute('href', trader.source_url);
+  await expect(evidence.getByText('Exact supporting observation is unavailable for this saved answer.', { exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
