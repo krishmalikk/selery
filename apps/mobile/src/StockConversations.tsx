@@ -10,6 +10,7 @@ import {
 } from "@selery/shared";
 import { useSession } from "./session";
 import { NativeChart } from "./NativeChart";
+import { ResearchMarkdown } from "./ResearchMarkdown";
 import { Button, Card, ExternalLink, FeedBadge, Input, Page, c, styles } from "./ui";
 
 const pageSize = 20;
@@ -17,14 +18,20 @@ const requestId = () => `mobile_${Date.now().toString(36)}_${Math.random().toStr
 const errorText = (e: unknown) => e instanceof Error ? e.message : "Request unavailable. Try again.";
 
 export function StockConversations() {
-  const { symbol: routeSymbol } = useLocalSearchParams<{ symbol?: string | string[] }>();
+  const { symbol: routeSymbol, conversation: routeConversation } = useLocalSearchParams<{ symbol?: string | string[]; conversation?: string }>();
   const initialSymbol = (Array.isArray(routeSymbol) ? routeSymbol[0] : routeSymbol) || "";
   const { client, authenticated } = useSession();
   const router = useRouter();
   const [symbol, setSymbol] = useState(initialSymbol.toUpperCase());
   const [items, setItems] = useState<Conversation[]>([]);
   const [offset, setOffset] = useState(0);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [title, setTitle] = useState("");
+  const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(false);
+  const latestDetail = useRef<ConversationDetail | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(routeConversation || null);
   const [detail, setDetail] = useState<ConversationDetail | null>(null);
   const [chart, setChart] = useState<ChartResponse | null>(null);
   const [timeframe, setTimeframe] = useState<Timeframe>("5m");
@@ -50,11 +57,15 @@ export function StockConversations() {
       setDetail(null);
       setChart(null);
       setDraft("");
+      setTitle(""); setSearch(""); setSearchQuery("");
       setError("");
       setChartError("");
       setBusy(false);
       setLoading(false);
-      attempted.current = null;
+      // Keep an in-flight request identity across background/foreground transitions.
+      if (!authenticated) attempted.current = null;
+      latestDetail.current = null;
+      pausedRef.current = false; setPaused(false);
       mutating.current = false;
     }
     setActive(authenticated && AppState.currentState === "active");
@@ -64,6 +75,8 @@ export function StockConversations() {
     });
     return () => { subscription.remove(); clearPrivateView(); };
   }, [authenticated, client]));
+
+  useEffect(() => { if (routeConversation) select(routeConversation); }, [routeConversation]);
 
   useEffect(() => { if (!selectedId) setSymbol(initialSymbol.toUpperCase()); }, [initialSymbol]);
 
@@ -78,25 +91,32 @@ export function StockConversations() {
     const current = generation.current;
     let disposed = false;
     let inFlight = false;
+    let lastRead = 0;
+    let lastChart = 0;
     const valid = () => !disposed && current === generation.current;
     async function refresh() {
-      if (inFlight || mutating.current) return;
+      if (inFlight || (mutating.current && !selectedId)) return;
+      const streaming = mutating.current || latestDetail.current?.messages.some((message) => message.status === "pending");
+      if (lastRead && Date.now() - lastRead < (streaming ? 650 : 30_000)) return;
+      lastRead = Date.now();
       inFlight = true;
       const mutationVersion = mutation.current;
       const currentRead = () => valid() && mutationVersion === mutation.current;
       setLoading(true);
       try {
         if (!selectedId) {
-          const result = await client.conversations(pageSize, offset);
+          const result = await client.conversations(pageSize, offset, searchQuery);
           if (currentRead()) { setItems(result); setError(""); }
         } else {
           const result = await client.conversation(selectedId);
           if (!currentRead()) return;
-          setDetail(result);
+          latestDetail.current = result;
+          if (!pausedRef.current) setDetail(result);
           setError("");
           try {
-            const value = await client.chart(result.conversation.symbol, timeframe, "iex", 200);
-            if (currentRead()) { setChart(value); setChartError(""); }
+            if (lastChart && Date.now() - lastChart < 30_000) return;
+            const value = result.conversation.signal ? await client.conversationChart(selectedId) : await client.chart(result.conversation.symbol, timeframe, "iex", 200);
+            if (currentRead()) { setChart(value); setChartError(""); lastChart = Date.now(); }
           } catch (e) { if (currentRead()) setChartError(errorText(e)); }
         }
       } catch (e) { if (currentRead()) {
@@ -109,13 +129,16 @@ export function StockConversations() {
     }
     void refresh();
     // Reads only. Entering a conversation and polling never invoke the LLM.
-    const timer = setInterval(() => void refresh(), 30_000);
+    const timer = setInterval(() => void refresh(), selectedId ? 700 : 30_000);
     return () => { disposed = true; clearInterval(timer); };
-  }, [active, client, offset, selectedId, timeframe]);
+  }, [active, client, offset, selectedId, timeframe, searchQuery]);
 
   function select(id: string | null) {
     generation.current++;
     setSelectedId(id);
+    pausedRef.current = false; setPaused(false);
+    latestDetail.current = null;
+    setTitle("");
     setDetail(null);
     setChart(null);
     setDraft("");
@@ -127,6 +150,8 @@ export function StockConversations() {
   }
 
   async function create() {
+    if (mutating.current) return;
+    mutating.current = true;
     const current = generation.current;
     setBusy(true);
     setError("");
@@ -134,25 +159,27 @@ export function StockConversations() {
       const result = await client.createConversation(symbol.trim().toUpperCase());
       if (current === generation.current) select(result.id);
     } catch (e) { if (current === generation.current) setError(errorText(e)); }
-    finally { if (current === generation.current) setBusy(false); }
+    finally { if (current === generation.current) { setBusy(false); mutating.current = false; } }
   }
 
   async function send() {
-    if (!selectedId || !draft.trim() || busy) return;
+    if (!selectedId || !draft.trim() || busy || mutating.current) return;
     const current = generation.current;
     const message = draft.trim();
     if (!attempted.current || attempted.current.conversationId !== selectedId || attempted.current.message !== message) {
-      attempted.current = { conversationId: selectedId, message, id: requestId(), timeframe };
+      attempted.current = { conversationId: selectedId, message, id: requestId(), timeframe: detail?.conversation.signal?.timeframe || timeframe };
     }
     const attempt = attempted.current;
     mutation.current++;
     mutating.current = true;
     setBusy(true);
+    pausedRef.current = false; setPaused(false);
     setError("");
     try {
       const result = await client.sendConversationMessage(selectedId, message, attempt.id, attempt.timeframe);
       if (current !== generation.current) return;
-      setDetail(result);
+      latestDetail.current = result;
+      if (!pausedRef.current) setDetail(result);
       setDraft("");
       attempted.current = null;
     } catch (e) {
@@ -161,12 +188,34 @@ export function StockConversations() {
       try {
         const result = await client.conversation(selectedId);
         if (current !== generation.current) return;
-        setDetail(result);
+        latestDetail.current = result;
+        if (!pausedRef.current) setDetail(result);
         // Only a confirmed terminal failure allows a new paid attempt.
         const turn = result.messages.find((m) => m.id === `${selectedId}:${attempt.id}`);
         if (turn?.status === "failed") attempted.current = null;
       } catch { /* Keep the draft and request ID until the user retries. */ }
     } finally { if (current === generation.current) { setBusy(false); mutating.current = false; } }
+  }
+
+  function toggleDisplay() {
+    pausedRef.current = !pausedRef.current;
+    setPaused(pausedRef.current);
+    if (!pausedRef.current && latestDetail.current) setDetail(latestDetail.current);
+  }
+
+  async function updateConversation(kind: "rename" | "summary") {
+    if (!selectedId || busy || mutating.current) return;
+    const current = generation.current;
+    mutation.current++; mutating.current = true; setBusy(true); setError("");
+    try {
+      const conversation = kind === "rename" ? await client.renameConversation(selectedId, title.trim()) : await client.summarizeConversation(selectedId);
+      if (current === generation.current) {
+        setDetail((previous) => previous ? { ...previous, conversation } : previous);
+        if (latestDetail.current) latestDetail.current = { ...latestDetail.current, conversation };
+        setTitle("");
+      }
+    } catch (e) { if (current === generation.current) setError(errorText(e)); }
+    finally { if (current === generation.current) { setBusy(false); mutating.current = false; } }
   }
 
   async function remove() {
@@ -191,6 +240,8 @@ export function StockConversations() {
       <Button title={busy ? "Creating…" : "Start conversation"} disabled={busy || !/^[A-Za-z][A-Za-z0-9.-]{0,11}$/.test(symbol.trim())} onPress={() => void create()} />
       {!!error && <Text accessibilityRole="alert" style={styles.warning}>{error}</Text>}
       <Text style={styles.heading}>Saved conversations</Text>
+      <Input accessibilityLabel="Search conversations" placeholder="Search saved conversations" value={search} onChangeText={setSearch} maxLength={100} />
+      <Button title="Search" onPress={() => { setOffset(0); setItems([]); setSearchQuery(search.trim()); }} />
       {loading && <Text style={styles.muted}>Loading conversations…</Text>}
       {!loading && !items.length && <Text style={styles.muted}>No conversations on this page.</Text>}
       {items.map((item) => <Pressable key={item.id} accessibilityRole="button" accessibilityLabel={`Open ${item.symbol} conversation`} onPress={() => select(item.id)}>
@@ -205,6 +256,7 @@ export function StockConversations() {
   );
 
   const pending = detail?.messages.some((m) => m.status === "pending") || false;
+  const boundSignal = detail?.conversation.signal;
   return (
     <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <View style={s.header}>
@@ -213,8 +265,9 @@ export function StockConversations() {
         <Pressable accessibilityRole="button" accessibilityLabel="Delete conversation" disabled={busy || pending} onPress={() => Alert.alert("Delete conversation?", "This removes its saved messages.", [{ text: "Cancel", style: "cancel" }, { text: "Delete", style: "destructive", onPress: () => void remove() }])}><Text style={[styles.muted, (busy || pending) && { opacity: 0.4 }]}>Delete</Text></Pressable>
       </View>
       <View style={s.chart}>
+        {boundSignal && <Text style={styles.warning}>Fixed signal · {boundSignal.strategy} · {formatTime(boundSignal.time)} · dated chart {detail?.conversation.chart_start ? formatTime(detail.conversation.chart_start) : "unavailable"} – {detail?.conversation.chart_end ? formatTime(detail.conversation.chart_end) : "unavailable"}</Text>}
         <View style={styles.row}>
-          <View style={styles.wrap}>{(["5m", "1h", "1D"] as const).map((value) => <Pressable key={value} accessibilityRole="button" disabled={busy || pending} accessibilityState={{ selected: timeframe === value, disabled: busy || pending }} onPress={() => { if (value !== timeframe) { setChart(null); setChartError(""); setTimeframe(value); } }} style={[s.timeframe, timeframe === value && { borderColor: c.accent }]}><Text style={styles.muted}>{value}</Text></Pressable>)}</View>
+          <View style={styles.wrap}>{(["5m", "1h", "1D"] as const).map((value) => <Pressable key={value} accessibilityRole="button" disabled={busy || pending || !!boundSignal} accessibilityState={{ selected: (boundSignal?.timeframe || timeframe) === value, disabled: busy || pending || !!boundSignal }} onPress={() => { if (value !== timeframe) { setChart(null); setChartError(""); setTimeframe(value); } }} style={[s.timeframe, (boundSignal?.timeframe || timeframe) === value && { borderColor: c.accent }]}><Text style={styles.muted}>{value}</Text></Pressable>)}</View>
           {chart && <View style={styles.row}><Text style={styles.text}>{formatPrice(chart.bars.at(-1)?.close)}</Text><FeedBadge feed={chart.provenance.feed} /></View>}
         </View>
         {chart ? <>
@@ -227,17 +280,26 @@ export function StockConversations() {
         {!!chartError && <Text numberOfLines={2} style={styles.warning}>{chartError}</Text>}
       </View>
       <ScrollView ref={transcript} style={s.messages} contentContainerStyle={s.messageContent} keyboardShouldPersistTaps="handled" onContentSizeChange={() => transcript.current?.scrollToEnd({ animated: false })}>
+        {detail && <View style={{ gap: 8 }}>
+          <Text style={styles.heading}>{detail.conversation.title}</Text>
+          <Input accessibilityLabel="Conversation title" value={title} onChangeText={setTitle} placeholder="New conversation title" maxLength={100} />
+          <View style={styles.wrap}>
+            <Button title="Rename" disabled={busy || pending || !title.trim()} onPress={() => void updateConversation("rename")} />
+            <Button title="Summarize history" disabled={busy || pending || !detail.messages.length} onPress={() => void updateConversation("summary")} />
+          </View>
+          {detail.conversation.summary && <Card><Text style={styles.heading}>Conversation history summary</Text><Text style={styles.warning}>Earlier conversation text; not current evidence. {detail.conversation.summary_at}</Text><Text selectable style={styles.text}>{detail.conversation.summary}</Text></Card>}
+        </View>}
         {detail && !detail.messages.length && <Text style={styles.muted}>Ask a question about {detail.conversation.symbol}. Follow-up questions use this conversation’s earlier messages. Start another conversation to discuss a different stock.</Text>}
         {detail?.messages.map((message) => <View key={message.id} style={[s.message, message.role === "user" && s.user]}>
           <Text style={styles.muted}>{message.role === "user" ? "You" : message.mode === "local" ? "Assistant · local explanation" : "Assistant"} · {new Date(message.created_at).toLocaleTimeString()}{message.cost_usd > 0 ? ` · $${message.cost_usd.toFixed(4)}` : ""}</Text>
-          <Text selectable style={styles.text}>{message.message}</Text>
-          {message.status === "pending" && <Text style={styles.warning}>Response pending…</Text>}
+          <ResearchMarkdown text={message.message} citations={message.citations} />
+          {message.status === "pending" && <Text style={styles.warning}>{message.phase === "generating" ? "Generating response…" : "Retrieving research context…"}</Text>}
           {message.status === "failed" && <Text style={styles.warning}>{message.error || "Response failed. You can retry your question."}</Text>}
-          {message.citations.map((citation, i) => citation.url ? <ExternalLink key={i} url={citation.url} label={citation.label} /> : <Text key={i} style={styles.muted}>{citation.label} · {citation.timestamp} · {citation.data_id}</Text>)}
         </View>)}
         {busy && <Text style={styles.muted}>Waiting for the assistant…</Text>}
       </ScrollView>
       <View style={s.composer}>
+        {(busy || pending || paused) && <><Button title={paused ? "Resume display" : "Stop display"} onPress={toggleDisplay} /><Text style={styles.muted}>{paused ? "Display paused. " : ""}Stopping display does not cancel the provider request or its cost.</Text></>}
         {!!error && <Text accessibilityRole="alert" numberOfLines={3} style={styles.warning}>{error}</Text>}
         <View style={s.composeRow}>
           <Input accessibilityLabel="Message assistant" placeholder={detail ? `Ask about ${detail.conversation.symbol}…` : "Loading conversation…"} multiline value={draft} onChangeText={setDraft} maxLength={4000} editable={!!detail && !busy && !pending} style={s.input} />

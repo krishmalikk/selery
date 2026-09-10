@@ -1,0 +1,11 @@
+# Native assistant improvement track
+
+Implemented on branch `feature/chat-native-improvements`, separate worktree. The integration agent owns canonical contracts and `SeleryClient` changes.
+
+- Browser and native consume the same restricted Markdown AST. Native renders text components, never HTML or a web view for responses. HTTP(S) links reject credentials, control characters, backslash tricks, and unsafe schemes. Unknown source IDs remain visibly unknown. Supporting source sheets show provider, feed, observation/availability timestamps, original supporting observation, and a validated original link.
+- Saved stock conversations support explicit search, rename, and extractive history summaries. Summaries are labeled earlier conversation text, not current evidence. These actions do not trigger a paid model response.
+- Pending assistant text refreshes at approximately 700 ms while a request is active, including while its POST has not returned. Idle thread reads and chart refreshes are limited to approximately 30 seconds. Failed chart reads remain visible. Pause/resume changes display only and states that provider requests/costs continue.
+- Send uses a synchronous mutation guard and preserves uncertain request IDs during background/foreground transitions. Private transcript/chart/title/search state clears when leaving the foreground. Resumption reads persisted state; it never automatically resubmits a paid POST. Auth failures clear private conversation content.
+- Chart signal details open a dedicated conversation with immutable signal ID and a chart ending at signal time. Signal conversations fetch the backend's dated chart snapshot, fix timeframe controls, and send the signal's original timeframe. Missing snapshots fail explicitly; they do not fall back to a current chart.
+
+Validation: `npm run typecheck --workspace @selery/mobile`, `node --import tsx --test tests/test_research_markdown.ts` (four passing parser tests), and `git diff --check` pass. The parser tests cover readable cross-client text projection, malicious schemes/HTML, unknown citations, and partial streamed Markdown. Native gesture, foreground/background, keyboard, and screen-reader acceptance on an actual iPhone remain pending. No native biometric work or deployment is part of this track.

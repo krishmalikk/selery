@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { View, Text, Pressable, Modal, ScrollView } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   ChartResponseSchema,
   formatPrice,
@@ -29,6 +29,24 @@ export default function Chart() {
     [timeframe, setTimeframe] = useState<Timeframe>("5m"),
     [selected, setSelected] = useState<Signal | null>(null);
   const { client } = useSession();
+  const router = useRouter();
+  const creating = useRef(false);
+  const [chatBusy, setChatBusy] = useState(false);
+  const [chatError, setChatError] = useState("");
+  async function askSignal() {
+    if (!selected || creating.current) return;
+    creating.current = true; setChatBusy(true); setChatError("");
+    try {
+      const seconds = selected.timeframe === "5m" ? 300 : selected.timeframe === "1h" ? 3600 : 86400;
+      const conversation = await client.createConversation(selected.symbol, {
+        signal_id: selected.id, timeframe: selected.timeframe,
+        chart_start: selected.time - 100 * seconds, chart_end: selected.time,
+      });
+      setSelected(null);
+      router.push({ pathname: "/chat", params: { conversation: conversation.id } });
+    } catch (error) { setChatError(error instanceof Error ? error.message : "Signal conversation unavailable."); }
+    finally { creating.current = false; setChatBusy(false); }
+  }
   useEffect(() => {
     if (params.symbol) setSymbol(params.symbol.toUpperCase());
   }, [params.symbol]);
@@ -190,6 +208,8 @@ export default function Chart() {
                   {signalConfidence(selected).detail}
                 </Text>
               </Card>
+              <Button title={chatBusy ? "Opening conversation…" : "Ask about this signal"} disabled={chatBusy} onPress={() => void askSignal()} />
+              {!!chatError && <Text accessibilityRole="alert" style={styles.warning}>{chatError}</Text>}
               <Button title="Close detail" onPress={() => setSelected(null)} />
             </>
           )}
