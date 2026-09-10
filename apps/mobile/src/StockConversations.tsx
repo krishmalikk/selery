@@ -122,7 +122,9 @@ export function StockConversations() {
       } catch (e) { if (currentRead()) {
         setError(errorText(e));
         if (e instanceof ApiError && (e.status === 401 || e.status === 404)) {
-          setDetail(null); setChart(null); setDraft(""); attempted.current = null;
+          setItems([]); setDetail(null); setChart(null); setDraft(""); setTitle("");
+          latestDetail.current = null; pausedRef.current = false; setPaused(false); attempted.current = null;
+          if (e.status === 401) { generation.current++; setActive(false); }
         }
       } }
       finally { inFlight = false; if (valid()) setLoading(false); }
@@ -185,6 +187,11 @@ export function StockConversations() {
     } catch (e) {
       if (current !== generation.current) return;
       setError(errorText(e));
+      if (e instanceof ApiError && e.status === 401) {
+        generation.current++; setActive(false); setDetail(null); setChart(null); setDraft("");
+        latestDetail.current = null; attempted.current = null; pausedRef.current = false; setPaused(false);
+        return;
+      }
       try {
         const result = await client.conversation(selectedId);
         if (current !== generation.current) return;
