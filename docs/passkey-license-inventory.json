@@ -1,0 +1,92 @@
+[
+  {
+    "package": "webauthn",
+    "version": "2.8.0",
+    "license_expression": "BSD-3-Clause",
+    "license": null,
+    "classifiers": [],
+    "notices": [
+      {
+        "file": "webauthn-2.8.0.dist-info/licenses/LICENSE",
+        "sha256": "5922ad23a214080d72535c733f69aa36de0f0135f7e5859239758a550042de81"
+      }
+    ]
+  },
+  {
+    "package": "cbor2",
+    "version": "5.9.0",
+    "license_expression": "MIT",
+    "license": null,
+    "classifiers": [],
+    "notices": [
+      {
+        "file": "cbor2-5.9.0.dist-info/licenses/LICENSE.txt",
+        "sha256": "a6afd126d8f545a15166a22f25fadff4b9fb4978bbdd17e97d97d950b66d2fef"
+      }
+    ]
+  },
+  {
+    "package": "cryptography",
+    "version": "50.0.1",
+    "license_expression": "Apache-2.0 OR BSD-3-Clause",
+    "license": null,
+    "classifiers": [],
+    "notices": [
+      {
+        "file": "cryptography-50.0.1.dist-info/licenses/LICENSE",
+        "sha256": "3e0c7c091a948b82533ba98fd7cbb40432d6f1a9acbf85f5922d2f99a93ae6bb"
+      },
+      {
+        "file": "cryptography-50.0.1.dist-info/licenses/LICENSE.APACHE",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe"
+      },
+      {
+        "file": "cryptography-50.0.1.dist-info/licenses/LICENSE.BSD",
+        "sha256": "602c4c7482de6479dd2e9793cda275e5e63d773dacd1eca689232ab7008fb4fb"
+      }
+    ]
+  },
+  {
+    "package": "pyasn1",
+    "version": "0.6.4",
+    "license_expression": null,
+    "license": "BSD-2-Clause",
+    "classifiers": [],
+    "notices": [
+      {
+        "file": "pyasn1-0.6.4.dist-info/licenses/LICENSE.rst",
+        "sha256": "2aad5fc00f705c4a1addb83eed10a6a75d286a3779f0cf8519d87e62bc4735fd"
+      }
+    ]
+  },
+  {
+    "package": "pyasn1-modules",
+    "version": "0.4.2",
+    "license_expression": null,
+    "license": "BSD",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "notices": [
+      {
+        "file": "pyasn1_modules-0.4.2.dist-info/licenses/LICENSE.txt",
+        "sha256": "2aad5fc00f705c4a1addb83eed10a6a75d286a3779f0cf8519d87e62bc4735fd"
+      }
+    ]
+  },
+  {
+    "package": "pyopenssl",
+    "version": "26.4.0",
+    "license_expression": null,
+    "license": "Apache License, Version 2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ],
+    "notices": [
+      {
+        "file": "pyopenssl-26.4.0.dist-info/licenses/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      }
+    ]
+  }
+]

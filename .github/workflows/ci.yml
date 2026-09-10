@@ -13,7 +13,10 @@ jobs:
       SELERY_DATA_MODE: fixtures
       SELERY_PUBLIC_TRADERS_MODE: fixtures
       SELERY_PUBLIC_FIXTURE_E2E: 'true'
-      SELERY_ALLOWED_ORIGINS: http://127.0.0.1:3000
+      SELERY_ALLOWED_ORIGINS: http://localhost:3000
+      SELERY_WEB_TEST_URL: http://localhost:3000
+      SELERY_PASSKEY_ORIGIN: http://localhost:3000
+      SELERY_PASSKEY_E2E: 'true'
       PYTHONPATH: apps/api:packages/shared/python:packages/strategies/python
       NEXT_TELEMETRY_DISABLED: 1
       CI: 1

@@ -36,6 +36,7 @@ import {
   formatPrice,
   formatPercent,
   formatTime,
+  signalConfidence,
   WatchlistResponseSchema,
   ChartResponseSchema,
   NewsResponseSchema,
@@ -44,6 +45,7 @@ import {
   type NewsItem,
   type Signal,
   type Settings,
+  type PasskeyStatus,
   type Timeframe,
   type ResearchReport,
   type StrategyInfo,
@@ -66,6 +68,8 @@ import ReportChart from "./report-chart";
 import ReportLibrary from "./report-library";
 import PublicTraders from "./public-traders";
 import Conversations from "./conversations";
+import {PasskeySettings} from "./passkey-settings";
+import {signInWithPasskey, supportsPasskeys} from "./passkeys";
 const api = new SeleryClient("");
 const views = [
   "Overview",
@@ -133,6 +137,13 @@ export default function Workspace() {
     [password, setPassword] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  const [passkeyStatus, setPasskeyStatus] = useState<PasskeyStatus | null>(null);
+  const [passkeySupported, setPasskeySupported] = useState(false);
+  const [passwordFallback, setPasswordFallback] = useState(false);
+  const refreshPasskeys = useCallback(() => {
+    void api.passkeyStatus().then(setPasskeyStatus).catch(() => setPasskeyStatus(null));
+  }, []);
+  useEffect(() => {setPasskeySupported(supportsPasskeys());refreshPasskeys();}, [refreshPasskeys]);
   const [view, setView] = useState<View>("Overview"),
     [symbol, setSymbol] = useState("SPY"),
     [timeframe, setTimeframe] = useState<Timeframe>("5m"),
@@ -405,6 +416,8 @@ export default function Workspace() {
     await action(async () => {
       await api.logout();
       setAuthenticated(false);
+      setPasswordFallback(false);
+      refreshPasskeys();
       setChart(null);
       setQuotes([]);
       for (const key of Object.keys(localStorage))
@@ -412,6 +425,7 @@ export default function Workspace() {
     });
   }
   const quote = quotes.find((q) => q.symbol === symbol);
+  const passkeyReady = passkeySupported && passkeyStatus?.enabled && passkeyStatus.registered;
   const lastBar = chart?.bars.at(-1);
   const shownSignals =
     chart?.signals
@@ -446,7 +460,17 @@ export default function Workspace() {
           <p>
             Welcome back to your research workspace.
           </p>
-          <form onSubmit={login}>
+          {passkeyReady && !passwordFallback ? <div>
+            <button className="primary" disabled={busy} onClick={() => void action(async () => {
+              await signInWithPasskey(api);
+              setSettings(await api.settings());setAuthenticated(true);
+            })}>
+              {busy ? "Waiting for Touch ID…" : "Open workspace"}
+              <ArrowUpRight size={16}/>
+            </button>
+            <p className="muted small" style={{marginTop:12}}>Unlock with Touch ID or your device’s passkey.</p>
+            <button disabled={busy} onClick={() => {setPasswordFallback(true);setError("");}}>Use workspace password instead</button>
+          </div> : <form onSubmit={login}>
             <label htmlFor="password">Workspace password</label>
             <input
               id="password"
@@ -460,10 +484,11 @@ export default function Workspace() {
               {busy ? "Connecting…" : "Open workspace"}
               <ArrowUpRight size={16} />
             </button>
-          </form>
+          </form>}
+          {passkeyReady && passwordFallback && <button disabled={busy} onClick={() => {setPasswordFallback(false);setPassword("");setError("");}}>Use Touch ID / passkey instead</button>}
           {error && <Notice>{error}</Notice>}
           <small>
-            Use the personal password configured on your research service.
+            {passkeyReady ? "Your workspace stays private. The password is available for recovery." : "Sign in once, then enable Touch ID / passkey in Settings."}
           </small>
         </div>
         <footer>{disclaimer}</footer>
@@ -924,10 +949,13 @@ export default function Workspace() {
                                 {formatPrice(s.reference_price)}
                               </td>
                               <td>{s.horizon_bars} bars</td>
-                              <td className="muted">
-                                {s.confidence === null
-                                  ? "Uncalibrated"
-                                  : formatPercent(s.confidence * 100)}
+                              <td title={signalConfidence(s).detail}>
+                                <strong className={signalConfidence(s).available ? "mono" : "muted"}>
+                                  {signalConfidence(s).label}
+                                </strong>
+                                <small className="muted">
+                                  {signalConfidence(s).available ? "Calibrated · target first" : "No calibrated estimate"}
+                                </small>
                               </td>
                             </tr>
                           ))}
@@ -937,6 +965,10 @@ export default function Workspace() {
                   ) : (
                     <Empty>No finalized signals in this window.</Empty>
                   )}
+                  <p className="muted small" style={{ padding: "12px 18px" }}>
+                    Confidence estimates whether the analytical target is reached before the stop within the signal horizon.
+                    Select a signal for its scope or the reason a score is unavailable.
+                  </p>
                 </section>
                 <section className="panel news-panel">
                   <div className="section-title">
@@ -1488,6 +1520,7 @@ export default function Workspace() {
           {view === "Assistant" && <Conversations api={api} suggestedSymbol={symbol} settings={settings} />}
           {view === "Settings" && (
             <div className="settings-grid">
+              <PasskeySettings api={api} onChanged={refreshPasskeys}/>
               <section className="panel padded">
                 <h2>Workspace configuration</h2>
                 <p className="muted">
@@ -1599,6 +1632,7 @@ export default function Workspace() {
   );
 }
 function SignalDetails({ signal: s }: { signal: Signal }) {
+  const confidence = signalConfidence(s);
   return (
     <div className="signal-details">
       <Badge warn={s.direction === "bearish"}>
@@ -1623,14 +1657,10 @@ function SignalDetails({ signal: s }: { signal: Signal }) {
         <dd>{formatTime(s.available_at)}</dd>
         <dt>Confidence</dt>
         <dd>
-          {s.confidence === null
-            ? "Unavailable"
-            : formatPercent(s.confidence * 100)}
+          {confidence.label}
         </dd>
       </dl>
-      {s.confidence_reason && (
-        <p className="warning small">{s.confidence_reason}</p>
-      )}
+      <p className={confidence.available ? "muted small" : "warning small"}>{confidence.detail}</p>
       <details>
         <summary>Signal-time features</summary>
         <dl className="details">

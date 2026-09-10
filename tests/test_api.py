@@ -58,6 +58,25 @@ def test_budget_cap_is_atomic_and_disabled_by_default():
     assert store.spend()==1
     assert store.reserve(2,3)
 
+@pytest.mark.parametrize('confidence',[0.0,0.73])
+def test_chart_reuses_only_matching_signal_time_confidence(client,confidence):
+    login(client)
+    initial=client.get('/api/v1/chart/SPY').json()['signals']
+    assert initial
+    original=Signal.model_validate(initial[-1])
+    assert original.confidence is None
+    assert 'not scored retroactively' in original.confidence_reason
+    saved=original.model_copy(update={'confidence':confidence,'confidence_reason':None})
+    client.app.state.store.put('signals',saved,saved.id)
+    current=client.get('/api/v1/chart/SPY').json()['signals']
+    assert next(s for s in current if s['id']==saved.id)['confidence']==confidence
+    # A cached estimate for a different horizon must not leak into this chart.
+    client.app.state.store.put('signals',saved.model_copy(update={'horizon_bars':saved.horizon_bars+1}),saved.id)
+    mismatched=client.get('/api/v1/chart/SPY').json()['signals']
+    returned=next(s for s in mismatched if s['id']==saved.id)
+    assert returned['confidence'] is None
+    assert 'not scored retroactively' in returned['confidence_reason']
+
 @pytest.mark.parametrize('debate',[False,True])
 def test_openai_chat_contract_and_manual_perspectives(client,monkeypatch,debate):
     import json

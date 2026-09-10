@@ -1324,6 +1324,125 @@
     "title": "OutcomeSummary",
     "type": "object"
   },
+  "PasskeyEnrollment": {
+    "additionalProperties": false,
+    "properties": {
+      "password": {
+        "maxLength": 1000,
+        "title": "Password",
+        "type": "string"
+      },
+      "name": {
+        "default": "My passkey",
+        "maxLength": 80,
+        "minLength": 1,
+        "title": "Name",
+        "type": "string"
+      }
+    },
+    "required": [
+      "password"
+    ],
+    "title": "PasskeyEnrollment",
+    "type": "object"
+  },
+  "PasskeyInfo": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "created_at"
+    ],
+    "title": "PasskeyInfo",
+    "type": "object"
+  },
+  "PasskeyOptions": {
+    "additionalProperties": false,
+    "properties": {
+      "ceremony_id": {
+        "title": "Ceremony Id",
+        "type": "string"
+      },
+      "options_json": {
+        "title": "Options Json",
+        "type": "string"
+      }
+    },
+    "required": [
+      "ceremony_id",
+      "options_json"
+    ],
+    "title": "PasskeyOptions",
+    "type": "object"
+  },
+  "PasskeyStatus": {
+    "additionalProperties": false,
+    "properties": {
+      "enabled": {
+        "title": "Enabled",
+        "type": "boolean"
+      },
+      "registered": {
+        "title": "Registered",
+        "type": "boolean"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      }
+    },
+    "required": [
+      "enabled",
+      "registered"
+    ],
+    "title": "PasskeyStatus",
+    "type": "object"
+  },
+  "PasskeyVerification": {
+    "additionalProperties": false,
+    "properties": {
+      "ceremony_id": {
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Ceremony Id",
+        "type": "string"
+      },
+      "credential_json": {
+        "maxLength": 20000,
+        "minLength": 2,
+        "title": "Credential Json",
+        "type": "string"
+      }
+    },
+    "required": [
+      "ceremony_id",
+      "credential_json"
+    ],
+    "title": "PasskeyVerification",
+    "type": "object"
+  },
   "PublicActivity": {
     "additionalProperties": false,
     "properties": {
@@ -2030,6 +2149,25 @@
       "benchmark"
     ],
     "title": "ResearchReport",
+    "type": "object"
+  },
+  "SessionResponse": {
+    "additionalProperties": false,
+    "properties": {
+      "token": {
+        "title": "Token",
+        "type": "string"
+      },
+      "expires_in": {
+        "title": "Expires In",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "token",
+      "expires_in"
+    ],
+    "title": "SessionResponse",
     "type": "object"
   },
   "Settings": {

@@ -5,6 +5,7 @@ import {
   ChartResponseSchema,
   formatPrice,
   formatTime,
+  signalConfidence,
   watchlist,
   type Signal,
   type Timeframe,
@@ -140,6 +141,14 @@ export default function Chart() {
                     {formatTime(signal.time)} ·{" "}
                     {formatPrice(signal.reference_price)}
                   </Text>
+                  <Text style={signalConfidence(signal).available ? styles.text : styles.warning}>
+                    Confidence: {signalConfidence(signal).label}
+                  </Text>
+                  <Text style={styles.muted}>
+                    {signalConfidence(signal).available
+                      ? `Calibrated · target first within ${signal.horizon_bars} bars`
+                      : signalConfidence(signal).detail}
+                  </Text>
                 </Card>
               </Pressable>
             ))}
@@ -176,11 +185,9 @@ export default function Chart() {
                 <Text style={styles.text}>
                   Horizon {selected.horizon_bars} bars
                 </Text>
-                <Text style={styles.warning}>
-                  {selected.confidence === null
-                    ? selected.confidence_reason ||
-                      "Confidence unavailable until calibrated"
-                    : `Calibrated confidence ${(selected.confidence * 100).toFixed(1)}%`}
+                <Text style={styles.text}>Confidence: {signalConfidence(selected).label}</Text>
+                <Text style={signalConfidence(selected).available ? styles.muted : styles.warning}>
+                  {signalConfidence(selected).detail}
                 </Text>
               </Card>
               <Button title="Close detail" onPress={() => setSelected(null)} />

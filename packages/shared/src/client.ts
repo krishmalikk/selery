@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ConversationSchema, ConversationDetailSchema } from './contracts';
+import { PasskeyStatusSchema, PasskeyOptionsSchema, PasskeyInfoSchema, SessionResponseSchema } from './contracts';
 import { PublicSourceSchema, PublicTraderPageSchema, PublicActivityPageSchema, PublicActivityDetailSchema, PublicRefreshResultSchema } from './contracts';
 import { WatchlistResponseSchema, ChartResponseSchema, NewsResponseSchema, SettingsSchema, StrategyInfoSchema, ResearchReportSchema, JobSchema, SizingResponseSchema, OutcomeSummarySchema, JournalEntrySchema, AlertSchema, ChatResponseSchema } from './contracts';
 import type { Timeframe, Feed, SizingRequest, ResearchRequest, ChatRequest, JournalEntry } from './contracts';
@@ -14,6 +15,13 @@ export class SeleryClient {
     return schema.parse(await response.json());
   }
   login(password:string){return this.request('/auth/login',z.object({token:z.string(),expires_in:z.number()}),{method:'POST',body:JSON.stringify({password})});}
+  passkeyStatus(){return this.request('/auth/passkeys/status',PasskeyStatusSchema);}
+  passkeys(){return this.request('/auth/passkeys',z.array(PasskeyInfoSchema));}
+  passkeyRegisterOptions(password:string,name:string){return this.request('/auth/passkeys/register/options',PasskeyOptionsSchema,{method:'POST',body:JSON.stringify({password,name})});}
+  passkeyRegisterVerify(ceremony_id:string,credential_json:string){return this.request('/auth/passkeys/register/verify',PasskeyInfoSchema,{method:'POST',body:JSON.stringify({ceremony_id,credential_json})});}
+  passkeyLoginOptions(){return this.request('/auth/passkeys/login/options',PasskeyOptionsSchema,{method:'POST'});}
+  passkeyLoginVerify(ceremony_id:string,credential_json:string){return this.request('/auth/passkeys/login/verify',SessionResponseSchema,{method:'POST',body:JSON.stringify({ceremony_id,credential_json})});}
+  removePasskey(id:string){return this.request('/auth/passkeys/'+encodeURIComponent(id)+'/delete',z.object({ok:z.boolean()}),{method:'POST'});}
   logout(){return this.request('/auth/logout',z.object({ok:z.boolean()}),{method:'POST'});}
   watchlist(){return this.request('/watchlist',WatchlistResponseSchema);}
   chart(symbol:string,timeframe:Timeframe='5m',feed:Feed='iex',limit=1000){return this.request(`/chart/${encodeURIComponent(symbol)}?timeframe=${timeframe}&feed=${feed}&limit=${limit}`,ChartResponseSchema);}

@@ -292,6 +292,29 @@ Before calling the system fully hosted and mobile-accepted, capture:
 
 Implementation and tests may be complete while these external acceptance items remain pending. Consult [PROGRESS.md](PROGRESS.md), [DEBT.md](DEBT.md), [LICENSE-AUDIT.md](LICENSE-AUDIT.md) and the wave reviews for the latest recorded evidence.
 
+## Web passkeys on Render
+
+The user's backend is hosted on **Render**; Railway instructions elsewhere are an alternative, not an additional required service. The confirmed web origin is `https://selery-web.vercel.app`. This update does not provision or modify either hosted service.
+
+Set these values on the existing Render API service:
+
+| Variable/resource | Required value or action |
+| --- | --- |
+| `SELERY_PASSKEY_ORIGIN` | `https://selery-web.vercel.app` — the web origin, not the Render backend URL; no path |
+| `SELERY_PASSWORD` | Keep your existing private password for first enrollment and recovery |
+| `SELERY_SESSION_SECRET` | Keep the existing strong backend session secret |
+| `SELERY_ALLOWED_ORIGINS` | Include `https://selery-web.vercel.app` |
+| Persistent database | Preserve the existing database. If using SQLite at `/app/data/selery.db`, keep the writable persistent disk mounted at `/app/data` and `SELERY_DATABASE_URL=sqlite:////app/data/selery.db` |
+| API instances | One process/instance; pending challenges and attempt limits are currently held in process memory |
+
+Deploy the updated backend and web. Vercel's server-only `SELERY_API_URL` must still point to your Render HTTPS API origin. The backend installs `webauthn` from `uv.lock`; startup creates the `auth_credentials` table through the existing schema initialization. Migration `004_passkeys.sql` also records the table for managed migration workflows. Public keys live in the persistent backend database; losing that database requires enrollment again. Include it in existing backup/restore checks.
+
+Sign in once with the workspace password, open **Settings → Touch ID & passkeys**, confirm the password and enable the passkey. Sign out and test **Open workspace**. Also test cancellation and password recovery on your Mac. No Google account, email service, biometric API key, or separate passkey subscription is required. A domain change needs backend origin reconfiguration and enrollment for the new domain.
+
+For local development use `SELERY_PASSKEY_ORIGIN=http://localhost:3000`, with that exact browser URL. Keep it separate from the production Render setting. WebAuthn binds credentials to a domain and verifies the calling origin; direct IP addresses are unsuitable. [WebAuthn specification](https://www.w3.org/TR/webauthn-3/)
+
+The browser test uses a virtual authenticator. It does not prove hosted deployment, a physical Touch ID prompt, or database persistence on Render. See [web passkey review](reviews/web-passkeys.md).
+
 ## Final local verification notes
 
 The optional ML dependency group was installed and exercised locally, including Torch 2.14.0, LightGBM 4.7.0, SHAP 0.52.0 and Numba 0.67.0. The lock explicitly constrains modern Numba to avoid an unsupported Python 3.12 resolution. On macOS, LightGBM also needs `brew install libomp`; Linux model images need an OpenMP runtime such as `libgomp1`. Sequence CPU training uses one thread, with a regression covering its interaction with indicator initialization. No successful real-market model is implied by architecture tests.

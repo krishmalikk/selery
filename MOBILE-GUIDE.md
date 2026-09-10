@@ -1,5 +1,7 @@
 # SELERY native app guide
 
+Each research signal card now displays confidence: a calibrated signal-time percentage when available, otherwise **Unavailable** and its reason. The detail sheet explains the target-first event, horizon, feed and excluded training outcomes. This is not a probability of profit; missing confidence is never replaced by an AI estimate.
+
 ## Stock conversations and chart
 
 Open the research assistant, specify a stock, and tap **Start conversation**. A route's suggested symbol is only a prefill. Select an existing thread from **Saved conversations** to continue it; conversations are stored on the backend and keep their original stock. Create another conversation for a different symbol.

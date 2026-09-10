@@ -30,7 +30,9 @@ def create_app(config=None,provider=None):
         app.state.public_registry=PublicRegistry(app.state.store)
         from .conversations import Conversations
         app.state.conversations=Conversations(app.state.store)
-        app.state.auth=Auth(app.state.config)
+        app.state.auth=Auth(app.state.config,app.state.store)
+        from .passkeys import Passkeys
+        app.state.passkeys=Passkeys(app.state.store)
         app.state.started_at=int(time.time())
         app.state.subscribers=set()
         app.state.live_quotes={}
@@ -59,6 +61,9 @@ def create_app(config=None,provider=None):
     async def validation_error(request,exc):return __import__('fastapi').responses.JSONResponse(status_code=422,content={'detail':str(exc)})
 
     def authorized(request:Request):return request.app.state.auth.require(request)
+
+    from .passkeys import register_routes as register_passkeys
+    register_passkeys(app,authorized)
 
     from .notifications import register_routes
     register_routes(app,authorized)
@@ -107,6 +112,7 @@ def create_app(config=None,provider=None):
         signals=EmaCross().evaluate(finalized,timeframe)
         # Reuse signal-time confidence, never retrospectively apply today's model.
         for index,signal in enumerate(signals):
+            signals[index]=signal.model_copy(update={'confidence_reason':'No calibrated prediction was recorded when this signal became available. Historical signals are not scored retroactively.'})
             snapshot=app.state.store.get('signals',signal.id)
             if snapshot:
                 original=Signal.model_validate(snapshot)

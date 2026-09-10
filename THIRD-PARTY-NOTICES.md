@@ -402,3 +402,7 @@ DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 
+
+## Web passkey backend dependencies
+
+Exact versions, original license paths and checksums are in [the passkey inventory](docs/passkey-license-inventory.json). Unmodified distribution license texts are reproduced in [passkey dependency notices](docs/passkey-notices.md), incorporated here by reference. Preserve installed package notices in backend distributions.

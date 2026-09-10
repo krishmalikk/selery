@@ -1,5 +1,19 @@
 # SELERY web guide
 
+## Touch ID and passkey login
+
+Web passkeys are implemented. Production activation and a real Mac Touch ID check remain pending. In the **Render backend** environment, set `SELERY_PASSKEY_ORIGIN=https://selery-web.vercel.app`, then deploy the updated backend and Vercel web code. Keep `SELERY_PASSWORD` and `SELERY_SESSION_SECRET`; do not expose them through `NEXT_PUBLIC_*` variables. No extra identity account or API key is needed.
+
+1. Open `https://selery-web.vercel.app` and sign in with your workspace password once.
+2. Open **Settings → Touch ID & passkeys**, name the passkey, confirm your workspace password, and click **Enable Touch ID / passkey**. Complete the browser's device prompt.
+3. Sign out. **Open workspace** now starts passkey unlock without displaying the workspace-password field. **Use workspace password instead** remains available for recovery.
+
+Selery receives a public key and signed challenges, never your fingerprint or private key. The browser/OS controls whether Touch ID or another device unlock is offered. Settings lists saved keys and lets you remove them; removal also invalidates sessions opened with that key. Sessions still last one hour. Initial enrollment requires fresh password confirmation even in an existing session.
+
+Use the exact configured website address. Preview deployments and other domains do not share this login origin. For development, configure `SELERY_PASSKEY_ORIGIN=http://localhost:3000` on the API and browse that address; numeric IP addresses are not supported for passkeys. Unsupported browsers, canceled prompts and expired challenges leave password recovery available. A missing Settings section usually means the web deployment is old; a configuration notice means the backend variable is absent or the deployed API is old. See [setup](SETUP-REQUIREMENTS.md#web-passkeys-on-render) and [verification](reviews/web-passkeys.md).
+
+Recent signals show a confidence percentage only when an eligible model prediction was recorded at signal time. This estimates the analytical target being reached before the stop within the stated horizon; it is not a probability of profit. Unscored signals say **Unavailable**, with the reason in signal details. Historical signals are not rescored with a model trained later. [Proposed chat improvements](docs/CHAT-IMPROVEMENTS.md) are separate future work.
+
 ## Stock conversations
 
 Open **Assistant → New conversation**, enter a stock symbol, and click **Start conversation**. The stock must have available chart data; no message is sent until you explicitly choose it. A suggested symbol from the workspace is only a prefill. Each conversation keeps its stock fixed; start another thread to discuss another stock.

@@ -57,6 +57,8 @@ The audit covers recursive license/notice file inventories and selected source h
 
 ## Distribution requirements
 
+The web-passkey backend uses the locked `webauthn` 2.8.0 dependency (BSD-3-Clause), with cbor2 5.9.0 (MIT), cryptography 50.0.1 (Apache-2.0 OR BSD-3-Clause), pyasn1 0.6.4 and pyasn1-modules 0.4.2 (BSD-2-Clause), and pyOpenSSL 26.4.0 (Apache-2.0). Exact installed license paths and SHA-256 values are recorded in [the passkey inventory](docs/passkey-license-inventory.json), with unmodified license texts in [passkey dependency notices](docs/passkey-notices.md). These are backend packages, not JavaScript client dependencies; preserve their installed distribution notices in server images. Signatures/attestations are verified through the library, not custom cryptography. This is a dependency-notice audit, not a claim of an external cryptographic security audit.
+
 Before publishing either client, retain the exact LICENSE/NOTICE texts from the installed Lightweight Charts release in distributed third-party notices and render its TradingView attribution/link. Retain MIT/BSD/Apache license and copyright texts for resolved backend dependencies in server distribution artifacts. Do not translate, abbreviate, or replace package notices with this summary.
 
 MIT/Apache/BSD/CC0 entries above permit consideration of the stated research use subject to their terms; they do not approve datasets, trademarks, model weights, API redistribution, or every transitive component. GPL, LGPL, AGPL, Commons Clause, proprietary, missing-license and unavailable sources are excluded from code reuse in the accepted implementation.

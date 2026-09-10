@@ -8,7 +8,7 @@ from sqlalchemy import create_engine,MetaData,Table,Column,String,JSON,DateTime,
 from sqlalchemy.exc import IntegrityError
 
 metadata=MetaData()
-COLLECTIONS=('signals','outcomes','journal','alerts','reports','jobs','audit','models','features','news','devices','settings','public_traders','public_activity','public_revisions','conversations','conversation_messages')
+COLLECTIONS=('signals','outcomes','journal','alerts','reports','jobs','audit','models','features','news','devices','settings','public_traders','public_activity','public_revisions','conversations','conversation_messages','auth_credentials')
 tables={name:Table(name,metadata,Column('id',String,primary_key=True),Column('created_at',DateTime(timezone=True),nullable=False),Column('payload',JSON,nullable=False)) for name in COLLECTIONS}
 budgets=Table('budgets',metadata,Column('month',String,primary_key=True),Column('spent',Float,nullable=False,default=0),Column('reserved',Float,nullable=False,default=0))
 bars_table=Table('bars',metadata,Column('symbol',String,primary_key=True),Column('feed',String,primary_key=True),Column('timeframe',String,primary_key=True),Column('time',DateTime(timezone=True),primary_key=True),Column('available_at',DateTime(timezone=True),nullable=False),Column('open',Float),Column('high',Float),Column('low',Float),Column('close',Float),Column('volume',Float),Column('source',String),Column('version',String,nullable=False,default='1'))

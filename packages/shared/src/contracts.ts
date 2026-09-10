@@ -175,6 +175,28 @@ export type OutcomeSummary = {
   "historical_hit_rate": number | null;
   "comparison_reason": string | null;
 };
+export type PasskeyEnrollment = {
+  "password": string;
+  "name": string;
+};
+export type PasskeyInfo = {
+  "id": string;
+  "name": string;
+  "created_at": string;
+};
+export type PasskeyOptions = {
+  "ceremony_id": string;
+  "options_json": string;
+};
+export type PasskeyStatus = {
+  "enabled": boolean;
+  "registered": boolean;
+  "reason": string | null;
+};
+export type PasskeyVerification = {
+  "ceremony_id": string;
+  "credential_json": string;
+};
 export type Provenance = {
   "provider": string;
   "feed": Feed;
@@ -290,6 +312,10 @@ export type ResearchRequest = {
   "feed": Feed;
   "horizon_bars": number;
 };
+export type SessionResponse = {
+  "token": string;
+  "expires_in": number;
+};
 export type Settings = {
   "data_mode": "fixtures" | "live";
   "feed": Feed;
@@ -373,6 +399,11 @@ export const NewsItemSchema: z.ZodType<NewsItem> = z.object({"id": z.string(), "
 export const NewsResponseSchema: z.ZodType<NewsResponse> = z.object({"items": z.array(z.lazy(() => NewsItemSchema)), "retrieved_at": z.string(), "stale": z.boolean()}).strict();
 export const OutcomeSchema: z.ZodType<Outcome> = z.object({"signal_id": z.string(), "status": z.enum(["pending", "target_first", "stop_first", "neither", "ambiguous", "incomplete"]), "evaluated_at": z.string(), "bars_observed": z.number().int().finite(), "resolved_at": z.union([z.number().int().finite(), z.null()]), "max_favorable_percent": z.union([z.number().finite(), z.null()]), "max_adverse_percent": z.union([z.number().finite(), z.null()]), "reason": z.union([z.string(), z.null()])}).strict();
 export const OutcomeSummarySchema: z.ZodType<OutcomeSummary> = z.object({"strategy": z.string(), "feed": z.lazy(() => FeedSchema), "matured": z.number().int().finite(), "target_first": z.number().int().finite(), "stop_first": z.number().int().finite(), "neither": z.number().int().finite(), "ambiguous": z.number().int().finite(), "hit_rate": z.union([z.number().finite(), z.null()]), "denominator": z.string(), "historical_hit_rate": z.union([z.number().finite(), z.null()]), "comparison_reason": z.union([z.string(), z.null()])}).strict();
+export const PasskeyEnrollmentSchema: z.ZodType<PasskeyEnrollment> = z.object({"password": z.string().max(1000), "name": z.string().min(1).max(80)}).strict();
+export const PasskeyInfoSchema: z.ZodType<PasskeyInfo> = z.object({"id": z.string(), "name": z.string(), "created_at": z.string()}).strict();
+export const PasskeyOptionsSchema: z.ZodType<PasskeyOptions> = z.object({"ceremony_id": z.string(), "options_json": z.string()}).strict();
+export const PasskeyStatusSchema: z.ZodType<PasskeyStatus> = z.object({"enabled": z.boolean(), "registered": z.boolean(), "reason": z.union([z.string(), z.null()])}).strict();
+export const PasskeyVerificationSchema: z.ZodType<PasskeyVerification> = z.object({"ceremony_id": z.string().regex(new RegExp("^[a-f0-9]{32}$")), "credential_json": z.string().min(2).max(20000)}).strict();
 export const ProvenanceSchema: z.ZodType<Provenance> = z.object({"provider": z.string(), "feed": z.lazy(() => FeedSchema), "observed_at": z.string(), "available_at": z.string(), "retrieved_at": z.string(), "stale": z.boolean(), "synthetic": z.boolean(), "version": z.string()}).strict();
 export const PublicActivitySchema: z.ZodType<PublicActivity> = z.object({"id": z.string(), "trader_id": z.string(), "source": z.enum(["etoro", "kinfo", "afterhour"]), "source_record_id": z.string(), "source_url": z.string(), "symbol": z.union([z.string(), z.null()]), "instrument_name": z.string(), "instrument_kind": z.enum(["stock", "stock_cfd", "other", "unclassified"]), "direction": z.enum(["long", "short", "unknown"]), "opened_at": z.union([z.string(), z.null()]), "published_at": z.union([z.string(), z.null()]), "provider_updated_at": z.union([z.string(), z.null()]), "first_observed_at": z.string(), "observed_at": z.string(), "entry_price": z.union([z.number().finite().gt(0), z.null()]), "allocation_percent": z.union([z.number().finite().min(0).max(100), z.null()]), "quantity": z.union([z.number().finite(), z.null()]), "exit_price": z.union([z.number().finite(), z.null()]), "status": z.enum(["observed_open", "no_longer_observed", "access_unavailable"]), "verification": z.string(), "stale": z.boolean(), "synthetic": z.boolean(), "revision": z.number().int().finite(), "limitations": z.array(z.string())}).strict();
 export const PublicActivityDetailSchema: z.ZodType<PublicActivityDetail> = z.object({"activity": z.lazy(() => PublicActivitySchema), "trader": z.lazy(() => PublicTraderSchema), "chart": z.union([z.lazy(() => ChartResponseSchema), z.null()]), "market_context_reason": z.string(), "reference_move_percent": z.union([z.number().finite(), z.null()]), "llm_allowed": z.boolean()}).strict();
@@ -385,6 +416,7 @@ export const PublicTraderPageSchema: z.ZodType<PublicTraderPage> = z.object({"it
 export const QuoteSchema: z.ZodType<Quote> = z.object({"symbol": z.string(), "price": z.number().finite(), "change": z.union([z.number().finite(), z.null()]), "change_percent": z.union([z.number().finite(), z.null()]), "bid": z.union([z.number().finite(), z.null()]), "ask": z.union([z.number().finite(), z.null()]), "provenance": z.lazy(() => ProvenanceSchema), "sparkline": z.array(z.number().finite())}).strict();
 export const ResearchReportSchema: z.ZodType<ResearchReport> = z.object({"id": z.string(), "created_at": z.string(), "request": z.lazy(() => ResearchRequestSchema), "signal_count": z.number().int().finite(), "outcomes": z.array(z.lazy(() => OutcomeSchema)), "metrics": z.record(z.union([z.number().finite(), z.null()])), "assumptions": z.array(z.string()), "limitations": z.array(z.string()), "series": z.array(z.lazy(() => IndicatorPointSchema)), "benchmark": z.array(z.lazy(() => IndicatorPointSchema))}).strict();
 export const ResearchRequestSchema: z.ZodType<ResearchRequest> = z.object({"symbol": z.string(), "timeframe": z.lazy(() => TimeframeSchema), "strategy": z.string(), "feed": z.lazy(() => FeedSchema), "horizon_bars": z.number().int().finite().min(1).max(252)}).strict();
+export const SessionResponseSchema: z.ZodType<SessionResponse> = z.object({"token": z.string(), "expires_in": z.number().int().finite()}).strict();
 export const SettingsSchema: z.ZodType<Settings> = z.object({"data_mode": z.enum(["fixtures", "live"]), "feed": z.lazy(() => FeedSchema), "llm_monthly_cap_usd": z.number().finite(), "llm_spent_usd": z.number().finite(), "llm_enabled": z.boolean(), "disclaimer": z.string()}).strict();
 export const SignalSchema: z.ZodType<Signal> = z.object({"id": z.string(), "symbol": z.string(), "strategy": z.string(), "strategy_version": z.string(), "timeframe": z.lazy(() => TimeframeSchema), "time": z.number().int().finite(), "available_at": z.number().int().finite(), "direction": z.enum(["bullish", "bearish"]), "reference_price": z.number().finite(), "stop": z.number().finite(), "target": z.number().finite(), "horizon_bars": z.number().int().finite(), "confidence": z.union([z.number().finite().min(0).max(1), z.null()]), "confidence_reason": z.union([z.string(), z.null()]), "feed": z.lazy(() => FeedSchema), "features": z.record(z.number().finite()), "explanation": z.string()}).strict();
 export const SizingRequestSchema: z.ZodType<SizingRequest> = z.object({"research_capital": z.number().finite().gt(0), "risk_percent": z.number().finite().max(5).gt(0), "reference_price": z.number().finite().gt(0), "stop": z.number().finite().gt(0), "max_allocation_percent": z.number().finite().max(100).gt(0)}).strict();

@@ -25,6 +25,32 @@ class Timeframe(StrEnum):
 class Contract(BaseModel):
     model_config = ConfigDict(extra='forbid', allow_inf_nan=False)
 
+class PasskeyStatus(Contract):
+    enabled: bool
+    registered: bool
+    reason: str | None = None
+
+class PasskeyEnrollment(Contract):
+    password: str = Field(max_length=1000)
+    name: str = Field(default='My passkey', min_length=1, max_length=80)
+
+class PasskeyOptions(Contract):
+    ceremony_id: str
+    options_json: str
+
+class PasskeyVerification(Contract):
+    ceremony_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    credential_json: str = Field(min_length=2, max_length=20000)
+
+class PasskeyInfo(Contract):
+    id: str
+    name: str
+    created_at: datetime
+
+class SessionResponse(Contract):
+    token: str
+    expires_in: int
+
 class Provenance(Contract):
     provider: str
     feed: Feed

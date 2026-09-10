@@ -13,7 +13,7 @@ async function proxy(request:NextRequest,{params}:{params:Promise<{path:string[]
  const outputHeaders=new Headers({'content-type':response.headers.get('content-type')||'application/json','cache-control':'no-store'});
  for(const cookie of response.headers.getSetCookie())outputHeaders.append('set-cookie',cookie);
  const body=await response.text();
- if(path.join('/')==='auth/login'&&response.ok){const data=JSON.parse(body);return new NextResponse(JSON.stringify({...data,token:''}),{status:response.status,headers:outputHeaders});}
+ if((path.join('/')==='auth/login'||path.join('/')==='auth/passkeys/login/verify')&&response.ok){const data=JSON.parse(body);return new NextResponse(JSON.stringify({...data,token:''}),{status:response.status,headers:outputHeaders});}
  return new NextResponse(body,{status:response.status,headers:outputHeaders});
  }catch{return NextResponse.json({detail:'Research service unavailable. Check the backend connection.'},{status:503});}
 }
