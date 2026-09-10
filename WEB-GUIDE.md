@@ -1,5 +1,29 @@
 # SELERY web guide
 
+## Stock conversations
+
+Open **Assistant → New conversation**, enter a stock symbol, and click **Start conversation**. The stock must have available chart data; no message is sent until you explicitly choose it. A suggested symbol from the workspace is only a prefill. Each conversation keeps its stock fixed; start another thread to discuss another stock.
+
+The chart sits beside the chat, with 5m/1h/1D intervals, IEX labels, dated/stale context and TradingView attribution. Visible charts refresh every 30 seconds; chart refresh and opening saved conversations never call the LLM. Each question supplies fresh market context in the selected chart interval. Forming bars are provisional, not finalized research observations.
+
+Send follow-up questions in the same message history. **Enter** sends; **Shift+Enter** inserts a newline. Saved conversations reopen from the list and survive page/backend restarts. Delete removes the thread and its messages from the active database. Failed replies preserve the question/draft and show the actual failure; retry is explicit, with duplicate-request protection. Credits/quota failures do not turn into a fabricated report.
+
+The backend supplies recent complete exchanges to Terra, bounded to ten pairs/16KB, with explicit truncation for unusually long messages. All saved messages remain readable up to the 200-message thread limit. Replies are instructed to be conversational and focused; a full report is generated only when requested. Ordinary stock conversations are stored privately on the backend and do not write the journal. The separate public-trader **Ask about this trade** panel retains its existing ephemeral evidence flow.
+
+The existing $5/month LLM cap and funding requirements still apply. Local mode explicitly states that it cannot provide model-generated conversational answers. See [conversation review](reviews/stock-conversations.md) for verification and limitations.
+
+## Public Traders
+
+Open **Traders** in the sidebar. The authenticated directory lists imported people with source-specific identities, attributed statistics and observation times. Search names/usernames, filter eToro/Kinfo/AfterHour, and page through results. **Load / refresh directory page** explicitly imports one provider page; **Refresh activity** on a trader imports their published open-record snapshot. Sources without approved access stay pending.
+
+Choose **View activity**, then **View record**. The activity feed supports search, source/trader filters, inclusive UTC opening dates and pagination. Detail shows source entry/allocation, separate opening/publication/provider/observation times, missing exit/quantity, source link, revision and a dated IEX chart. Shares versus CFD and quote currency are unverified; source prices are displayed without assuming dollars. Disappearance never means a sale. The recent chart may not include an old entry date, and no trader return is inferred.
+
+**Ask about this trade** uses the selected activity reference. Without permitted OpenAI processing it returns a cited local summary. With source permission and the enabled, funded LLM it requests one analysis under the existing $5/month cap. Synthetic records never trigger paid analysis. The prior HTTP 429 still blocks live LLM acceptance.
+
+Public records use no-store responses and no persistent offline cache. Hidden tabs clear records and answers; returning tabs revalidate. While visible, a one-minute stored-evidence check updates stale/revoked records without refreshing eToro. The chart is separately dated market context. Keyboard users can tab through filters, links, detail controls and the question form; no new global shortcut is assigned.
+
+Setup and pending resources are in [SETUP-REQUIREMENTS.md](SETUP-REQUIREMENTS.md); API/data semantics and access qualification are in [the Public Traders guide](docs/PUBLIC-TRADERS.md). The existing Vercel backend proxy now permits the authenticated public-trader routes. Production deployment and a real permitted eToro record remain unverified.
+
 The desktop app is a personal research workspace for prices, signals, historical event studies and source context. It shares a Python backend with the native app. This guide describes implemented behavior and identifies resources or acceptance still pending.
 
 **Selery is research software that displays analysis. It does not execute, recommend, or place trades.**
@@ -166,7 +190,7 @@ The assistant works in two modes:
 | Mode | Behavior |
 | --- | --- |
 | Local | Summarizes current available symbol bars/signals and links to available news. It openly states that it cannot answer arbitrary questions. No LLM cost. |
-| LLM | Optional Anthropic evidence response with supplied citations, shown cost and a server-controlled spending cap. Disabled by default. |
+| LLM | Optional OpenAI GPT-5.6 Terra evidence response with high reasoning, supplied citations, shown cost allowance and a server-controlled spending cap. Disabled by default. |
 
 The **Compare research perspectives** option is enabled only with funded LLM configuration. It invokes distinct analytical perspectives and a memo. It is manually triggered and uses more calls. The chat proxy permits up to 285 seconds, but deployed function limits may be lower. Long requests need operational review before repeated use. Generated text is not a verified market fact; follow its citations and check available timestamps.
 

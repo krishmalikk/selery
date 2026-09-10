@@ -11,9 +11,11 @@ import { styles } from "./ui";
 export function NativeChart({
   data,
   onSignal,
+  height = 420,
 }: {
   data: ChartResponse;
   onSignal: (s: Signal) => void;
+  height?: number;
 }) {
   const ref = useRef<WebView>(null),
     [ready, setReady] = useState(false),
@@ -32,7 +34,7 @@ export function NativeChart({
     }
   }, [data, ready]);
   return (
-    <View style={{ height: 420, borderRadius: 16, overflow: "hidden" }}>
+    <View style={{ height, borderRadius: 16, overflow: "hidden" }}>
       <WebView
         ref={ref}
         source={source}

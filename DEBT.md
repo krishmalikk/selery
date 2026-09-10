@@ -1,5 +1,13 @@
 # Outstanding implementation and acceptance work
 
+Assistant tone change needs live qualitative evaluation: direct next-session questions, stale data, absent targets/probabilities and short follow-ups. No paid probe was run for this prompt-only update. The user's pasted AI answer supersedes an assumption that no visible response has ever been obtained; current provider credit balance and cited-output correctness were not independently verified.
+
+Stock conversations now have saved threads, explicit symbol selection and accompanying charts on both clients. Remaining acceptance: a funded live multi-turn Terra response, physical-iPhone chart/keyboard/foreground testing and hosted deployment. Context is intentionally bounded to ten recent complete exchanges/16 KB; there is no transcript search, token streaming or chart-cursor awareness. Thread coordination requires one API process, and deletion does not purge old backups. See [conversation review](reviews/stock-conversations.md).
+
+Latest external blocker: OpenAI returned `credit_balance_exhausted`; the configured API organization needs a credit top-up. eToro imports/sharing are now enabled at the user's request, with live profiles/open records imported and detail/chart API verified. Prior missing-credential/disabled-flag notes are superseded. Successful cited LLM output and real-iPhone acceptance remain pending. See [billing diagnosis](reviews/etoro-enabled-openai-billing.md).
+
+Public Traders release remains pending: eToro credentials and permitted real payloads, stable username/stock-CFD/currency validation, measurable upstream freshness, retention/backup deletion terms and both-client real-record evidence; Kinfo/AfterHour approved access; successful cited Terra response after resolving OpenAI HTTP 429. Full closed history, complete directory coverage and automatic provider refresh are unavailable. No provider source is marked operational. See [extension review](reviews/public-traders.md) and [access qualification](docs/PUBLIC-TRADERS.md).
+
 This list and the detailed [requirement matrix](docs/REQUIREMENT-COVERAGE.md) are the authoritative remaining scope. Every PARTIAL/EXTERNAL row there is debt; this summary does not remove those rows.
 
 | Priority | Work | Why outstanding / acceptance evidence |
@@ -13,7 +21,7 @@ This list and the detailed [requirement matrix](docs/REQUIREMENT-COVERAGE.md) ar
 | P2 | Full storage/worker operations | Docker absent here. Exercise Timescale migration, Redis/Arq jobs, persistent volumes, PostgreSQL backup/restore and hosted monitoring. SQLite backup integrity check passed locally. |
 | P2 | Durable coordination before replicas | Auth revocations, stream tickets and observer ownership are process-local. Use one API replica; add shared leadership/revocation before scaling. |
 | P2 | Deterministic lifecycle test coverage | Live WebSocket upstream and Arq worker have zero statement coverage in fixture suite; expand failure/reconnect/job integration tests. Existing live smoke is dated observational evidence only. |
-| P2 | Assistant breadth and operations | Streaming retrieval across saved research and transcript browser are incomplete. Real LLM usage/notifications remain disabled until configured. Reconcile unknown billing reservations manually. |
+| P2 | Assistant breadth and operations | Saved stock conversations and history browsing are implemented; streaming retrieval across saved research and transcript search remain incomplete. Terra is configured locally at an approved $5/month cap, but the live check returned OpenAI HTTP 429; resolve billing/credits/rate limits and verify a successful response. Reconcile unknown-billing reservations manually. Notifications remain disabled until configured. |
 | P3 | Other original breadth | Optional TA-Lib adapter, all intervals, general provider ingestion, complete PWA cold offline launch, richer native comparison/handoff and extensive accessibility/device checks remain in the detailed matrix. |
 
 Closed during integration: browser login artifact password exposure was addressed by rotating local personal/session credentials and removing sensitive artifacts; no provider key was exposed. Dependency vulnerabilities were resolved to zero in the final npm audit. Mobile Zod type-memory blow-up was fixed. Outcome symbol mixing, enqueue status race, ignored training horizon, uncovered-session false outcomes, missing-weekday annualization, WebSocket logout survival and native Transformer/indicator runtime interaction received fixes and targeted verification.

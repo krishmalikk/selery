@@ -58,6 +58,32 @@ def test_budget_cap_is_atomic_and_disabled_by_default():
     assert store.spend()==1
     assert store.reserve(2,3)
 
+@pytest.mark.parametrize('debate',[False,True])
+def test_openai_chat_contract_and_manual_perspectives(client,monkeypatch,debate):
+    import json
+    import httpx
+    from dataclasses import replace
+    from selery_api.assistant import LlmConfig
+    client.app.state.config=replace(client.app.state.config,llm_cap=5)
+    monkeypatch.setattr(LlmConfig,'load',classmethod(lambda cls:LlmConfig(key='local-test-key',enabled=True)))
+    requests=[]
+    def handler(request):
+        requests.append(request)
+        assert str(request.url)=='https://api.openai.com/v1/responses'
+        assert json.loads(request.content)['reasoning']=={'effort':'high'}
+        return httpx.Response(200,json={'status':'completed','output':[{'type':'message','content':[{'type':'output_text','text':'Research evidence only.'}]}],'usage':{'input_tokens':100,'output_tokens':50}})
+    original=httpx.AsyncClient
+    monkeypatch.setattr(httpx,'AsyncClient',lambda **kwargs:original(**{**kwargs,'transport':httpx.MockTransport(handler)}))
+    login(client)
+    assert client.get('/api/v1/settings').json()['llm_enabled'] is True
+    response=client.post('/api/v1/chat',json={'symbol':'SPY','message':'Explain available observations.','debate':debate})
+    assert response.status_code==200,response.text
+    payload=response.json()
+    assert payload['mode']=='llm' and payload['citations'] and payload['message']
+    assert len(requests)==(5 if debate else 1)
+    assert payload['cost_usd']==pytest.approx(0.0008*len(requests))
+    assert client.get('/api/v1/journal').json()==[]
+
 def test_signal_snapshot_immutable():
     store=Store('sqlite:///:memory:')
     store.put('signals',{'reference_price':100},'one',immutable=True)

@@ -1,5 +1,25 @@
 # SELERY native app guide
 
+## Stock conversations and chart
+
+Open the research assistant, specify a stock, and tap **Start conversation**. A route's suggested symbol is only a prefill. Select an existing thread from **Saved conversations** to continue it; conversations are stored on the backend and keep their original stock. Create another conversation for a different symbol.
+
+The native view keeps a compact touch chart above the scrollable transcript, with a composer below it. The chart shrinks while the keyboard is visible and supports 5m/1h/1D context. Foreground reads refresh dated chart/thread state without requesting an AI answer. Follow-ups send prior exchanges plus fresh context for the chart's interval. Messages include source citations, local/AI labels, pending/failed states and explicit errors. Failed sends retain the draft; retries are manual and use an idempotent request identifier.
+
+Back navigation returns to the saved-thread list. Delete removes a thread and its messages from the active backend database. Screen data clears on blur/background; no new persistent mobile cache is used. The existing activity-ID route remains the separate public-trader evidence chat. Native exports/type checks do not establish iPhone keyboard, chart gesture or layout acceptance; those checks remain pending.
+
+## Public Traders
+
+Open **Settings → Public Traders**. Native directory and activity cards share source filters, search and pagination, with additional symbol and inclusive UTC opening-date activity filters. Refresh the directory to import one provider page; select a trader and refresh their activity explicitly. Kinfo and AfterHour stay visibly pending while access is unresolved.
+
+**View research details** opens a native route showing source identity, direction, unclassified exposure, entry/allocation, unknown quantity/exit, separate timestamps and limitations. Source prices have no assumed currency. The locally bundled touch chart supplies dated IEX context with TradingView attribution; it is not a trader's realized performance and may not include an old opening date. **Ask about this trade** opens activity-scoped chat with citations and permission-aware local/AI labeling. Public activity does not create a journal entry.
+
+Routes are `/traders`, `/public-activity/[id]` and `/chat?activity_id=…`; a signed-in session is required. Public records and activity-chat answers clear on blur/background and are not persisted for offline viewing. Pull to refresh re-reads stored evidence; the explicit provider-refresh button is the action that fetches new public snapshots. Existing market cache behavior remains separate.
+
+No new Expo permissions or mobile provider keys are needed. Use the existing Expo Go setup and `EXPO_PUBLIC_API_URL`; all eToro/OpenAI credentials remain on the backend. Push integration is not part of Public Traders. EAS/signing/TestFlight requirements below are unchanged. Bundle checks do not establish real-iPhone gestures, deep-link or real-record acceptance, which remain pending.
+
+See [setup requirements](SETUP-REQUIREMENTS.md) and [public source qualification](docs/PUBLIC-TRADERS.md) for missing access and live LLM evidence. This feature is present on both surfaces; desktop-only broader research features are still identified below.
+
 The native app is an Expo Router/React Native companion for reviewing market context, charts, alerts and personal notes. It uses the same authenticated Python research API and generated contracts as the web app. Its chart is a locally bundled renderer inside a WebView; navigation, forms and signal sheets are native.
 
 **Selery is research software that displays analysis. It does not execute, recommend, or place trades.**
@@ -90,7 +110,7 @@ The native chart is intentionally focused on the default research view. Desktop 
 
 News links open the original source. The backend performs transparent lexical scoring and duplicate clustering; it does not prove a headline caused a price move. Publication time and retrieval/availability are different concepts.
 
-Open the assistant from Settings. Specify a symbol and ask a question. Local mode gives an explicitly limited source-linked summary of available data. Optional LLM mode requires all backend enablement, key and budget settings. The response shows its mode and cost. Native chat sends a single research request; the multi-perspective debate control is a desktop feature.
+Open the assistant from Settings. Specify a symbol and ask a question. Local mode gives an explicitly limited source-linked summary of available data. Optional LLM mode uses OpenAI GPT-5.6 Terra with high reasoning and requires all backend enablement, key and budget settings. The response shows its mode and cost allowance. Native chat sends a single research request; the multi-perspective debate control is a desktop feature. Changing the backend model does not require a native rebuild.
 
 ### Journal
 
@@ -154,7 +174,7 @@ Set these public/build values in the EAS environment and local shell/app environ
 | `SELERY_IOS_BUNDLE_ID` | Unique Apple bundle identifier |
 | `SELERY_ANDROID_PACKAGE` | Unique Android package identifier |
 
-These are app configuration values, not a place for Alpaca, Anthropic, SMTP or other provider secrets. Public values become part of the client build. Changing the API URL in the server `.env` does not rewrite an already exported native bundle; rebuild/re-export with the new app environment.
+These are app configuration values, not a place for Alpaca, OpenAI, SMTP or other provider secrets. Public values become part of the client build. Changing the API URL in the server `.env` does not rewrite an already exported native bundle; rebuild/re-export with the new app environment.
 
 Before a cloud build, ensure the generated chart HTML reflects the shared renderer:
 

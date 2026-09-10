@@ -446,6 +446,19 @@
         "default": false,
         "title": "Debate",
         "type": "boolean"
+      },
+      "activity_id": {
+        "anyOf": [
+          {
+            "maxLength": 180,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Activity Id"
       }
     },
     "required": [
@@ -532,6 +545,194 @@
       "mode"
     ],
     "title": "ChatResponse",
+    "type": "object"
+  },
+  "Conversation": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "symbol": {
+        "title": "Symbol",
+        "type": "string"
+      },
+      "title": {
+        "title": "Title",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      },
+      "updated_at": {
+        "format": "date-time",
+        "title": "Updated At",
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "symbol",
+      "title",
+      "created_at",
+      "updated_at"
+    ],
+    "title": "Conversation",
+    "type": "object"
+  },
+  "ConversationCreate": {
+    "additionalProperties": false,
+    "properties": {
+      "symbol": {
+        "maxLength": 12,
+        "minLength": 1,
+        "title": "Symbol",
+        "type": "string"
+      }
+    },
+    "required": [
+      "symbol"
+    ],
+    "title": "ConversationCreate",
+    "type": "object"
+  },
+  "ConversationMessage": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "conversation_id": {
+        "title": "Conversation Id",
+        "type": "string"
+      },
+      "role": {
+        "enum": [
+          "user",
+          "assistant"
+        ],
+        "title": "Role",
+        "type": "string"
+      },
+      "message": {
+        "title": "Message",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      },
+      "status": {
+        "default": "complete",
+        "enum": [
+          "pending",
+          "complete",
+          "failed"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "error": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Error"
+      },
+      "citations": {
+        "items": {
+          "$ref": "#/$defs/Citation"
+        },
+        "title": "Citations",
+        "type": "array"
+      },
+      "mode": {
+        "anyOf": [
+          {
+            "enum": [
+              "local",
+              "llm"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Mode"
+      },
+      "cost_usd": {
+        "default": 0,
+        "title": "Cost Usd",
+        "type": "number"
+      }
+    },
+    "required": [
+      "id",
+      "conversation_id",
+      "role",
+      "message",
+      "created_at"
+    ],
+    "title": "ConversationMessage",
+    "type": "object"
+  },
+  "ConversationDetail": {
+    "additionalProperties": false,
+    "properties": {
+      "conversation": {
+        "$ref": "#/$defs/Conversation"
+      },
+      "messages": {
+        "items": {
+          "$ref": "#/$defs/ConversationMessage"
+        },
+        "title": "Messages",
+        "type": "array"
+      }
+    },
+    "required": [
+      "conversation",
+      "messages"
+    ],
+    "title": "ConversationDetail",
+    "type": "object"
+  },
+  "ConversationTurn": {
+    "additionalProperties": false,
+    "properties": {
+      "message": {
+        "maxLength": 4000,
+        "minLength": 1,
+        "title": "Message",
+        "type": "string"
+      },
+      "request_id": {
+        "pattern": "^[A-Za-z0-9_-]{8,80}$",
+        "title": "Request Id",
+        "type": "string"
+      },
+      "timeframe": {
+        "$ref": "#/$defs/Timeframe",
+        "default": "5m"
+      }
+    },
+    "required": [
+      "message",
+      "request_id"
+    ],
+    "title": "ConversationTurn",
     "type": "object"
   },
   "DataQuery": {
@@ -1121,6 +1322,520 @@
       "hit_rate"
     ],
     "title": "OutcomeSummary",
+    "type": "object"
+  },
+  "PublicActivity": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "trader_id": {
+        "title": "Trader Id",
+        "type": "string"
+      },
+      "source": {
+        "enum": [
+          "etoro",
+          "kinfo",
+          "afterhour"
+        ],
+        "title": "Source",
+        "type": "string"
+      },
+      "source_record_id": {
+        "title": "Source Record Id",
+        "type": "string"
+      },
+      "source_url": {
+        "title": "Source Url",
+        "type": "string"
+      },
+      "symbol": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Symbol"
+      },
+      "instrument_name": {
+        "title": "Instrument Name",
+        "type": "string"
+      },
+      "instrument_kind": {
+        "default": "unclassified",
+        "enum": [
+          "stock",
+          "stock_cfd",
+          "other",
+          "unclassified"
+        ],
+        "title": "Instrument Kind",
+        "type": "string"
+      },
+      "direction": {
+        "default": "unknown",
+        "enum": [
+          "long",
+          "short",
+          "unknown"
+        ],
+        "title": "Direction",
+        "type": "string"
+      },
+      "opened_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Opened At"
+      },
+      "published_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Published At"
+      },
+      "provider_updated_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Provider Updated At"
+      },
+      "first_observed_at": {
+        "format": "date-time",
+        "title": "First Observed At",
+        "type": "string"
+      },
+      "observed_at": {
+        "format": "date-time",
+        "title": "Observed At",
+        "type": "string"
+      },
+      "entry_price": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Entry Price"
+      },
+      "allocation_percent": {
+        "anyOf": [
+          {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Allocation Percent"
+      },
+      "quantity": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Quantity"
+      },
+      "exit_price": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Exit Price"
+      },
+      "status": {
+        "default": "observed_open",
+        "enum": [
+          "observed_open",
+          "no_longer_observed",
+          "access_unavailable"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "verification": {
+        "default": "Provider-reported public record; not independently broker-verified by SELERY.",
+        "title": "Verification",
+        "type": "string"
+      },
+      "stale": {
+        "default": true,
+        "title": "Stale",
+        "type": "boolean"
+      },
+      "synthetic": {
+        "default": false,
+        "title": "Synthetic",
+        "type": "boolean"
+      },
+      "revision": {
+        "default": 1,
+        "title": "Revision",
+        "type": "integer"
+      },
+      "limitations": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Limitations",
+        "type": "array"
+      }
+    },
+    "required": [
+      "id",
+      "trader_id",
+      "source",
+      "source_record_id",
+      "source_url",
+      "instrument_name",
+      "first_observed_at",
+      "observed_at"
+    ],
+    "title": "PublicActivity",
+    "type": "object"
+  },
+  "PublicTrader": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "title": "Id",
+        "type": "string"
+      },
+      "source": {
+        "enum": [
+          "etoro",
+          "kinfo",
+          "afterhour"
+        ],
+        "title": "Source",
+        "type": "string"
+      },
+      "username": {
+        "title": "Username",
+        "type": "string"
+      },
+      "display_name": {
+        "title": "Display Name",
+        "type": "string"
+      },
+      "source_url": {
+        "title": "Source Url",
+        "type": "string"
+      },
+      "observed_at": {
+        "format": "date-time",
+        "title": "Observed At",
+        "type": "string"
+      },
+      "stale": {
+        "default": true,
+        "title": "Stale",
+        "type": "boolean"
+      },
+      "synthetic": {
+        "default": false,
+        "title": "Synthetic",
+        "type": "boolean"
+      },
+      "access": {
+        "default": "public",
+        "enum": [
+          "public",
+          "unavailable"
+        ],
+        "title": "Access",
+        "type": "string"
+      },
+      "statistics": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "title": "Statistics",
+        "type": "object"
+      },
+      "statistics_note": {
+        "default": "Provider-reported statistics; units and period must be verified before comparison.",
+        "title": "Statistics Note",
+        "type": "string"
+      },
+      "version": {
+        "default": "1",
+        "title": "Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "source",
+      "username",
+      "display_name",
+      "source_url",
+      "observed_at"
+    ],
+    "title": "PublicTrader",
+    "type": "object"
+  },
+  "PublicActivityDetail": {
+    "additionalProperties": false,
+    "properties": {
+      "activity": {
+        "$ref": "#/$defs/PublicActivity"
+      },
+      "trader": {
+        "$ref": "#/$defs/PublicTrader"
+      },
+      "chart": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ChartResponse"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "market_context_reason": {
+        "title": "Market Context Reason",
+        "type": "string"
+      },
+      "reference_move_percent": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reference Move Percent"
+      },
+      "llm_allowed": {
+        "default": false,
+        "title": "Llm Allowed",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "activity",
+      "trader",
+      "market_context_reason"
+    ],
+    "title": "PublicActivityDetail",
+    "type": "object"
+  },
+  "PublicActivityPage": {
+    "additionalProperties": false,
+    "properties": {
+      "items": {
+        "items": {
+          "$ref": "#/$defs/PublicActivity"
+        },
+        "title": "Items",
+        "type": "array"
+      },
+      "total": {
+        "title": "Total",
+        "type": "integer"
+      },
+      "limit": {
+        "title": "Limit",
+        "type": "integer"
+      },
+      "offset": {
+        "title": "Offset",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "items",
+      "total",
+      "limit",
+      "offset"
+    ],
+    "title": "PublicActivityPage",
+    "type": "object"
+  },
+  "PublicRefreshRequest": {
+    "additionalProperties": false,
+    "properties": {
+      "trader_id": {
+        "anyOf": [
+          {
+            "maxLength": 180,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Trader Id"
+      }
+    },
+    "title": "PublicRefreshRequest",
+    "type": "object"
+  },
+  "PublicRefreshResult": {
+    "additionalProperties": false,
+    "properties": {
+      "updated": {
+        "title": "Updated",
+        "type": "integer"
+      },
+      "message": {
+        "title": "Message",
+        "type": "string"
+      }
+    },
+    "required": [
+      "updated",
+      "message"
+    ],
+    "title": "PublicRefreshResult",
+    "type": "object"
+  },
+  "PublicSource": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "enum": [
+          "etoro",
+          "kinfo",
+          "afterhour"
+        ],
+        "title": "Id",
+        "type": "string"
+      },
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "pending",
+          "configured",
+          "verified",
+          "error",
+          "fixtures"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "reason": {
+        "title": "Reason",
+        "type": "string"
+      },
+      "can_refresh": {
+        "default": false,
+        "title": "Can Refresh",
+        "type": "boolean"
+      },
+      "llm_allowed": {
+        "default": false,
+        "title": "Llm Allowed",
+        "type": "boolean"
+      },
+      "last_checked_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Last Checked At"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "status",
+      "reason"
+    ],
+    "title": "PublicSource",
+    "type": "object"
+  },
+  "PublicTraderPage": {
+    "additionalProperties": false,
+    "properties": {
+      "items": {
+        "items": {
+          "$ref": "#/$defs/PublicTrader"
+        },
+        "title": "Items",
+        "type": "array"
+      },
+      "total": {
+        "title": "Total",
+        "type": "integer"
+      },
+      "limit": {
+        "title": "Limit",
+        "type": "integer"
+      },
+      "offset": {
+        "title": "Offset",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "items",
+      "total",
+      "limit",
+      "offset"
+    ],
+    "title": "PublicTraderPage",
     "type": "object"
   },
   "Quote": {

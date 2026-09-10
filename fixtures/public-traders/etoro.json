@@ -1,0 +1,76 @@
+{
+  "sha256": "275a4e21bff6ecdf8894a249d8ddba580e1ae561e129733d15d9710e9adbcdaf",
+  "data": {
+    "directory": {
+      "results": [
+        {
+          "username": "selery_demo_ada",
+          "fullName": "Ada (synthetic example)",
+          "type": "trader",
+          "riskScore": 4,
+          "copiers": 25
+        },
+        {
+          "username": "selery_demo_lin",
+          "fullName": "Lin (synthetic example)",
+          "type": "trader",
+          "riskScore": 6,
+          "copiers": 10
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "pageSize": 20,
+        "hasNext": false,
+        "totalItems": 2
+      }
+    },
+    "snapshots": {
+      "selery_demo_ada": {
+        "positions": [
+          {
+            "positionId": 101,
+            "instrumentId": 1001,
+            "openTimestamp": "2026-09-08T14:35:00Z",
+            "openRate": 762,
+            "isBuy": true,
+            "leverage": 1,
+            "investmentPct": 8
+          },
+          {
+            "positionId": 102,
+            "instrumentId": 999,
+            "openRate": null,
+            "isBuy": false
+          }
+        ],
+        "socialTrades": []
+      },
+      "selery_demo_lin": {
+        "positions": [
+          {
+            "positionId": 201,
+            "instrumentId": 1002,
+            "openTimestamp": "2026-09-08T15:00:00Z",
+            "openRate": 230,
+            "isBuy": true,
+            "investmentPct": 12
+          }
+        ],
+        "socialTrades": []
+      }
+    },
+    "instruments": [
+      {
+        "instrumentID": 1001,
+        "instrumentDisplayName": "SPDR S&P 500 ETF",
+        "symbolFull": "SPY"
+      },
+      {
+        "instrumentID": 1002,
+        "instrumentDisplayName": "Apple",
+        "symbolFull": "AAPL"
+      }
+    ]
+  }
+}

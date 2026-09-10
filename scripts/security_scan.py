@@ -9,8 +9,11 @@ ROOT=Path(__file__).resolve().parents[1]
 EXCLUDED={'.git','.venv','node_modules','.worktrees','.next','.expo','.codex','data','__pycache__','.pytest_cache','.turbo','dist','coverage'}
 
 def forbidden_endpoints(text):
+    # Authorized third-party public-user evidence namespace; private broker paths
+    # remain prohibited. Runtime provider access has an independent GET allowlist.
     # Construct tokens to avoid embedding a prohibited endpoint in the scanner itself.
     nouns=('ord'+'ers','pos'+'itions','port'+'folio')
+    text=re.sub(r'/api/v1/user-info/people/[^/\s]+/'+nouns[2]+r'/live(?=[\s\x27"?]|$)','PUBLIC_USER_EVIDENCE',text)
     # A source-audit path ending in a license filename is documentary evidence,
     # not a network operation. Keep the endpoint detector active everywhere else.
     return any(re.search(r'/(?:v\d+/)?'+noun+r'(?!/LICENSE(?:\.md|\.txt)?["\s])(?:[/\s?"\x27]|$)',text,re.I) for noun in nouns)

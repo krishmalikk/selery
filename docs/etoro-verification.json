@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-09-09T23:43:49.843112+00:00",
+  "operation": "instrument_display_metadata",
+  "credential_aliases": ["ETORO_PUBLIC_KEY", "ETORO_PRIVATE_KEY"],
+  "http_status": 200,
+  "status": "authenticated_metadata_access",
+  "public_record_access_verified": false,
+  "records_stored": false,
+  "llm_requested": false,
+  "storage_display_permission_confirmed": false,
+  "openai_processing_permission_confirmed": false
+}

@@ -42,6 +42,7 @@ export type ChatRequest = {
   "message": string;
   "symbol": string;
   "debate": boolean;
+  "activity_id": string | null;
 };
 export type ChatResponse = {
   "message": string;
@@ -54,6 +55,37 @@ export type Citation = {
   "timestamp": string;
   "url": string | null;
   "data_id": string | null;
+};
+export type Conversation = {
+  "id": string;
+  "symbol": string;
+  "title": string;
+  "created_at": string;
+  "updated_at": string;
+};
+export type ConversationCreate = {
+  "symbol": string;
+};
+export type ConversationDetail = {
+  "conversation": Conversation;
+  "messages": Array<ConversationMessage>;
+};
+export type ConversationMessage = {
+  "id": string;
+  "conversation_id": string;
+  "role": "user" | "assistant";
+  "message": string;
+  "created_at": string;
+  "status": "pending" | "complete" | "failed";
+  "error": string | null;
+  "citations": Array<Citation>;
+  "mode": "local" | "llm" | null;
+  "cost_usd": number;
+};
+export type ConversationTurn = {
+  "message": string;
+  "request_id": string;
+  "timeframe": Timeframe;
 };
 export type DataQuery = {
   "provider": "finnhub" | "alpha_vantage" | "twelve_data" | "fred" | "sec" | "kenneth_french" | "yfinance";
@@ -153,6 +185,82 @@ export type Provenance = {
   "synthetic": boolean;
   "version": string;
 };
+export type PublicActivity = {
+  "id": string;
+  "trader_id": string;
+  "source": "etoro" | "kinfo" | "afterhour";
+  "source_record_id": string;
+  "source_url": string;
+  "symbol": string | null;
+  "instrument_name": string;
+  "instrument_kind": "stock" | "stock_cfd" | "other" | "unclassified";
+  "direction": "long" | "short" | "unknown";
+  "opened_at": string | null;
+  "published_at": string | null;
+  "provider_updated_at": string | null;
+  "first_observed_at": string;
+  "observed_at": string;
+  "entry_price": number | null;
+  "allocation_percent": number | null;
+  "quantity": number | null;
+  "exit_price": number | null;
+  "status": "observed_open" | "no_longer_observed" | "access_unavailable";
+  "verification": string;
+  "stale": boolean;
+  "synthetic": boolean;
+  "revision": number;
+  "limitations": Array<string>;
+};
+export type PublicActivityDetail = {
+  "activity": PublicActivity;
+  "trader": PublicTrader;
+  "chart": ChartResponse | null;
+  "market_context_reason": string;
+  "reference_move_percent": number | null;
+  "llm_allowed": boolean;
+};
+export type PublicActivityPage = {
+  "items": Array<PublicActivity>;
+  "total": number;
+  "limit": number;
+  "offset": number;
+};
+export type PublicRefreshRequest = {
+  "trader_id": string | null;
+};
+export type PublicRefreshResult = {
+  "updated": number;
+  "message": string;
+};
+export type PublicSource = {
+  "id": "etoro" | "kinfo" | "afterhour";
+  "name": string;
+  "status": "pending" | "configured" | "verified" | "error" | "fixtures";
+  "reason": string;
+  "can_refresh": boolean;
+  "llm_allowed": boolean;
+  "last_checked_at": string | null;
+};
+export type PublicTrader = {
+  "id": string;
+  "source": "etoro" | "kinfo" | "afterhour";
+  "username": string;
+  "display_name": string;
+  "source_url": string;
+  "observed_at": string;
+  "stale": boolean;
+  "synthetic": boolean;
+  "access": "public" | "unavailable";
+  "statistics": Record<string, number>;
+  "statistics_note": string;
+  "version": string;
+};
+export type PublicTraderPage = {
+  "items": Array<PublicTrader>;
+  "total": number;
+  "limit": number;
+  "offset": number;
+};
 export type Quote = {
   "symbol": string;
   "price": number;
@@ -245,9 +353,14 @@ export const AlertSchema: z.ZodType<Alert> = z.object({"id": z.string(), "kind":
 export const BarSchema: z.ZodType<Bar> = z.object({"symbol": z.string(), "time": z.number().int().finite(), "available_at": z.number().int().finite(), "open": z.number().finite(), "high": z.number().finite(), "low": z.number().finite(), "close": z.number().finite(), "volume": z.number().finite(), "feed": z.lazy(() => FeedSchema), "finalized": z.boolean()}).strict();
 export const CapabilitySchema: z.ZodType<Capability> = z.object({"id": z.string(), "label": z.string(), "enabled": z.boolean(), "reason": z.union([z.string(), z.null()])}).strict();
 export const ChartResponseSchema: z.ZodType<ChartResponse> = z.object({"symbol": z.string(), "timeframe": z.lazy(() => TimeframeSchema), "bars": z.array(z.lazy(() => BarSchema)), "indicators": z.record(z.array(z.lazy(() => IndicatorPointSchema))), "signals": z.array(z.lazy(() => SignalSchema)), "capabilities": z.array(z.lazy(() => CapabilitySchema)), "provenance": z.lazy(() => ProvenanceSchema)}).strict();
-export const ChatRequestSchema: z.ZodType<ChatRequest> = z.object({"message": z.string().min(1).max(4000), "symbol": z.string(), "debate": z.boolean()}).strict();
+export const ChatRequestSchema: z.ZodType<ChatRequest> = z.object({"message": z.string().min(1).max(4000), "symbol": z.string(), "debate": z.boolean(), "activity_id": z.union([z.string().max(180), z.null()])}).strict();
 export const ChatResponseSchema: z.ZodType<ChatResponse> = z.object({"message": z.string(), "citations": z.array(z.lazy(() => CitationSchema)), "mode": z.enum(["local", "llm"]), "cost_usd": z.number().finite()}).strict();
 export const CitationSchema: z.ZodType<Citation> = z.object({"label": z.string(), "timestamp": z.string(), "url": z.union([z.string(), z.null()]), "data_id": z.union([z.string(), z.null()])}).strict();
+export const ConversationSchema: z.ZodType<Conversation> = z.object({"id": z.string(), "symbol": z.string(), "title": z.string(), "created_at": z.string(), "updated_at": z.string()}).strict();
+export const ConversationCreateSchema: z.ZodType<ConversationCreate> = z.object({"symbol": z.string().min(1).max(12)}).strict();
+export const ConversationDetailSchema: z.ZodType<ConversationDetail> = z.object({"conversation": z.lazy(() => ConversationSchema), "messages": z.array(z.lazy(() => ConversationMessageSchema))}).strict();
+export const ConversationMessageSchema: z.ZodType<ConversationMessage> = z.object({"id": z.string(), "conversation_id": z.string(), "role": z.enum(["user", "assistant"]), "message": z.string(), "created_at": z.string(), "status": z.enum(["pending", "complete", "failed"]), "error": z.union([z.string(), z.null()]), "citations": z.array(z.lazy(() => CitationSchema)), "mode": z.union([z.enum(["local", "llm"]), z.null()]), "cost_usd": z.number().finite()}).strict();
+export const ConversationTurnSchema: z.ZodType<ConversationTurn> = z.object({"message": z.string().min(1).max(4000), "request_id": z.string().regex(new RegExp("^[A-Za-z0-9_-]{8,80}$")), "timeframe": z.lazy(() => TimeframeSchema)}).strict();
 export const DataQuerySchema: z.ZodType<DataQuery> = z.object({"provider": z.enum(["finnhub", "alpha_vantage", "twelve_data", "fred", "sec", "kenneth_french", "yfinance"]), "dataset": z.string().min(1).max(60), "symbol": z.string(), "timeframe": z.lazy(() => TimeframeSchema), "start": z.union([z.string(), z.null()]), "end": z.union([z.string(), z.null()]), "series_id": z.union([z.string(), z.null()]), "cik": z.union([z.string(), z.null()]), "as_of": z.union([z.string(), z.null()]), "archive": z.boolean()}).strict();
 export const DeliverySummarySchema: z.ZodType<DeliverySummary> = z.object({"accepted": z.number().int().finite(), "failed": z.number().int().finite(), "skipped": z.number().int().finite(), "unknown": z.number().int().finite()}).strict();
 export const DeviceRegistrationSchema: z.ZodType<DeviceRegistration> = z.object({"token": z.string().max(230).regex(new RegExp("^(ExponentPushToken|ExpoPushToken)\\[[A-Za-z0-9_-]{10,200}\\]$")), "platform": z.enum(["ios", "android"]), "enabled": z.boolean()}).strict();
@@ -261,6 +374,14 @@ export const NewsResponseSchema: z.ZodType<NewsResponse> = z.object({"items": z.
 export const OutcomeSchema: z.ZodType<Outcome> = z.object({"signal_id": z.string(), "status": z.enum(["pending", "target_first", "stop_first", "neither", "ambiguous", "incomplete"]), "evaluated_at": z.string(), "bars_observed": z.number().int().finite(), "resolved_at": z.union([z.number().int().finite(), z.null()]), "max_favorable_percent": z.union([z.number().finite(), z.null()]), "max_adverse_percent": z.union([z.number().finite(), z.null()]), "reason": z.union([z.string(), z.null()])}).strict();
 export const OutcomeSummarySchema: z.ZodType<OutcomeSummary> = z.object({"strategy": z.string(), "feed": z.lazy(() => FeedSchema), "matured": z.number().int().finite(), "target_first": z.number().int().finite(), "stop_first": z.number().int().finite(), "neither": z.number().int().finite(), "ambiguous": z.number().int().finite(), "hit_rate": z.union([z.number().finite(), z.null()]), "denominator": z.string(), "historical_hit_rate": z.union([z.number().finite(), z.null()]), "comparison_reason": z.union([z.string(), z.null()])}).strict();
 export const ProvenanceSchema: z.ZodType<Provenance> = z.object({"provider": z.string(), "feed": z.lazy(() => FeedSchema), "observed_at": z.string(), "available_at": z.string(), "retrieved_at": z.string(), "stale": z.boolean(), "synthetic": z.boolean(), "version": z.string()}).strict();
+export const PublicActivitySchema: z.ZodType<PublicActivity> = z.object({"id": z.string(), "trader_id": z.string(), "source": z.enum(["etoro", "kinfo", "afterhour"]), "source_record_id": z.string(), "source_url": z.string(), "symbol": z.union([z.string(), z.null()]), "instrument_name": z.string(), "instrument_kind": z.enum(["stock", "stock_cfd", "other", "unclassified"]), "direction": z.enum(["long", "short", "unknown"]), "opened_at": z.union([z.string(), z.null()]), "published_at": z.union([z.string(), z.null()]), "provider_updated_at": z.union([z.string(), z.null()]), "first_observed_at": z.string(), "observed_at": z.string(), "entry_price": z.union([z.number().finite().gt(0), z.null()]), "allocation_percent": z.union([z.number().finite().min(0).max(100), z.null()]), "quantity": z.union([z.number().finite(), z.null()]), "exit_price": z.union([z.number().finite(), z.null()]), "status": z.enum(["observed_open", "no_longer_observed", "access_unavailable"]), "verification": z.string(), "stale": z.boolean(), "synthetic": z.boolean(), "revision": z.number().int().finite(), "limitations": z.array(z.string())}).strict();
+export const PublicActivityDetailSchema: z.ZodType<PublicActivityDetail> = z.object({"activity": z.lazy(() => PublicActivitySchema), "trader": z.lazy(() => PublicTraderSchema), "chart": z.union([z.lazy(() => ChartResponseSchema), z.null()]), "market_context_reason": z.string(), "reference_move_percent": z.union([z.number().finite(), z.null()]), "llm_allowed": z.boolean()}).strict();
+export const PublicActivityPageSchema: z.ZodType<PublicActivityPage> = z.object({"items": z.array(z.lazy(() => PublicActivitySchema)), "total": z.number().int().finite(), "limit": z.number().int().finite(), "offset": z.number().int().finite()}).strict();
+export const PublicRefreshRequestSchema: z.ZodType<PublicRefreshRequest> = z.object({"trader_id": z.union([z.string().max(180), z.null()])}).strict();
+export const PublicRefreshResultSchema: z.ZodType<PublicRefreshResult> = z.object({"updated": z.number().int().finite(), "message": z.string()}).strict();
+export const PublicSourceSchema: z.ZodType<PublicSource> = z.object({"id": z.enum(["etoro", "kinfo", "afterhour"]), "name": z.string(), "status": z.enum(["pending", "configured", "verified", "error", "fixtures"]), "reason": z.string(), "can_refresh": z.boolean(), "llm_allowed": z.boolean(), "last_checked_at": z.union([z.string(), z.null()])}).strict();
+export const PublicTraderSchema: z.ZodType<PublicTrader> = z.object({"id": z.string(), "source": z.enum(["etoro", "kinfo", "afterhour"]), "username": z.string(), "display_name": z.string(), "source_url": z.string(), "observed_at": z.string(), "stale": z.boolean(), "synthetic": z.boolean(), "access": z.enum(["public", "unavailable"]), "statistics": z.record(z.number().finite()), "statistics_note": z.string(), "version": z.string()}).strict();
+export const PublicTraderPageSchema: z.ZodType<PublicTraderPage> = z.object({"items": z.array(z.lazy(() => PublicTraderSchema)), "total": z.number().int().finite(), "limit": z.number().int().finite(), "offset": z.number().int().finite()}).strict();
 export const QuoteSchema: z.ZodType<Quote> = z.object({"symbol": z.string(), "price": z.number().finite(), "change": z.union([z.number().finite(), z.null()]), "change_percent": z.union([z.number().finite(), z.null()]), "bid": z.union([z.number().finite(), z.null()]), "ask": z.union([z.number().finite(), z.null()]), "provenance": z.lazy(() => ProvenanceSchema), "sparkline": z.array(z.number().finite())}).strict();
 export const ResearchReportSchema: z.ZodType<ResearchReport> = z.object({"id": z.string(), "created_at": z.string(), "request": z.lazy(() => ResearchRequestSchema), "signal_count": z.number().int().finite(), "outcomes": z.array(z.lazy(() => OutcomeSchema)), "metrics": z.record(z.union([z.number().finite(), z.null()])), "assumptions": z.array(z.string()), "limitations": z.array(z.string()), "series": z.array(z.lazy(() => IndicatorPointSchema)), "benchmark": z.array(z.lazy(() => IndicatorPointSchema))}).strict();
 export const ResearchRequestSchema: z.ZodType<ResearchRequest> = z.object({"symbol": z.string(), "timeframe": z.lazy(() => TimeframeSchema), "strategy": z.string(), "feed": z.lazy(() => FeedSchema), "horizon_bars": z.number().int().finite().min(1).max(252)}).strict();

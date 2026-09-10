@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { ConversationSchema, ConversationDetailSchema } from './contracts';
+import { PublicSourceSchema, PublicTraderPageSchema, PublicActivityPageSchema, PublicActivityDetailSchema, PublicRefreshResultSchema } from './contracts';
 import { WatchlistResponseSchema, ChartResponseSchema, NewsResponseSchema, SettingsSchema, StrategyInfoSchema, ResearchReportSchema, JobSchema, SizingResponseSchema, OutcomeSummarySchema, JournalEntrySchema, AlertSchema, ChatResponseSchema } from './contracts';
 import type { Timeframe, Feed, SizingRequest, ResearchRequest, ChatRequest, JournalEntry } from './contracts';
 
@@ -27,7 +29,17 @@ export class SeleryClient {
   research(input:ResearchRequest){return this.request('/research',ResearchReportSchema,{method:'POST',body:JSON.stringify(input)});}
   report(id:string){return this.request(`/research/${encodeURIComponent(id)}`,ResearchReportSchema);}
   reports(limit=10,offset=0){return this.request(`/research?limit=${limit}&offset=${offset}`,z.array(ResearchReportSchema));}
-  chat(input:ChatRequest){return this.request('/chat',ChatResponseSchema,{method:'POST',body:JSON.stringify(input)});}
+  chat(input:Omit<ChatRequest,'activity_id'> & {activity_id?:string|null}){return this.request('/chat',ChatResponseSchema,{method:'POST',body:JSON.stringify(input)});}
+  conversations(limit=50,offset=0){return this.request(`/conversations?limit=${limit}&offset=${offset}`,z.array(ConversationSchema));}
+  createConversation(symbol:string){return this.request('/conversations',ConversationSchema,{method:'POST',body:JSON.stringify({symbol})});}
+  conversation(id:string){return this.request('/conversations/'+encodeURIComponent(id),ConversationDetailSchema);}
+  sendConversationMessage(id:string,message:string,requestId:string,timeframe:Timeframe='5m'){return this.request('/conversations/'+encodeURIComponent(id)+'/messages',ConversationDetailSchema,{method:'POST',body:JSON.stringify({message,request_id:requestId,timeframe})});}
+  deleteConversation(id:string){return this.request('/conversations/'+encodeURIComponent(id)+'/delete',z.object({ok:z.boolean()}),{method:'POST'});}
+  publicSources(){return this.request('/public-traders/sources',z.array(PublicSourceSchema));}
+  publicTraders(query:Record<string,string|number>={}){return this.request('/public-traders?'+new URLSearchParams(Object.entries(query).map(([k,v])=>[k,String(v)])),PublicTraderPageSchema);}
+  publicActivity(query:Record<string,string|number>={}){return this.request('/public-traders/activity?'+new URLSearchParams(Object.entries(query).map(([k,v])=>[k,String(v)])),PublicActivityPageSchema);}
+  publicActivityDetail(id:string,includeChart=true){return this.request('/public-traders/activity/'+encodeURIComponent(id)+(includeChart?'':'?include_chart=false'),PublicActivityDetailSchema);}
+  refreshPublicTraders(trader_id:string|null=null){return this.request('/public-traders/refresh',PublicRefreshResultSchema,{method:'POST',body:JSON.stringify({trader_id})});}
   jobs(){return this.request('/jobs',z.array(JobSchema));}
   domain(){return this.request('/domain/SPY',z.record(z.unknown()));}
   modelStatus(){return this.request('/models',z.record(z.unknown()));}

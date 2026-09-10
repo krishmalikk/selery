@@ -26,6 +26,7 @@ import {
   RefreshCw,
   PanelLeftClose,
   ExternalLink,
+  Users,
 } from "lucide-react";
 import {
   SeleryClient,
@@ -50,7 +51,6 @@ import {
   type SizingResponse,
   type OutcomeSummary,
   type Alert,
-  type ChatResponse,
 } from "@selery/shared";
 import { encodeCache, parseCache } from "@selery/shared/src/cache";
 import {
@@ -64,10 +64,13 @@ import {
 import ResearchChart from "./chart";
 import ReportChart from "./report-chart";
 import ReportLibrary from "./report-library";
+import PublicTraders from "./public-traders";
+import Conversations from "./conversations";
 const api = new SeleryClient("");
 const views = [
   "Overview",
   "Research",
+  "Traders",
   "Outcomes",
   "Journal",
   "Sizing",
@@ -79,6 +82,7 @@ type View = (typeof views)[number];
 const icons = [
   ChartNoAxesCombined,
   FlaskConical,
+  Users,
   Activity,
   BookOpen,
   SlidersHorizontal,
@@ -154,7 +158,6 @@ export default function Workspace() {
     [journal, setJournal] = useState<JournalEntry[]>([]),
     [alerts, setAlerts] = useState<Alert[]>([]),
     [sizing, setSizing] = useState<SizingResponse | null>(null),
-    [answer, setAnswer] = useState<ChatResponse | null>(null),
     [domain, setDomain] = useState<Record<string, unknown> | null>(null),
     [models, setModels] = useState<Record<string, unknown> | null>(null),
     [success, setSuccess] = useState("");
@@ -583,6 +586,7 @@ export default function Workspace() {
               {success}
             </div>
           )}
+          {view === "Traders" && <PublicTraders api={api} />}
           {view === "Overview" && (
             <>
               <section className="quote-strip" aria-label="Watchlist">
@@ -660,7 +664,6 @@ export default function Workspace() {
                       className="quiet-button"
                       onClick={() => {
                         setView("Assistant");
-                        setAnswer(null);
                       }}
                     >
                       Explain this move
@@ -1488,101 +1491,7 @@ export default function Workspace() {
               )}
             </section>
           )}
-          {view === "Assistant" && (
-            <section className="panel assistant-panel">
-              <div className="assistant-intro">
-                <div className="assistant-icon">
-                  <Leaf size={27} />
-                </div>
-                <Badge>READ-ONLY RESEARCH</Badge>
-                <h2>Start with a better question.</h2>
-                <p>
-                  Explore signals, recent headlines, and data limitations.
-                  <br />
-                  Answers include their available evidence.
-                </p>
-              </div>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const d = new FormData(e.currentTarget);
-                  void action(async () =>
-                    setAnswer(
-                      await api.chat({
-                        message: String(d.get("message")),
-                        symbol,
-                        debate: d.get("debate") === "on",
-                      }),
-                    ),
-                  );
-                }}
-              >
-                <label htmlFor="message">Ask about {symbol}</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  maxLength={4000}
-                  placeholder={`Explain the latest move in ${symbol} and what the available data can tell me.`}
-                />
-                <div className="assistant-actions">
-                  <label className="check-label">
-                    <input
-                      type="checkbox"
-                      name="debate"
-                      disabled={!settings?.llm_enabled}
-                    />
-                    Compare research perspectives
-                  </label>
-                  <button disabled={busy} className="primary">
-                    {busy ? "Reading evidence…" : "Ask research assistant"}
-                    <ArrowUpRight size={15} />
-                  </button>
-                </div>
-              </form>
-              <p className="muted small">
-                {settings?.llm_enabled
-                  ? `LLM cap ${formatPrice(settings.llm_monthly_cap_usd)} / month`
-                  : "LLM disabled · local source-linked explanations available · $0 LLM spending"}
-              </p>
-              {answer && (
-                <article className="answer">
-                  <div className="section-title">
-                    <h3>Research response</h3>
-                    <Badge>{answer.mode}</Badge>
-                  </div>
-                  <p>{answer.message}</p>
-                  <h4>SOURCES</h4>
-                  {answer.citations.length ? (
-                    answer.citations.map((c, i) => (
-                      <div className="citation" key={i}>
-                        {c.url ? (
-                          <a
-                            href={safeLink(c.url)}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {c.label}
-                            <ExternalLink size={12} />
-                          </a>
-                        ) : (
-                          <span>{c.label}</span>
-                        )}
-                        <small>
-                          {formatTime(c.timestamp)}
-                          {c.data_id ? ` · ${c.data_id}` : ""}
-                        </small>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="muted">
-                      No citations available for this response.
-                    </p>
-                  )}
-                </article>
-              )}
-            </section>
-          )}
+          {view === "Assistant" && <Conversations api={api} suggestedSymbol={symbol} settings={settings} />}
           {view === "Settings" && (
             <div className="settings-grid">
               <section className="panel padded">

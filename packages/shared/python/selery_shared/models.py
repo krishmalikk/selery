@@ -210,6 +210,83 @@ class ChatRequest(Contract):
     message: str = Field(min_length=1, max_length=4000)
     symbol: str = 'SPY'
     debate: bool = False
+    activity_id: str | None = Field(default=None,max_length=180)
+
+class PublicSource(Contract):
+    id: Literal['etoro','kinfo','afterhour']
+    name: str
+    status: Literal['pending','configured','verified','error','fixtures']
+    reason: str
+    can_refresh: bool = False
+    llm_allowed: bool = False
+    last_checked_at: datetime | None = None
+
+class PublicTrader(Contract):
+    id: str
+    source: Literal['etoro','kinfo','afterhour']
+    username: str
+    display_name: str
+    source_url: str
+    observed_at: datetime
+    stale: bool = True
+    synthetic: bool = False
+    access: Literal['public','unavailable'] = 'public'
+    statistics: dict[str,float] = Field(default_factory=dict)
+    statistics_note: str = 'Provider-reported statistics; units and period must be verified before comparison.'
+    version: str = '1'
+
+class PublicActivity(Contract):
+    id: str
+    trader_id: str
+    source: Literal['etoro','kinfo','afterhour']
+    source_record_id: str
+    source_url: str
+    symbol: str | None = None
+    instrument_name: str
+    instrument_kind: Literal['stock','stock_cfd','other','unclassified'] = 'unclassified'
+    direction: Literal['long','short','unknown'] = 'unknown'
+    opened_at: datetime | None = None
+    published_at: datetime | None = None
+    provider_updated_at: datetime | None = None
+    first_observed_at: datetime
+    observed_at: datetime
+    entry_price: float | None = Field(default=None,gt=0)
+    allocation_percent: float | None = Field(default=None,ge=0,le=100)
+    quantity: float | None = None
+    exit_price: float | None = None
+    status: Literal['observed_open','no_longer_observed','access_unavailable'] = 'observed_open'
+    verification: str = 'Provider-reported public record; not independently broker-verified by SELERY.'
+    stale: bool = True
+    synthetic: bool = False
+    revision: int = 1
+    limitations: list[str] = Field(default_factory=list)
+
+class PublicTraderPage(Contract):
+    items: list[PublicTrader]
+    total: int
+    limit: int
+    offset: int
+
+class PublicActivityPage(Contract):
+    items: list[PublicActivity]
+    total: int
+    limit: int
+    offset: int
+
+class PublicActivityDetail(Contract):
+    activity: PublicActivity
+    trader: PublicTrader
+    chart: ChartResponse | None = None
+    market_context_reason: str
+    reference_move_percent: float | None = None
+    llm_allowed: bool = False
+
+class PublicRefreshRequest(Contract):
+    trader_id: str | None = Field(default=None,max_length=180)
+
+class PublicRefreshResult(Contract):
+    updated: int
+    message: str
 
 class Citation(Contract):
     label: str
@@ -222,6 +299,37 @@ class ChatResponse(Contract):
     citations: list[Citation]
     mode: Literal['local', 'llm']
     cost_usd: float = 0
+
+class ConversationCreate(Contract):
+    symbol: str = Field(min_length=1,max_length=12)
+
+class Conversation(Contract):
+    id: str
+    symbol: str
+    title: str
+    created_at: datetime
+    updated_at: datetime
+
+class ConversationMessage(Contract):
+    id: str
+    conversation_id: str
+    role: Literal['user','assistant']
+    message: str
+    created_at: datetime
+    status: Literal['pending','complete','failed'] = 'complete'
+    error: str | None = None
+    citations: list[Citation] = Field(default_factory=list)
+    mode: Literal['local','llm'] | None = None
+    cost_usd: float = 0
+
+class ConversationDetail(Contract):
+    conversation: Conversation
+    messages: list[ConversationMessage]
+
+class ConversationTurn(Contract):
+    message: str = Field(min_length=1,max_length=4000)
+    request_id: str = Field(pattern=r'^[A-Za-z0-9_-]{8,80}$')
+    timeframe: Timeframe = Timeframe.M5
 
 class Settings(Contract):
     data_mode: Literal['fixtures', 'live']

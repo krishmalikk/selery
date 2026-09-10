@@ -1,5 +1,37 @@
 # SELERY setup requirements
 
+## Stock conversations — additional setup
+
+No new account, API key, dependency or paid service is required. The existing OpenAI/Terra configuration and $5/month cap serve multi-turn stock conversations. Opening threads and refreshing charts do not spend LLM credits. The last live billing diagnosis was `credit_balance_exhausted`; new UI behavior does not fund the provider account.
+
+SQLite creates `conversations` and `conversation_messages` automatically on backend startup. New Compose databases run migration 003. Existing PostgreSQL databases should apply `packages/shared/migrations/003_conversations.sql` after a backup: `docker compose exec -T db psql -U selery -d selery < packages/shared/migrations/003_conversations.sql`. Rebuild/restart the backend and web application; re-export mobile for the new routes/UI. Continue running one API process, since in-flight thread coordination follows the existing single-process runtime.
+
+Conversation messages are private backend data and should be included in your existing backup/retention policy. Deleting a thread removes active database messages; old backups require separate retention handling. Saved history is capped at 200 messages per thread/500 threads; model context uses the newest bounded exchanges, with older text still readable in the app. See [stock conversation review](reviews/stock-conversations.md).
+
+## Public Traders extension — September 9, 2026
+
+**Latest local status:** Both `SELERY_ETORO_DATA_ALLOWED` and `SELERY_ETORO_LLM_ALLOWED` are enabled at the user's explicit request. Live imports returned 11 profiles and 122 open observations from one trader. The remaining OpenAI blocker is confirmed `credit_balance_exhausted`: add API credits in [OpenAI billing](https://platform.openai.com/settings/organization/billing/overview), then retry the assistant. SELERY's $5/month cap is unchanged and does not itself fund API credits. Default templates below remain opt-in. See [verification and diagnosis](reviews/etoro-enabled-openai-billing.md).
+
+The code is available on both clients; eToro real import is verified locally, with real-iPhone acceptance pending. Kinfo/AfterHour remain unavailable. See [access qualification and implementation](docs/PUBLIC-TRADERS.md) and unsent [Kinfo](docs/access-inquiries/KINFO.md) / [AfterHour](docs/access-inquiries/AFTERHOUR.md) inquiries.
+
+| Backend variable | Required value / purpose |
+| --- | --- |
+| `SELERY_PUBLIC_TRADERS_MODE` | `live` by default; `fixtures` only for explicitly synthetic development |
+| `ETORO_API_KEY` or `ETORO_PUBLIC_KEY` | Application credential; supplied and accepted for the read-only metadata probe |
+| `ETORO_USER_KEY` or `ETORO_PRIVATE_KEY` | User credential; supplied and accepted for the read-only metadata probe |
+| `SELERY_ETORO_DATA_ALLOWED` | Default `false`; set `true` only after permitted private storage/display, refresh and removal terms are established |
+| `SELERY_ETORO_LLM_ALLOWED` | Default `false`; separate permission to supply selected records to OpenAI |
+
+Put these only in root `.env` locally or Railway API variables. Restart the backend after changing `.env`. Never use `NEXT_PUBLIC_` or `EXPO_PUBLIC_` for these values, and do not copy keys into Vercel or Expo. Vercel uses the existing server-side `SELERY_API_URL`; mobile uses its existing public backend URL and SecureStore login token. No additional database, Redis job, chart subscription or Vercel service is needed for this extension. Actual eToro feed price and live resource requirements remain unverified; no subscription is purchased. Kinfo and AfterHour need approved access agreements before any credentials or adapter can be specified.
+
+Credential verification on 2026-09-09 returned HTTP 200 for instrument display metadata. Run `.venv/bin/python scripts/verify_etoro.py` for the same explicit, sanitized probe. It does not fetch public traders, store source records or call OpenAI. Public-record entitlement and data-use permissions remain pending. Use one variable name per credential; conflicting alias values fail closed. Evidence: [sanitized verification](docs/etoro-verification.json).
+
+The existing OpenAI key and approved $5/month app allowance remain unchanged. Enabling source rights does not resolve the previously observed OpenAI HTTP 429; successful paid/cited output needs separate billing/rate-limit and model-access verification. Public-record summaries work locally without LLM access.
+
+New databases run migrations 001 and 002 through Compose initialization. On an existing PostgreSQL database, apply `packages/shared/migrations/002_public_traders.sql` once (idempotently); for Compose, use `docker compose exec -T db psql -U selery -d selery < packages/shared/migrations/002_public_traders.sql`. Back up first. SQLite creates the new tables on API startup. Keep a single API process; public refresh throttling is process-local.
+
+For an isolated preview, set `SELERY_PUBLIC_TRADERS_MODE=fixtures`, keep LLM disabled, restart the API, open Traders and manually refresh. Do not change existing live market configuration merely to preview the separate public registry. Synthetic examples never establish provider acceptance. Switch back to `live` for pending/authorized access; the fixture examples are hidden from live reads.
+
 This is the account, credential, deployment and resource checklist for the implemented personal research workspace. The web walkthrough is in [WEB-GUIDE.md](WEB-GUIDE.md); the native walkthrough is in [MOBILE-GUIDE.md](MOBILE-GUIDE.md).
 
 **Selery is research software that displays analysis. It does not execute, recommend, or place trades.**
@@ -21,7 +53,7 @@ Authenticated market-data verification succeeded on September 9, 2026: recorded 
 | Install an iOS development build/TestFlight | Expo/EAS account and project ID, Apple Developer membership, bundle identifier, signing/provisioning and an App Store Connect app |
 | Install an Android internal APK | Expo/EAS project or local Android toolchain, package identifier and Android signing key; a Play Store listing is not required |
 | Receive external research alerts | Opt-in server setting plus credentials for your selected channel; phone push also needs native signing and permission |
-| Enable LLM research | Anthropic API key, explicit enablement, positive monthly cap and current model/pricing settings |
+| Enable LLM research | OpenAI API key, explicit enablement, positive monthly cap and current model/pricing settings |
 | Run optional ML training | Larger suitable historical datasets, optional Python ML dependencies and manually allocated compute |
 
 No Vercel deployment, Railway provisioning, paid subscription, cloud mobile build, TestFlight upload or physical-device acceptance is implied by the source code or local bundle checks.
@@ -163,18 +195,24 @@ IEX restrictions include VWAP, anchored VWAP, OBV, volume profile, unusual-volum
 
 ## 7. LLM configuration and costs
 
-Local source-linked explanations work without an LLM. They summarize the available symbol data and cannot answer arbitrary questions. The optional implementation uses Anthropic's Messages API.
+Local source-linked explanations work without an LLM. They summarize the available symbol data and cannot answer arbitrary questions. The optional implementation uses OpenAI's Responses API with GPT-5.6 Terra and high reasoning. Create a backend-only API key in your OpenAI project and enable API billing/model access; a ChatGPT subscription does not configure this application.
 
 | Variable | Default / meaning |
 | --- | --- |
-| `ANTHROPIC_API_KEY` | Empty; create in your Anthropic account if enabling the feature |
+| `OPENAI_API_KEY` | Empty; `OPENAI_KEY` and `openAI_KEY` aliases also work. Set one key value; conflicting aliases are rejected. |
 | `SELERY_LLM_ENABLED` | `false` |
 | `SELERY_LLM_MONTHLY_CAP_USD` | `0`; calls remain disabled until positive |
-| `SELERY_LLM_MODEL` | `claude-haiku-4-5-20251001` |
-| `SELERY_LLM_INPUT_USD_PER_MILLION` | `1` for the configured model |
-| `SELERY_LLM_OUTPUT_USD_PER_MILLION` | `5` for the configured model |
+| `SELERY_LLM_MODEL` | `gpt-5.6-terra` |
+| `SELERY_LLM_REASONING_EFFORT` | `high` |
+| `SELERY_LLM_MAX_OUTPUT_TOKENS` | `8192`, including hidden reasoning and visible output; accepted range 256–32768 |
+| `SELERY_LLM_INPUT_USD_PER_MILLION` | `2` for the configured model |
+| `SELERY_LLM_OUTPUT_USD_PER_MILLION` | `12` for the configured model |
 
-These prices match the checked Haiku 4.5 base token rates; verify them again if changing the model or enabling billing later. [Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing)
+These prices match the checked Terra base token rates; verify them again if changing the model or enabling billing later. Cached inputs are conservatively accounted at the full input rate, so the displayed allowance can exceed the provider invoice. Reasoning tokens count once as output usage. [OpenAI Terra documentation](https://developers.openai.com/api/docs/models/gpt-5.6-terra)
+
+To enable locally, set the key, `SELERY_LLM_ENABLED=true` and your chosen positive `SELERY_LLM_MONTHLY_CAP_USD` in root `.env`, then restart FastAPI. For Railway, set these in the backend service variables and redeploy. The local user approved a $5/month cap on September 9, 2026; the committed template remains disabled at $0. The cap covers this SELERY database's usage, not other applications using the same OpenAI account.
+
+Requests use `store=false` and contain only the supplied research context with no external tools. An exhausted reasoning/output limit returns an explicit incomplete-response error and records reported usage; it never automatically retries a paid request. The 8192-token limit is a budget/latency choice, not a guarantee that every high-reasoning question will complete. [OpenAI reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning)
 
 The server reserves a conservative allowance atomically before each request. It records feature usage, keeps uncertain requests reserved without automatic retries, and enables a persistent kill switch if observed usage exceeds the reservation. Settings show spent plus reserved usage. A provider error can therefore leave budget unavailable until a human reconciles the bill. Changing model prices without updating the settings invalidates the budget assumption.
 

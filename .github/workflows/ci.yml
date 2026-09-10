@@ -8,9 +8,11 @@ jobs:
     timeout-minutes: 25
     env:
       ALPACA_ENDPOINT: https://paper-api.alpaca.markets
-      SELERY_PASSWORD: ci-fixture-password-only
+      SELERY_PASSWORD: public-fixture-test-password
       SELERY_SESSION_SECRET: ci-fixture-session-secret-not-for-deployment
       SELERY_DATA_MODE: fixtures
+      SELERY_PUBLIC_TRADERS_MODE: fixtures
+      SELERY_PUBLIC_FIXTURE_E2E: 'true'
       SELERY_ALLOWED_ORIGINS: http://127.0.0.1:3000
       PYTHONPATH: apps/api:packages/shared/python:packages/strategies/python
       NEXT_TELEMETRY_DISABLED: 1

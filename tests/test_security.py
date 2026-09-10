@@ -7,3 +7,7 @@ def test_endpoint_scanner():
     for noun in ('ord'+'ers','pos'+'itions'):
         assert scanner.forbidden_endpoints('https://example.test/v2/'+noun+'?limit=10')
     assert not scanner.forbidden_endpoints('/api/v1/chart/SPY')
+    noun='port'+'folio'
+    assert not scanner.forbidden_endpoints('/api/v1/user-info/people/example/'+noun+'/live')
+    assert scanner.forbidden_endpoints('/api/v1/private/'+noun+'/live')
+    assert scanner.forbidden_endpoints('/api/v1/user-info/people/example/'+noun+'/other')

@@ -29,6 +29,11 @@ export default function Settings() {
         </Text>
       </Card>
       <Card>
+        <Text style={styles.heading}>Public Traders</Text>
+        <Text style={styles.muted}>Explore authorized public activity from eToro, Kinfo and AfterHour. Source availability is shown in the directory.</Text>
+        <Button title="Browse public traders" onPress={() => router.push("/traders")} />
+      </Card>
+      <Card>
         <Text style={styles.heading}>Research assistant</Text>
         <Text style={styles.muted}>
           Read-only, source-linked explanations. LLM calls are disabled until

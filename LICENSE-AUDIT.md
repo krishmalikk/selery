@@ -1,5 +1,7 @@
 # Source and license audit
 
+Public Traders extension (2026-09-09): adapter and normalization code are original; no eToro SDK or provider source code was imported and no new dependency was installed. API documentation is used as a schema reference, not as a data-use license. Real eToro caching/display/OpenAI rights remain unverified; Kinfo scraping is excluded and AfterHour sharing requires approved access. Synthetic test records are authored locally. Qualification, source links and unsent permission inquiries are in [Public Traders](docs/PUBLIC-TRADERS.md). The scanner's new explicit exception is the authorized third-party public-user evidence namespace; private broker paths remain prohibited and runtime requests have a separate GET-only allowlist.
+
 Audited September 9, 2026. This inventories all 29 repositories named in Part 5 plus the accepted pandas-ta-classic replacement. The 29 accessible repositories have immutable revision pins; the original pandas-ta URL returned 404 and is excluded. No upstream source files were imported by this audit.
 
 The audit covers recursive license/notice file inventories and selected source headers, not every file in every upstream repository. This is sufficient for the present decision to avoid source copying. Any later copied/adapted file needs an explicit file-level review and attribution before integration. Package installation also requires auditing the exact resolved release and its transitive dependencies; reference HEAD pins below do not substitute for lockfiles.

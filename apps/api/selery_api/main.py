@@ -26,6 +26,10 @@ def create_app(config=None,provider=None):
         app.state.config=config or Config.load()
         app.state.provider=provider or (FixtureProvider() if app.state.config.data_mode=='fixtures' else AlpacaProvider(app.state.config))
         app.state.store=Store(app.state.config.database_url)
+        from .public_traders import PublicRegistry
+        app.state.public_registry=PublicRegistry(app.state.store)
+        from .conversations import Conversations
+        app.state.conversations=Conversations(app.state.store)
         app.state.auth=Auth(app.state.config)
         app.state.started_at=int(time.time())
         app.state.subscribers=set()
@@ -108,7 +112,8 @@ def create_app(config=None,provider=None):
                 original=Signal.model_validate(snapshot)
                 from .model_registry import scope_for
                 if scope_for(original)==scope_for(signal):signals[index]=original
-        return ChartResponse(symbol=symbol,timeframe=timeframe,bars=bars,signals=signals,indicators=chart_indicators(bars,feed),capabilities=capabilities(feed),provenance=provenance(feed,bars[-1].available_at,app.state.config.data_mode=='fixtures' or bars[-1].available_at<time.time()-120, 'alpaca-recording' if app.state.config.data_mode=='fixtures' else 'alpaca'))
+        observed=bars[-1].available_at if bars[-1].finalized else int(time.time())
+        return ChartResponse(symbol=symbol,timeframe=timeframe,bars=bars,signals=signals,indicators=chart_indicators(bars,feed),capabilities=capabilities(feed),provenance=provenance(feed,observed,app.state.config.data_mode=='fixtures' or observed<time.time()-120, 'alpaca-recording' if app.state.config.data_mode=='fixtures' else 'alpaca'))
 
     @app.get('/api/v1/chart/{symbol}',response_model=ChartResponse,dependencies=[Depends(authorized)])
     async def chart(symbol:str,timeframe:Timeframe=Timeframe.M5,feed:Feed=Feed.IEX,limit:int=Query(1000,ge=80,le=2000)):return await get_chart(symbol,timeframe,feed,limit)
@@ -291,6 +296,9 @@ def create_app(config=None,provider=None):
 
     @app.post('/api/v1/chat',response_model=ChatResponse,dependencies=[Depends(authorized)])
     async def chat(body:ChatRequest):
+        if body.activity_id:
+            from .public_traders import activity_chat
+            return await activity_chat(app,body)
         valid_symbol(body.symbol)
         chart=await get_chart(body.symbol,Timeframe.M5,Feed.IEX)
         news_items=await app.state.provider.news([body.symbol])
@@ -310,6 +318,18 @@ def create_app(config=None,provider=None):
             return await BoundedAssistant(app.state.store,llm,app.state.config.llm_cap).research(body,context,citations)
         if body.debate:raise HTTPException(422,'LLM debate is disabled until a provider and hard spending cap are configured.')
         return ChatResponse(message=message,citations=citations,mode='local')
+
+    from .public_traders import register_routes as register_public_routes
+    register_public_routes(app,authorized,get_chart)
+    from .conversations import register_routes as register_conversations
+    register_conversations(app,authorized,get_chart)
+
+    @app.middleware('http')
+    async def public_cache_policy(request,call_next):
+        response=await call_next(request)
+        if request.url.path.startswith(('/api/v1/public-traders','/api/v1/conversations')) or request.url.path=='/api/v1/chat':
+            response.headers['Cache-Control']='private, no-store'
+        return response
 
     @app.websocket('/api/v1/stream')
     async def stream(websocket:WebSocket):

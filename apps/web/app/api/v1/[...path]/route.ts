@@ -1,5 +1,5 @@
 import {NextRequest,NextResponse} from 'next/server';
-const allowed=new Set(['auth','watchlist','chart','news','settings','strategies','outcomes','journal','alerts','research','chat','jobs','domain','models','providers','features','notifications']);
+const allowed=new Set(['auth','watchlist','chart','news','settings','strategies','outcomes','journal','alerts','research','chat','jobs','domain','models','providers','features','notifications','public-traders','conversations']);
 async function proxy(request:NextRequest,{params}:{params:Promise<{path:string[]}>}){
  const {path}=await params;
  if(!allowed.has(path[0])||path.some(p=>p==='..'||p.includes('/')))return NextResponse.json({detail:'Unknown resource'},{status:404});
@@ -9,7 +9,7 @@ async function proxy(request:NextRequest,{params}:{params:Promise<{path:string[]
  const headers=new Headers({'content-type':'application/json'}); headers.set('x-forwarded-proto',request.nextUrl.protocol.replace(':','')); const cookie=request.headers.get('cookie');if(cookie)headers.set('cookie',cookie);
  // Browser calls must be same-origin; credentials are never sent to a caller-controlled host.
  if(request.method!=='GET'){const incoming=request.headers.get('origin');const expected=`${request.nextUrl.protocol}//${request.headers.get('host')}`;if(incoming&&incoming!==expected)return NextResponse.json({detail:'Origin rejected'},{status:403});}
- const response=await fetch(url,{method:request.method,headers,body:request.method==='GET'?undefined:await request.text(),cache:'no-store',signal:AbortSignal.timeout(path[0]==='chat'?285000:30000)});
+ const response=await fetch(url,{method:request.method,headers,body:request.method==='GET'?undefined:await request.text(),cache:'no-store',signal:AbortSignal.timeout(path[0]==='chat'||(path[0]==='conversations'&&path[2]==='messages')?285000:30000)});
  const outputHeaders=new Headers({'content-type':response.headers.get('content-type')||'application/json','cache-control':'no-store'});
  for(const cookie of response.headers.getSetCookie())outputHeaders.append('set-cookie',cookie);
  const body=await response.text();

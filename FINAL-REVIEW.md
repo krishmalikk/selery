@@ -1,5 +1,7 @@
 # Final integration review — September 9, 2026
 
+The later Public Traders extension is documented in [its nine-part review](reviews/public-traders.md). Local implementation/testing does not change the full-scope acceptance status below. Its five leading unresolved weaknesses are real provider authorization/payload validation, upstream freshness and withdrawal detection, instrument/currency classification, live cited LLM verification after HTTP 429, and real-device/deployment evidence.
+
 **The implemented local research workspace runs, but the full requested Waves 0–5 scope is not accepted.** The six retrospective [wave reviews](reviews) explicitly mark full acceptance FAIL where requirements remain partial. This document is an integration report, not a claim of completed deployment or product release.
 
 ## Implemented and locally verified

@@ -2,6 +2,8 @@
 
 SELERY is research-only. It must never submit orders, simulate fills, track broker positions, synchronize a broker portfolio, or provide execution adapters, flags, tickets, or confirmation flows. Do not ask about adding execution. Flag any future request that conflicts with this restriction. Alpaca provides quotes, bars, and news only; reject non-paper ALPACA_ENDPOINT hosts at startup.
 
+The accepted Public Traders extension permits reading and storing authorized third-party public trader activity for research. This is separate from the user's brokerage account: no personal broker synchronization or execution is permitted. Public open records are observations, and disappearance never proves a sale.
+
 Python is authoritative for quantitative calculations. Generate TypeScript contracts from the Python models; both apps consume the same API client and design tokens. No provider secret may enter either client bundle. Never print .env values.
 
 IEX volume-dependent features must fail closed in the backend and read "needs SIP data" in both apps. Never treat IEX quotes as NBBO. All datasets retain feed, timestamp, availability, and source provenance. Historical evaluation is signal-event research, without fills or virtual accounts.
