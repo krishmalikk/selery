@@ -6,6 +6,7 @@ RUN uv sync --frozen --no-dev
 COPY apps/api apps/api
 COPY packages packages
 COPY fixtures fixtures
+COPY docs/chat-calendar-notices.md docs/passkey-notices.md ./licenses/
 ENV PATH="/app/.venv/bin:$PATH" PYTHONPATH="/app/apps/api:/app/packages/shared/python:/app/packages/strategies/python"
 RUN useradd --create-home selery && mkdir /app/data && chown -R selery:selery /app/data
 USER selery

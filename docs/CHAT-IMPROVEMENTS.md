@@ -1,6 +1,8 @@
-# Assistant improvements, in implementation order
+# Assistant improvements — implementation and deployment
 
-The existing stock assistant saves threads, accepts follow-up messages, fetches selected-timeframe charts and news, and sends bounded history to Terra on explicit request. It currently receives only the newest 20 bars, three points per Python indicator, one recent signal and three news items. At most ten complete exchanges/16 KB of history are included. There are no model tools for fetching more context mid-answer. These limitations matter more than stronger-sounding wording.
+Implemented across the web and native source. The assistant keeps explicit stock-scoped conversations, retrieves bounded question-matched evidence, and streams visible model text into durable pending messages. The same safe Markdown parser powers both clients. Deployment verification and physical-device/live-model acceptance are recorded separately in [the release review](../reviews/chat-improvements.md).
+
+The model remains Terra and the monthly LLM cap remains $5. No model, billing, provider permission, or subscription change is required. No paid model evaluation was run during implementation.
 
 ## 1. Readable answers and usable citations
 
@@ -26,4 +28,8 @@ Stream visible answer text, show retrieval/generation state, and support stoppin
 
 Use a small fixed set of questions: next-session plan with stale bars, explain an existing signal, absent confidence, conflicting news, missing history, and requests to infer a public trader's motive. Measure supported citations, correct dates, missing-data honesty, follow-up continuity, latency and cost. The $5/month allowance and kill switch remain. Live paid evaluations are manual; no model change or added subscription is required for the first UI improvements.
 
-Current external dependencies: private passwordless sign-in still needs a selected identity method and its configuration; Render deployment/device behavior must be verified separately. No chat improvements in this document are claimed implemented merely because they are listed here.
+Implementation details: streaming uses OpenAI visible-text events on the backend and authenticated client polling (~700 ms while generating). Stop display pauses presentation; generation and possible billing continue. Search covers titles, symbols and message text. Explicit summaries are dated question excerpts from up to 20 completed user turns, not a paid model-generated memory. Signal discussions preserve a backend-selected snapshot and stored chart; their interval cannot be changed through the API.
+
+Evaluation: six fixed offline questions plus causal/security regressions are executable. `scripts/evaluate_chat_answers.py` scores manually captured answers without sending requests; recognized IDs, latency/cost and explicit human-review fields are separate. Successful cited live output, actual iPhone behavior and production verification are not inferred from fixtures. See [evaluation instructions](CHAT-EVALUATION.md).
+
+Current deployment targets: `https://selery-web.vercel.app` and `https://selery-13rz.onrender.com`. Web passkeys are implemented separately; Render still needs `SELERY_PASSKEY_ORIGIN=https://selery-web.vercel.app` if not already configured. No new chat API key or service is needed.

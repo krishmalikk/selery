@@ -3,6 +3,7 @@ import { AppState, Text } from "react-native";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { type ChatResponse } from "@selery/shared";
 import { useSession } from "./session";
+import { ResearchMarkdown } from "./ResearchMarkdown";
 import { Page, Card, Input, Button, ExternalLink, styles } from "./ui";
 export function PublicActivityChat() {
   const params = useLocalSearchParams<{ activity_id?: string | string[]; symbol?: string | string[] }>();
@@ -72,16 +73,7 @@ export function PublicActivityChat() {
               : "LLM explanation"}{" "}
             · ${response.cost_usd.toFixed(4)}
           </Text>
-          <Text style={styles.text}>{response.message}</Text>
-          {response.citations.map((citation, i) =>
-            citation.url ? (
-              <ExternalLink key={i} url={citation.url} label={citation.label} />
-            ) : (
-              <Text key={i} style={styles.muted}>
-                {citation.label} · {citation.timestamp} · {citation.data_id}
-              </Text>
-            ),
-          )}
+          <ResearchMarkdown text={response.message} citations={response.citations} />
         </Card>
       )}
     </Page>

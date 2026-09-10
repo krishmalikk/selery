@@ -1,5 +1,11 @@
 # SELERY native app guide
 
+## Chat improvements release
+
+Native stock conversations now share safe formatted answers, source-ID evidence sheets, unknown-source flags, search, rename and explicit dated history excerpts. Signal details offer **Ask about this signal**, opening a dedicated conversation with a fixed dated chart and immutable signal snapshot. Source links use an HTTP/HTTPS allowlist.
+
+Pending replies show retrieval/generation status and saved incoming text. **Stop display** pauses presentation only; provider billing may continue. Resume/reconnect reads saved state without another paid request. Backgrounding clears private visible content while retaining uncertain request identity in memory. The native bundles compile, but this release has not been accepted on a physical iPhone or distributed through TestFlight. [Release evidence](reviews/chat-improvements.md).
+
 Each research signal card now displays confidence: a calibrated signal-time percentage when available, otherwise **Unavailable** and its reason. The detail sheet explains the target-first event, horizon, feed and excluded training outcomes. This is not a probability of profit; missing confidence is never replaced by an AI estimate.
 
 ## Stock conversations and chart

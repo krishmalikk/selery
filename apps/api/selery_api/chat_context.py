@@ -231,6 +231,11 @@ async def build_context(app, get_chart, conversation, message, timeframe, now=No
                                 'as_of': now.date().isoformat(), 'cases': [{'assumed_full_spread': float(cost.assumptions.full_spread), 'total_usd_per_reference_share': float(cost.total), 'cost_bps': float(cost.cost_bps)} for cost in cases]}
         except ValueError as error:
             context['costs']['reason'] = str(error)
+    if context['costs']['available']:
+        cost_id=f'cost:{conversation.symbol}:{now.date()}:{CONTEXT_VERSION}'
+        citations.append(Citation(label='Python illustrative cost assumptions',timestamp=now,available_at=now,
+            provider='selery',feed=Feed.IEX,data_id=cost_id,observation=json.dumps(context['costs'],separators=(',',':'))))
+        context['costs']['citation_id']=cost_id
     news = []
     try:
         supplied = await app.state.provider.news([conversation.symbol])

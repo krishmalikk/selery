@@ -1,5 +1,15 @@
 # SELERY web guide
 
+## Chat improvements release
+
+Answers now render safe bold/list/code/link formatting. Click an inline `[source ID]` or supplied evidence button to inspect provider, IEX label, timestamps and the exact supplied observation. Unknown IDs are flagged; unsafe links and HTML never execute. Older answers without saved observations say unavailable.
+
+Use the Assistant search field to find titles, symbols or messages. Rename updates the saved title. **Summarize history** saves dated excerpts of your completed questions without calling the LLM; it is labeled conversation history. **Ask about this signal** from signal details opens a dedicated thread with its immutable snapshot and fixed dated chart. Other stock conversations keep live charts.
+
+During a reply, retrieval/generation status and incoming text appear. **Stop display** pauses visible updates, while the backend may continue generating and charging; **Resume display** recovers saved text without resending. Reconnecting reads the same pending/completed turn. Partial interrupted text is explicitly failed and excluded from future model history.
+
+Questions about tomorrow, setups or comparisons retrieve bounded 5m/1h/1D evidence with an XNYS calendar, causal ATR and session coverage checks. Incomplete IEX coverage cannot establish a daily range. Scenario preferences are qualitative, separate from calibrated signal confidence. [Release evidence](reviews/chat-improvements.md).
+
 ## Touch ID and passkey login
 
 Web passkeys are implemented. Production activation and a real Mac Touch ID check remain pending. In the **Render backend** environment, set `SELERY_PASSKEY_ORIGIN=https://selery-web.vercel.app`, then deploy the updated backend and Vercel web code. Keep `SELERY_PASSWORD` and `SELERY_SESSION_SECRET`; do not expose them through `NEXT_PUBLIC_*` variables. No extra identity account or API key is needed.

@@ -50,6 +50,9 @@ def create_app(config=None,provider=None):
             upstream.cancel()
             try:await upstream
             except asyncio.CancelledError:pass
+        pending=list(app.state.conversations.tasks)
+        for generation in pending:generation.cancel()
+        if pending:await asyncio.gather(*pending,return_exceptions=True)
         if hasattr(app.state.provider,'client'):await app.state.provider.client.aclose()
         app.state.store.engine.dispose()
 
@@ -74,7 +77,8 @@ def create_app(config=None,provider=None):
             with app.state.store.engine.connect() as connection:connection.exec_driver_sql('SELECT 1')
         except Exception:
             return __import__('fastapi').responses.JSONResponse(status_code=503,content={'status':'unavailable','service':'selery-research'})
-        return {'status':'ok','service':'selery-research','version':'0.1.0'}
+        return {'status':'ok','service':'selery-research','version':'0.1.0','chat_revision':'2',
+            'commit':__import__('os').getenv('RENDER_GIT_COMMIT','local')}
 
     class Login(BaseModel):password:str=Field(max_length=1000)
 

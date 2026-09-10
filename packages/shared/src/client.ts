@@ -43,6 +43,7 @@ export class SeleryClient {
   renameConversation(id:string,title:string){return this.request('/conversations/'+encodeURIComponent(id)+'/rename',ConversationSchema,{method:'POST',body:JSON.stringify({title})});}
   summarizeConversation(id:string){return this.request('/conversations/'+encodeURIComponent(id)+'/summary',ConversationSchema,{method:'POST'});}
   conversation(id:string){return this.request('/conversations/'+encodeURIComponent(id),ConversationDetailSchema);}
+  conversationChart(id:string){return this.request('/conversations/'+encodeURIComponent(id)+'/chart',ChartResponseSchema);}
   sendConversationMessage(id:string,message:string,requestId:string,timeframe:Timeframe='5m'){return this.request('/conversations/'+encodeURIComponent(id)+'/messages',ConversationDetailSchema,{method:'POST',body:JSON.stringify({message,request_id:requestId,timeframe})});}
   deleteConversation(id:string){return this.request('/conversations/'+encodeURIComponent(id)+'/delete',z.object({ok:z.boolean()}),{method:'POST'});}
   publicSources(){return this.request('/public-traders/sources',z.array(PublicSourceSchema));}

@@ -1,0 +1,48 @@
+[
+  {
+    "package": "exchange-calendars",
+    "version": "4.13.2",
+    "license": "Apache-2.0",
+    "notices": [
+      {
+        "file": "exchange_calendars-4.13.2.dist-info/licenses/LICENSE",
+        "sha256": "e35c4578f7db4498e62e278978f6c42e0fce6f21f9993a060b08a33549cd3044"
+      }
+    ]
+  },
+  {
+    "package": "korean-lunar-calendar",
+    "version": "0.4.0",
+    "license": "MIT",
+    "notices": [
+      {
+        "file": "korean_lunar_calendar-0.4.0.dist-info/licenses/LICENSE",
+        "sha256": "6a6e946406ba147b65b77d1c7fda0a2c4ef326c8a77d7d9181b60037767672d4"
+      }
+    ]
+  },
+  {
+    "package": "pyluach",
+    "version": "2.3.0",
+    "license": "MIT",
+    "notices": [
+      {
+        "file": "pyluach-2.3.0/license.txt",
+        "sha256": "a6900a379815872f27df1aac58d8c249ddd085259f6bab6768e162cc82d346b1",
+        "source_url": "https://files.pythonhosted.org/packages/11/11/42568c1568a75f8803c59f26d29af01a0890352b7a8e03d41ecda8bfb5dd/pyluach-2.3.0.tar.gz"
+      }
+    ],
+    "source_artifact_sha256": "ec6e30669d1df50c9ca160486da44a8195bb4c7a5d3d533990d0c5b03accd281"
+  },
+  {
+    "package": "toolz",
+    "version": "1.1.0",
+    "license": "BSD-3-Clause",
+    "notices": [
+      {
+        "file": "toolz-1.1.0.dist-info/licenses/LICENSE.txt",
+        "sha256": "053664057b295b2f0c1332291a77102f01a099d87926e449e08a117eea9660bf"
+      }
+    ]
+  }
+]

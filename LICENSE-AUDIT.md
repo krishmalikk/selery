@@ -66,3 +66,7 @@ MIT/Apache/BSD/CC0 entries above permit consideration of the stated research use
 ## Remaining evidence boundaries
 
 The original pandas-ta repository cannot be pinned because it is unavailable; replacement is the recorded resolution. No clearance is asserted for unreviewed source files, future upstream revisions, linked repositories, upstream datasets or model weights. Optional dependencies must be checked against their exact lockfile artifacts before enabling them. This audit makes no claim that client distribution, deployment, or real-device acceptance has been verified.
+
+## Chat calendar dependencies
+
+exchange-calendars 4.13.2 (Apache-2.0), korean-lunar-calendar 0.4.0 and pyluach 2.3.0 (MIT), and toolz 1.1.0 (BSD-3-Clause) are pinned in uv.lock. [Inventory/checksums](docs/chat-calendar-license-inventory.json) and [exact notices](docs/chat-calendar-notices.md) are retained; pyluach’s missing wheel notice was recovered from the checksum-verified 2.3.0 source distribution. The Docker image explicitly includes these notices.
