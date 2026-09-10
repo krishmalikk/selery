@@ -442,15 +442,9 @@ export default function Workspace() {
             </span>
           </div>
           <Badge>PERSONAL RESEARCH WORKSPACE</Badge>
-          <h1>
-            A clearer view
-            <br />
-            of the market.
-          </h1>
+          <h1>Hi Krish.</h1>
           <p>
-            Price, context, and evidence.
-            <br />
-            Your research, in one quiet workspace.
+            Welcome back to your research workspace.
           </p>
           <form onSubmit={login}>
             <label htmlFor="password">Workspace password</label>

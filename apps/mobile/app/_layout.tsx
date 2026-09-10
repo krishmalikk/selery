@@ -26,9 +26,9 @@ function Gate() {
           style={{ flex: 1, justifyContent: "center", padding: 28, gap: 20 }}
         >
           <Text style={[styles.title, { fontSize: 44 }]}>selery.</Text>
-          <Text style={styles.muted}>YOUR RESEARCH, IN REACH</Text>
+          <Text style={[styles.title, { fontSize: 32 }]}>Hi Krish.</Text>
           <Text style={styles.text}>
-            Sign in to your personal research workspace.
+            Welcome back to your research workspace.
           </Text>
           <Input
             placeholder="Workspace password"
