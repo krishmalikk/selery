@@ -23,7 +23,7 @@ async function fixtureApp(page: Page) {
     if (path === "/conversations" && request.method() === "GET") return json([...records.values()].map((record) => record.conversation));
     if (path === "/conversations" && request.method() === "POST") {
       const { symbol } = request.postDataJSON();
-      const conversation: Conversation = { id: `thread-${records.size + 1}`, symbol, title: `${symbol} research`, created_at: timestamp, updated_at: timestamp };
+      const conversation: Conversation = { id: `thread-${records.size + 1}`, symbol, title: `${symbol} research`, created_at: timestamp, updated_at: timestamp, signal: null, chart_start: null, chart_end: null, summary: null, summary_at: null };
       records.set(conversation.id, { conversation, messages: [] }); return json(conversation);
     }
     const match = path.match(/^\/conversations\/([^/]+)(\/messages)?$/);
@@ -33,10 +33,10 @@ async function fixtureApp(page: Page) {
       if (!match[2]) return json(record);
       const body = request.postDataJSON();
       turns.push({ symbol: record.conversation.symbol, message: body.message, timeframe: body.timeframe });
-      const user: ConversationMessage = { id: `${record.conversation.id}:${body.request_id}`, conversation_id: record.conversation.id, role: "user", message: body.message, created_at: timestamp, status: failNext ? "failed" : "complete", error: failNext ? "Provider credits exhausted" : null, citations: [], mode: null, cost_usd: 0 };
+      const user: ConversationMessage = { id: `${record.conversation.id}:${body.request_id}`, conversation_id: record.conversation.id, role: "user", message: body.message, created_at: timestamp, status: failNext ? "failed" : "complete", error: failNext ? "Provider credits exhausted" : null, citations: [], mode: null, cost_usd: 0, phase: null };
       record.messages.push(user);
       if (failNext) { failNext = false; return json({ detail: "Provider credits exhausted" }, 503); }
-      record.messages.push({ ...user, id: `${user.id}:answer`, role: "assistant", message: `Answer ${turns.length} about ${record.conversation.symbol}; ${record.messages.filter((message) => message.role === "user").length} questions in this conversation.`, mode: "llm", citations: [{ label: `${record.conversation.symbol} dated chart evidence`, timestamp, url: null, data_id: "fixture-bars" }] });
+      record.messages.push({ ...user, id: `${user.id}:answer`, role: "assistant", message: `Answer ${turns.length} about ${record.conversation.symbol}; ${record.messages.filter((message) => message.role === "user").length} questions in this conversation.`, mode: "llm", citations: [{ label: `${record.conversation.symbol} dated chart evidence`, timestamp, url: null, data_id: "fixture-bars", provider: "Fixture", feed: "iex", available_at: timestamp, observation: "Dated synthetic bars" }] });
       if (held) await held;
       return json(record);
     }
@@ -119,7 +119,7 @@ test("reopened pending threads update without sending and removed history is cle
   const fixture = await fixtureApp(page);
   await page.getByRole("button", { name: "Start conversation" }).click();
   const record = fixture.records.get("thread-1")!;
-  const user: ConversationMessage = { id: "thread-1:pending-request", conversation_id: "thread-1", role: "user", message: "A previously submitted question", created_at: timestamp, status: "pending", error: null, citations: [], mode: null, cost_usd: 0 };
+  const user: ConversationMessage = { id: "thread-1:pending-request", conversation_id: "thread-1", role: "user", message: "A previously submitted question", created_at: timestamp, status: "pending", error: null, citations: [], mode: null, cost_usd: 0, phase: null };
   record.messages.push(user);
   await page.reload();
   await page.getByRole("navigation", { name: "Saved conversations" }).getByRole("button", { name: /SPY/ }).click();

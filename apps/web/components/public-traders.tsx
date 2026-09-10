@@ -1,4 +1,6 @@
 "use client";
+import ResearchAnswer from "./research-answer";
+import "./conversations.css";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ExternalLink, RefreshCw, Search } from "lucide-react";
 import { feedLabel, type SeleryClient, type PublicSource, type PublicTraderPage, type PublicActivityPage, type PublicActivityDetail, type ChatResponse } from "@selery/shared";
@@ -239,7 +241,7 @@ export default function PublicTraders({ api }: { api: SeleryClient }) {
           <label>Question about this public record<textarea value={question} onChange={e => setQuestion(e.target.value)} maxLength={4000} rows={3} required /></label>
           <button className="primary" type="submit" disabled={asking || !question.trim()}>{asking ? "Reviewing evidence…" : "Ask about this trade"}</button>
         </form>
-        {answer && <div className="answer" aria-live="polite"><span className="badge">{answer.mode === "llm" ? "AI research explanation" : "Local evidence"}</span><p>{answer.message}</p>{answer.citations.map((citation, index) => <div className="citation" key={`${citation.data_id}-${index}`}><SourceLink href={citation.url}>{citation.label}</SourceLink><small>{time(citation.timestamp)}</small></div>)}</div>}
+        {answer && <div className="answer" aria-live="polite"><span className="badge">{answer.mode === "llm" ? "AI research explanation" : "Local evidence"}</span><ResearchAnswer text={answer.message} citations={answer.citations} /></div>}
       </>}
     </section>}
   </section>;

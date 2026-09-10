@@ -67,7 +67,7 @@ import ResearchChart from "./chart";
 import ReportChart from "./report-chart";
 import ReportLibrary from "./report-library";
 import PublicTraders from "./public-traders";
-import Conversations from "./conversations";
+import Conversations, { type SignalConversation } from "./conversations";
 import {PasskeySettings} from "./passkey-settings";
 import {signInWithPasskey, supportsPasskeys} from "./passkeys";
 const api = new SeleryClient("");
@@ -162,6 +162,7 @@ export default function Workspace() {
     ),
     [sidebar, setSidebar] = useState(true),
     [refresh, setRefresh] = useState(0);
+  const [signalConversation, setSignalConversation] = useState<SignalConversation | null>(null);
   const [strategies, setStrategies] = useState<StrategyInfo[]>([]),
     [strategy, setStrategy] = useState(""),
     [report, setReport] = useState<ResearchReport | null>(null),
@@ -825,7 +826,7 @@ export default function Workspace() {
                     <Activity size={16} />
                   </div>
                   {selected ? (
-                    <SignalDetails signal={selected} />
+                    <><SignalDetails signal={selected} /><button className="quiet-button" onClick={() => { setSignalConversation({ signal: selected, start: chart?.bars[0]?.time || selected.time, end: selected.time }); setView("Assistant"); }}>Ask about this signal</button></>
                   ) : (
                     <>
                       <div className="context-illustration">
@@ -1517,7 +1518,7 @@ export default function Workspace() {
               )}
             </section>
           )}
-          {view === "Assistant" && <Conversations api={api} suggestedSymbol={symbol} settings={settings} />}
+          {view === "Assistant" && <Conversations api={api} suggestedSymbol={symbol} settings={settings} signalRequest={signalConversation} onSignalOpened={() => setSignalConversation(null)} />}
           {view === "Settings" && (
             <div className="settings-grid">
               <PasskeySettings api={api} onChanged={refreshPasskeys}/>
