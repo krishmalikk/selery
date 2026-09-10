@@ -502,6 +502,54 @@
         ],
         "default": null,
         "title": "Data Id"
+      },
+      "provider": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Provider"
+      },
+      "feed": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Feed"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "available_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Available At"
+      },
+      "observation": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Observation"
       }
     },
     "required": [
@@ -571,6 +619,66 @@
         "format": "date-time",
         "title": "Updated At",
         "type": "string"
+      },
+      "signal": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Signal"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "chart_start": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Chart Start"
+      },
+      "chart_end": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Chart End"
+      },
+      "summary": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Summary"
+      },
+      "summary_at": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Summary At"
       }
     },
     "required": [
@@ -591,6 +699,47 @@
         "minLength": 1,
         "title": "Symbol",
         "type": "string"
+      },
+      "signal_id": {
+        "anyOf": [
+          {
+            "maxLength": 240,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Signal Id"
+      },
+      "timeframe": {
+        "$ref": "#/$defs/Timeframe",
+        "default": "5m"
+      },
+      "chart_start": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Chart Start"
+      },
+      "chart_end": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Chart End"
       }
     },
     "required": [
@@ -676,6 +825,22 @@
         "default": 0,
         "title": "Cost Usd",
         "type": "number"
+      },
+      "phase": {
+        "anyOf": [
+          {
+            "enum": [
+              "retrieving",
+              "generating"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Phase"
       }
     },
     "required": [
@@ -707,6 +872,22 @@
       "messages"
     ],
     "title": "ConversationDetail",
+    "type": "object"
+  },
+  "ConversationRename": {
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Title",
+        "type": "string"
+      }
+    },
+    "required": [
+      "title"
+    ],
+    "title": "ConversationRename",
     "type": "object"
   },
   "ConversationTurn": {

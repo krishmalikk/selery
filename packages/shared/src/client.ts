@@ -38,8 +38,10 @@ export class SeleryClient {
   report(id:string){return this.request(`/research/${encodeURIComponent(id)}`,ResearchReportSchema);}
   reports(limit=10,offset=0){return this.request(`/research?limit=${limit}&offset=${offset}`,z.array(ResearchReportSchema));}
   chat(input:Omit<ChatRequest,'activity_id'> & {activity_id?:string|null}){return this.request('/chat',ChatResponseSchema,{method:'POST',body:JSON.stringify(input)});}
-  conversations(limit=50,offset=0){return this.request(`/conversations?limit=${limit}&offset=${offset}`,z.array(ConversationSchema));}
-  createConversation(symbol:string){return this.request('/conversations',ConversationSchema,{method:'POST',body:JSON.stringify({symbol})});}
+  conversations(limit=50,offset=0,q=''){return this.request(`/conversations?limit=${limit}&offset=${offset}&q=${encodeURIComponent(q)}`,z.array(ConversationSchema));}
+  createConversation(symbol:string,options:{signal_id?:string;timeframe?:Timeframe;chart_start?:number;chart_end?:number}={}){return this.request('/conversations',ConversationSchema,{method:'POST',body:JSON.stringify({symbol,...options})});}
+  renameConversation(id:string,title:string){return this.request('/conversations/'+encodeURIComponent(id)+'/rename',ConversationSchema,{method:'POST',body:JSON.stringify({title})});}
+  summarizeConversation(id:string){return this.request('/conversations/'+encodeURIComponent(id)+'/summary',ConversationSchema,{method:'POST'});}
   conversation(id:string){return this.request('/conversations/'+encodeURIComponent(id),ConversationDetailSchema);}
   sendConversationMessage(id:string,message:string,requestId:string,timeframe:Timeframe='5m'){return this.request('/conversations/'+encodeURIComponent(id)+'/messages',ConversationDetailSchema,{method:'POST',body:JSON.stringify({message,request_id:requestId,timeframe})});}
   deleteConversation(id:string){return this.request('/conversations/'+encodeURIComponent(id)+'/delete',z.object({ok:z.boolean()}),{method:'POST'});}

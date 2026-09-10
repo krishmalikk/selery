@@ -55,6 +55,10 @@ export type Citation = {
   "timestamp": string;
   "url": string | null;
   "data_id": string | null;
+  "provider": string | null;
+  "feed": Feed | null;
+  "available_at": string | null;
+  "observation": string | null;
 };
 export type Conversation = {
   "id": string;
@@ -62,9 +66,18 @@ export type Conversation = {
   "title": string;
   "created_at": string;
   "updated_at": string;
+  "signal": Signal | null;
+  "chart_start": number | null;
+  "chart_end": number | null;
+  "summary": string | null;
+  "summary_at": string | null;
 };
 export type ConversationCreate = {
   "symbol": string;
+  "signal_id": string | null;
+  "timeframe": Timeframe;
+  "chart_start": number | null;
+  "chart_end": number | null;
 };
 export type ConversationDetail = {
   "conversation": Conversation;
@@ -81,6 +94,10 @@ export type ConversationMessage = {
   "citations": Array<Citation>;
   "mode": "local" | "llm" | null;
   "cost_usd": number;
+  "phase": "retrieving" | "generating" | null;
+};
+export type ConversationRename = {
+  "title": string;
 };
 export type ConversationTurn = {
   "message": string;
@@ -381,11 +398,12 @@ export const CapabilitySchema: z.ZodType<Capability> = z.object({"id": z.string(
 export const ChartResponseSchema: z.ZodType<ChartResponse> = z.object({"symbol": z.string(), "timeframe": z.lazy(() => TimeframeSchema), "bars": z.array(z.lazy(() => BarSchema)), "indicators": z.record(z.array(z.lazy(() => IndicatorPointSchema))), "signals": z.array(z.lazy(() => SignalSchema)), "capabilities": z.array(z.lazy(() => CapabilitySchema)), "provenance": z.lazy(() => ProvenanceSchema)}).strict();
 export const ChatRequestSchema: z.ZodType<ChatRequest> = z.object({"message": z.string().min(1).max(4000), "symbol": z.string(), "debate": z.boolean(), "activity_id": z.union([z.string().max(180), z.null()])}).strict();
 export const ChatResponseSchema: z.ZodType<ChatResponse> = z.object({"message": z.string(), "citations": z.array(z.lazy(() => CitationSchema)), "mode": z.enum(["local", "llm"]), "cost_usd": z.number().finite()}).strict();
-export const CitationSchema: z.ZodType<Citation> = z.object({"label": z.string(), "timestamp": z.string(), "url": z.union([z.string(), z.null()]), "data_id": z.union([z.string(), z.null()])}).strict();
-export const ConversationSchema: z.ZodType<Conversation> = z.object({"id": z.string(), "symbol": z.string(), "title": z.string(), "created_at": z.string(), "updated_at": z.string()}).strict();
-export const ConversationCreateSchema: z.ZodType<ConversationCreate> = z.object({"symbol": z.string().min(1).max(12)}).strict();
+export const CitationSchema: z.ZodType<Citation> = z.object({"label": z.string(), "timestamp": z.string(), "url": z.union([z.string(), z.null()]), "data_id": z.union([z.string(), z.null()]), "provider": z.union([z.string(), z.null()]), "feed": z.union([z.lazy(() => FeedSchema), z.null()]), "available_at": z.union([z.string(), z.null()]), "observation": z.union([z.string(), z.null()])}).strict();
+export const ConversationSchema: z.ZodType<Conversation> = z.object({"id": z.string(), "symbol": z.string(), "title": z.string(), "created_at": z.string(), "updated_at": z.string(), "signal": z.union([z.lazy(() => SignalSchema), z.null()]), "chart_start": z.union([z.number().int().finite(), z.null()]), "chart_end": z.union([z.number().int().finite(), z.null()]), "summary": z.union([z.string(), z.null()]), "summary_at": z.union([z.string(), z.null()])}).strict();
+export const ConversationCreateSchema: z.ZodType<ConversationCreate> = z.object({"symbol": z.string().min(1).max(12), "signal_id": z.union([z.string().max(240), z.null()]), "timeframe": z.lazy(() => TimeframeSchema), "chart_start": z.union([z.number().int().finite(), z.null()]), "chart_end": z.union([z.number().int().finite(), z.null()])}).strict();
 export const ConversationDetailSchema: z.ZodType<ConversationDetail> = z.object({"conversation": z.lazy(() => ConversationSchema), "messages": z.array(z.lazy(() => ConversationMessageSchema))}).strict();
-export const ConversationMessageSchema: z.ZodType<ConversationMessage> = z.object({"id": z.string(), "conversation_id": z.string(), "role": z.enum(["user", "assistant"]), "message": z.string(), "created_at": z.string(), "status": z.enum(["pending", "complete", "failed"]), "error": z.union([z.string(), z.null()]), "citations": z.array(z.lazy(() => CitationSchema)), "mode": z.union([z.enum(["local", "llm"]), z.null()]), "cost_usd": z.number().finite()}).strict();
+export const ConversationMessageSchema: z.ZodType<ConversationMessage> = z.object({"id": z.string(), "conversation_id": z.string(), "role": z.enum(["user", "assistant"]), "message": z.string(), "created_at": z.string(), "status": z.enum(["pending", "complete", "failed"]), "error": z.union([z.string(), z.null()]), "citations": z.array(z.lazy(() => CitationSchema)), "mode": z.union([z.enum(["local", "llm"]), z.null()]), "cost_usd": z.number().finite(), "phase": z.union([z.enum(["retrieving", "generating"]), z.null()])}).strict();
+export const ConversationRenameSchema: z.ZodType<ConversationRename> = z.object({"title": z.string().min(1).max(100)}).strict();
 export const ConversationTurnSchema: z.ZodType<ConversationTurn> = z.object({"message": z.string().min(1).max(4000), "request_id": z.string().regex(new RegExp("^[A-Za-z0-9_-]{8,80}$")), "timeframe": z.lazy(() => TimeframeSchema)}).strict();
 export const DataQuerySchema: z.ZodType<DataQuery> = z.object({"provider": z.enum(["finnhub", "alpha_vantage", "twelve_data", "fred", "sec", "kenneth_french", "yfinance"]), "dataset": z.string().min(1).max(60), "symbol": z.string(), "timeframe": z.lazy(() => TimeframeSchema), "start": z.union([z.string(), z.null()]), "end": z.union([z.string(), z.null()]), "series_id": z.union([z.string(), z.null()]), "cik": z.union([z.string(), z.null()]), "as_of": z.union([z.string(), z.null()]), "archive": z.boolean()}).strict();
 export const DeliverySummarySchema: z.ZodType<DeliverySummary> = z.object({"accepted": z.number().int().finite(), "failed": z.number().int().finite(), "skipped": z.number().int().finite(), "unknown": z.number().int().finite()}).strict();

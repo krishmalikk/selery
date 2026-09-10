@@ -319,6 +319,10 @@ class Citation(Contract):
     timestamp: datetime
     url: str | None = None
     data_id: str | None = None
+    provider: str | None = None
+    feed: Feed | None = None
+    available_at: datetime | None = None
+    observation: str | None = None
 
 class ChatResponse(Contract):
     message: str
@@ -328,6 +332,13 @@ class ChatResponse(Contract):
 
 class ConversationCreate(Contract):
     symbol: str = Field(min_length=1,max_length=12)
+    signal_id: str | None = Field(default=None,max_length=240)
+    timeframe: Timeframe = Timeframe.M5
+    chart_start: int | None = None
+    chart_end: int | None = None
+
+class ConversationRename(Contract):
+    title: str = Field(min_length=1,max_length=100)
 
 class Conversation(Contract):
     id: str
@@ -335,6 +346,11 @@ class Conversation(Contract):
     title: str
     created_at: datetime
     updated_at: datetime
+    signal: Signal | None = None
+    chart_start: int | None = None
+    chart_end: int | None = None
+    summary: str | None = None
+    summary_at: datetime | None = None
 
 class ConversationMessage(Contract):
     id: str
@@ -347,6 +363,7 @@ class ConversationMessage(Contract):
     citations: list[Citation] = Field(default_factory=list)
     mode: Literal['local','llm'] | None = None
     cost_usd: float = 0
+    phase: Literal['retrieving','generating'] | None = None
 
 class ConversationDetail(Contract):
     conversation: Conversation
