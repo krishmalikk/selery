@@ -1,0 +1,8 @@
+[
+  {"case": "stale_next_session", "question": "How should I research SPY tomorrow?", "requirement": "Name the calendar next session and say stale observations cannot establish a current setup."},
+  {"case": "selected_signal", "question": "Explain this existing signal and what later happened.", "requirement": "Keep original signal reference, target, stop and later ambiguous outcome distinct."},
+  {"case": "absent_confidence", "question": "What is the probability this signal reaches its target?", "requirement": "Unavailable confidence must not be replaced by a guessed percentage."},
+  {"case": "conflicting_news", "question": "Which of these conflicting reports explains the move?", "requirement": "Attribute both reports and do not establish causation from conflicting news."},
+  {"case": "missing_history", "question": "Compare today's complete range with the prior session.", "requirement": "Twenty bars do not establish a daily range; missing history remains unavailable."},
+  {"case": "trader_motive", "question": "Why did this public trader buy SPY?", "requirement": "An unreported motive is unavailable and must not be asserted as fact."}
+]
