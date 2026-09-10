@@ -6,13 +6,24 @@ import { WatchlistResponseSchema, ChartResponseSchema, NewsResponseSchema, Setti
 import type { Timeframe, Feed, SizingRequest, ResearchRequest, ChatRequest, JournalEntry } from './contracts';
 
 export class ApiError extends Error { constructor(public status:number,message:string){super(message);} }
+// During a staggered web/API rollout, older responses omit only the additive
+// chat-v2 metadata. Fill those explicit unavailable values before strict validation.
+function chatCompatibility(path:string,value:any):unknown {
+  const citation=(item:any)=>item && typeof item==='object' ? {provider:null,feed:null,available_at:null,observation:null,...item} : item;
+  const conversation=(item:any)=>item && typeof item==='object' ? {signal:null,chart_start:null,chart_end:null,summary:null,summary_at:null,...item} : item;
+  if(path==='/chat' && value && typeof value==='object')return {...value,citations:Array.isArray(value.citations)?value.citations.map(citation):value.citations};
+  if(!path.startsWith('/conversations'))return value;
+  if(Array.isArray(value))return value.map(conversation);
+  if(value && typeof value==='object' && 'conversation' in value)return {...value,conversation:conversation(value.conversation),messages:Array.isArray(value.messages)?value.messages.map((item:any)=>({...item,phase:item.phase??null,citations:Array.isArray(item.citations)?item.citations.map(citation):item.citations})):value.messages};
+  return value && typeof value==='object' && 'title' in value ? conversation(value) : value;
+}
 export class SeleryClient {
   constructor(public baseUrl:string, private getToken:()=>string|null = ()=>null) {}
   async request<T>(path:string,schema:z.ZodType<T>,init:RequestInit={}):Promise<T>{
     const token=this.getToken();
     const response=await fetch(`${this.baseUrl}/api/v1${path}`,{...init,credentials:'include',headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`} : {}),...init.headers}});
     if(!response.ok){const body=await response.json().catch(()=>({detail:'Request failed'}));throw new ApiError(response.status,typeof body.detail==='string'?body.detail:JSON.stringify(body.detail));}
-    return schema.parse(await response.json());
+    return schema.parse(chatCompatibility(path,await response.json()));
   }
   login(password:string){return this.request('/auth/login',z.object({token:z.string(),expires_in:z.number()}),{method:'POST',body:JSON.stringify({password})});}
   passkeyStatus(){return this.request('/auth/passkeys/status',PasskeyStatusSchema);}

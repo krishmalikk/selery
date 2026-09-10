@@ -43,3 +43,9 @@ Targets: web `https://selery-web.vercel.app`; backend `https://selery-13rz.onren
 Implementation passes local automated checks. The reviewed API interval mismatch is fixed. Production deployment status, physical-device evidence and live paid evaluation are distinct acceptance gates; only verified deployment results will be marked complete.
 
 Reference: visible-text event handling and terminal response processing follow [OpenAI streaming documentation](https://developers.openai.com/api/docs/guides/streaming-responses).
+
+## Hosted evidence after release push
+
+Feature commit `f67be2b` deployed successfully on Vercel and `/api/release` returned its exact commit and chat revision 2. Hosted proxy login succeeded with an HttpOnly cookie and the bearer token removed from browser JSON. [GitHub verification](https://github.com/krishmalikk/selery/actions/runs/34433479369) passed every step, including clean installs, all browser checks, native exports and dependency audit. [Sanitized deployment record](../docs/chat-deployment.json).
+
+Render remained healthy but served the previous API revision during verification. Full hosted chat-v2 acceptance therefore remains pending the latest Render deployment. The subsequent compatibility patch allows the new clients to read older chat responses during a staggered rollout by filling only newly added nullable metadata; strict validation still rejects malformed/extra fields. Its regression and production build pass.

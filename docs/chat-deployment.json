@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-09-10T03:36:47.057817+00:00",
+  "feature_commit": "f67be2b99240ceffa5e2f2f5e1f4456a7ea5f26b",
+  "web": {
+    "url": "https://selery-web.vercel.app",
+    "chat_revision": "2",
+    "commit_verified": true,
+    "login_proxy_verified": true,
+    "http_only_cookie_verified": true,
+    "bearer_token_hidden": true
+  },
+  "backend": {
+    "url": "https://selery-13rz.onrender.com",
+    "health": "ok",
+    "chat_revision": null,
+    "status": "Previous revision still serving; latest Render deployment required"
+  },
+  "ci": {
+    "url": "https://github.com/krishmalikk/selery/actions/runs/34433479369",
+    "status": "success",
+    "checks": [
+      "clean frozen Python install",
+      "npm ci",
+      "Python tests",
+      "contracts",
+      "TypeScript",
+      "web build",
+      "native exports",
+      "npm audit",
+      "browser acceptance",
+      "security scan"
+    ]
+  },
+  "live_model_evaluation": "not run",
+  "physical_device": "unverified"
+}

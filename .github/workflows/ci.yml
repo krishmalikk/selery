@@ -44,7 +44,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npx tsx tests/test_mobile_helpers.ts
       - run: npx tsx tests/test_chart_helpers.ts
-      - run: node --import tsx --test tests/test_research_markdown.ts
+      - run: node --import tsx --test tests/test_research_markdown.ts tests/test_chat_compat.ts
       - name: Browser acceptance
         run: |
           .venv/bin/uvicorn selery_api.main:app --host 127.0.0.1 --port 8000 > /tmp/selery-api.log 2>&1 &
