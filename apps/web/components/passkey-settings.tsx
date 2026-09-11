@@ -1,6 +1,6 @@
 "use client";
 import {useEffect, useState, type FormEvent} from 'react';
-import {SeleryClient, type PasskeyInfo, type PasskeyStatus} from '@selery/shared';
+import {ApiError, SeleryClient, type PasskeyInfo, type PasskeyStatus} from '@selery/shared';
 import {registerPasskey, supportsPasskeys} from './passkeys';
 
 export function PasskeySettings({api, onChanged}: {api: SeleryClient; onChanged: () => void}) {
@@ -8,11 +8,31 @@ export function PasskeySettings({api, onChanged}: {api: SeleryClient; onChanged:
   const [status, setStatus] = useState<PasskeyStatus | null>(null);
   const [password, setPassword] = useState(''), [name, setName] = useState('My Mac');
   const [busy, setBusy] = useState(false), [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState('');
+  const [retry, setRetry] = useState(0);
   useEffect(() => {let alive = true;
-    Promise.all([api.passkeyStatus(), api.passkeys()]).then(([s, keys]) => {if (alive) {setStatus(s);setItems(keys);}})
-      .catch(() => {if (alive) setMessage('Passkey settings could not be loaded.');});
+    setLoading(true);setLoadError('');setStatus(null);setItems([]);setMessage('');
+    void (async () => {
+      try {
+        const status = await api.passkeyStatus();
+        if (!alive) return;
+        setStatus(status);
+        // Disabled passkeys need configuration, not a second authenticated request.
+        if (status.enabled) {
+          const keys = await api.passkeys();
+          if (alive) setItems(keys);
+        }
+      } catch (error) {
+        if (!alive) return;
+        setLoadError(error instanceof ApiError && error.status === 404
+          ? 'The backend serving this website has not been updated for passkeys. Deploy the latest Selery code on Render, then retry.'
+          : error instanceof ApiError && error.status === 401
+          ? 'Your session expired. Sign out and sign in again, then retry.'
+          : 'Passkey settings could not be loaded. Check the research service connection and retry.');
+      } finally {if (alive) setLoading(false);}
+    })();
     return () => {alive = false;};
-  }, [api]);
+  }, [api, retry]);
   async function enroll(e: FormEvent) {
     e.preventDefault();setBusy(true);setMessage('');
     const entered = password;setPassword('');
@@ -33,7 +53,9 @@ export function PasskeySettings({api, onChanged}: {api: SeleryClient; onChanged:
   return <section className="panel padded">
     <h2>Touch ID &amp; passkeys</h2>
     <p className="muted">Set up once with your workspace password. Your browser can then unlock Selery with Touch ID, Face ID, or your device’s passkey unlock. Selery never receives your fingerprint.</p>
-    {!status ? <p className="muted">Loading passkey settings…</p> : !status.enabled ? <p className="notice">{status.reason}</p> :
+    {loading ? <p className="muted">Loading passkey settings…</p> : loadError ?
+      <div><p className="notice" role="alert">{loadError}</p><button type="button" onClick={() => setRetry(value => value + 1)}>Retry passkey settings</button></div> : !status?.enabled ?
+      <div><p className="notice">{status?.reason || 'Passkey sign-in is not configured for this website yet.'}</p><button type="button" onClick={() => setRetry(value => value + 1)}>Retry passkey settings</button></div> :
       !supportsPasskeys() ? <p className="notice">Use a supported browser on HTTPS to add a passkey.</p> :
       <form onSubmit={enroll} style={{maxWidth: 380, margin: '16px 0'}}>
         <label htmlFor="passkey-name">Passkey name</label>

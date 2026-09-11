@@ -970,6 +970,11 @@ export default function Workspace() {
                     Confidence estimates whether the analytical target is reached before the stop within the signal horizon.
                     Select a signal for its scope or the reason a score is unavailable.
                   </p>
+                  {shownSignals.length > 0 && shownSignals.every(s => !signalConfidence(s).available) &&
+                    <p className="notice" style={{margin:"0 18px 16px"}}>
+                      Confidence is unavailable for these signals: no calibrated prediction was recorded at signal time.
+                      A validated model must be active before new signals occur. Training later does not add scores to old signals.
+                    </p>}
                 </section>
                 <section className="panel news-panel">
                   <div className="section-title">
@@ -1564,7 +1569,10 @@ export default function Workspace() {
                   Training is manual.
                 </p>
                 {models ? (
-                  <DataTree value={models} />
+                  <>
+                    {models.status === "untrained" && <p className="notice">No validated model is active. Numerical signal confidence remains unavailable until a model passes validation and records predictions for new signals.</p>}
+                    <DataTree value={models} />
+                  </>
                 ) : (
                   <Empty>No model metadata available.</Empty>
                 )}
